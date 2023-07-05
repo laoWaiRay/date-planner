@@ -25,11 +25,13 @@
 
 a {
   font-weight: 500;
-  color: rgb(3, 111, 249);
+  color: rgb(2, 162, 249);
   text-decoration: inherit;
 }
 a:hover {
-  color: #f25353;
+  color: rgb(2, 117, 249);
+
+  cursor: pointer;
 }
 
 body {
