@@ -3,24 +3,28 @@ import Input from "../components/Input";
 import useForm from "../hooks/useForm";
 import GoogleLogo from '../assets/GoogleLogo.png'
 import Hero from "../assets/Hero.jpg"
+import { useLoaderData, Link } from "react-router-dom";
 
 export default function Login() {
   const [formState, handleInputChange] = useForm({
     "username": "",
     "password": "",
   });
+
+  const heroImg = useLoaderData();
   
   return (
-    <div className="w-full h-screen flex">
+    <div className="w-full min-h-screen flex">
       {/* Hero Image */}
-      <div>
-        <img src={Hero} className="object-cover w-full h-full" alt="Concert Lights" />
+      <div className="overflow-hidden">
+        {heroImg}
       </div>
 
       {/* Form Sidebar*/}
-      <main className="w-[28rem] h-screen ml-auto px-12 py-6 flex flex-col justify-center">
+      <main className="w-full min-h-screen ml-auto px-12 py-6 flex flex-shrink-0 flex-col 
+      justify-center sm:w-[28rem] items-center">
         
-        <form action="#" className="mb-10">
+        <form action="#" className="mb-10 max-w-sm w-full">
           <h1 className="font-display text-blue-500 font-bold text-4xl mb-0">Date Planner</h1>
           <h2 className="font-semibold text-lg ml-[3px] tracking-wide mb-4">Nice to see you again</h2>
 
@@ -56,11 +60,16 @@ export default function Login() {
 
             <div className="text-sm mt-8 flex justify-center">
               Don't have an account?
-              <a className="ml-3">Sign up now</a>
+              <Link to="/signup" className="ml-3">Sign up now</Link>
             </div>
           </section>
         </form>
       </main>
     </div>
   )
+}
+
+// Preload large hero image
+export function loader() {
+  return (<img src={Hero} className="object-cover w-full h-full" alt="Concert Lights" />);
 }

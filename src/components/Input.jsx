@@ -40,7 +40,7 @@ export default function Input({ id, name, element, label, type, placeholder, upd
       <label className="text-sm pl-3 pb-2" htmlFor={id}> {label} </label>
       <div className="relative w-full">
         {inputElement}
-        {id === "password" && 
+        {(id === "password" || id === "confirmPassword") && 
           <button type="button" className="absolute right-3 top-2 text-gray-500"
           onClick={toggleVisiblility}>
             {isVisibile ? <VisibilityOff /> : <Visibility />}
