@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {},
     fontFamily: {
-      'display': ['Playfair Display']
+      'display': ['Comfortaa']
     }
   },
   plugins: [],

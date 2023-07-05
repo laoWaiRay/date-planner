@@ -1,10 +1,13 @@
 // Credit Gerald Ezenagu, section.io for reusable form input guide
 // https://www.section.io/engineering-education/how-to-create-a-reusable-react-form/
 
-import { useReducer, useEffect } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useReducer, useEffect, useState, useRef } from "react";
 
 export default function Input({ id, name, element, label, type, placeholder, updateForm }) {
   const [inputState, dispatch] = useReducer(inputReducer, { value: "" });
+  const inputRef = useRef(null);
+  const [isVisibile, setVisibile] = useState(false);
 
   const handleChange = (event) => {
     dispatch({ type: "CHANGE", value: event.target.value });
@@ -12,10 +15,20 @@ export default function Input({ id, name, element, label, type, placeholder, upd
 
   const inputElement = element === "input" ? (
     <input id={id} name={name} type={type} placeholder={placeholder} value={inputState.value}
-    onChange={handleChange} />
+    onChange={handleChange} ref={inputRef}
+    className="bg-gray-100 py-2 px-3 rounded-sm placeholder:text-gray-400 w-full" />
   ) : (
     <textarea name={name} rows="4" onChange={handleChange} value={inputState.value} />
   );
+
+  const toggleVisiblility = () => {
+    if (inputRef.current.type === "password")
+      inputRef.current.type = "text";
+    else
+      inputRef.current.type = "password";
+    
+    setVisibile(!isVisibile);
+  }
 
   // Update form state whenever the input state changes
   useEffect(() => {
@@ -23,9 +36,17 @@ export default function Input({ id, name, element, label, type, placeholder, upd
   }, [inputState.value, id, updateForm])
 
   return (
-    <div className="">
-      <label htmlFor={id}> {label} </label>
-      {inputElement}
+    <div className="flex flex-col">
+      <label className="text-sm pl-3 pb-2" htmlFor={id}> {label} </label>
+      <div className="relative w-full">
+        {inputElement}
+        {id === "password" && 
+          <button type="button" className="absolute right-3 top-2 text-gray-500"
+          onClick={toggleVisiblility}>
+            {isVisibile ? <VisibilityOff /> : <Visibility />}
+          </button>
+        }
+      </div>
     </div>
   )
 }
