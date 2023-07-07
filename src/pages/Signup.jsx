@@ -39,7 +39,7 @@ export default function Signup() {
           {/* Main Form Section */}
           <section className="space-y-4 border-gray-100 border-b-2 pb-5">
             <Input id="username" name="username" label="Username" placeholder="Enter a username" 
-            updateForm={handleInputChange} />
+            updateForm={handleInputChange} errorMessage="Oops Error"/>
             <Input id="email" name="email" label="Email" placeholder="Enter email address" 
             updateForm={handleInputChange} />
             <Input id="password" name="password" label="Password" placeholder="Enter password" 

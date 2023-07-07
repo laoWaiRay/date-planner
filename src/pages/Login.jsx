@@ -3,10 +3,16 @@ import Input from "../components/Input";
 import useForm from "../hooks/useForm";
 import Hero from "../assets/Hero.jpg"
 import { useLoaderData, Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { renderGoogleBtn } from "../GoogleIdentity";
+import { validateLoginForm } from "../helpers/formValidator";
 
 export default function Login() {
+  const [isValid, setIsValid] = useState(true);
+  const [formErr, setFormErr] = useState("");
+  const [usernameErr, setUsernameErr] = useState("");
+  const [passwordErr, setPasswordErr] = useState("");
+
   const [formState, handleInputChange] = useForm({
     "username": "",
     "password": "",
@@ -17,6 +23,17 @@ export default function Login() {
   useEffect(() => {
     renderGoogleBtn("googleSignInBtn", "login")
   }, [])
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (formState) {
+      const {isValid, formErr, usernameErr, passwordErr} = validateLoginForm(formState);
+      setIsValid(isValid);
+      setFormErr(formErr)
+      setUsernameErr(usernameErr);
+      setPasswordErr(passwordErr);
+    }
+  }
   
   return (
     <div className="w-full min-h-screen flex">
@@ -29,16 +46,21 @@ export default function Login() {
       <main className="w-full min-h-screen ml-auto px-12 py-6 flex flex-shrink-0 flex-col 
       justify-center sm:w-[28rem] items-center">
         
-        <form action="#" className="mb-10 max-w-sm w-full">
+        <form onSubmit={(e) => handleSubmit(e)} className="mb-10 max-w-sm w-full">
           <h1 className="font-display text-blue-500 font-bold text-4xl mb-0">Date Planner</h1>
           <h2 className="font-semibold text-lg ml-[3px] tracking-wide mb-4">Nice to see you again</h2>
+
+          {/* Error Message Popup */}
+          { !isValid && formErr &&
+            <div className="my-4 ml-1 text-red-500">{formErr}</div>
+          }
 
           {/* Main Form Section */}
           <section className="space-y-4 border-b-2 pb-8 border-gray-100">
             <Input id="username" name="username" label="Login" placeholder="Email or username" 
-            updateForm={handleInputChange} />
+            updateForm={handleInputChange} errorMessage={usernameErr}/>
             <Input id="password" name="password" label="Password" placeholder="Enter password" 
-            updateForm={handleInputChange} type="password" />
+            updateForm={handleInputChange} type="password" errorMessage={passwordErr} />
 
             <div className="w-full">
               <div className="w-full flex items-center">

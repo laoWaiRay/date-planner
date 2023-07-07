@@ -4,14 +4,14 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useReducer, useEffect, useState, useRef } from "react";
 
-export default function Input({ id, name, element, label, type, placeholder, updateForm }) {
+export default function Input({ id, name, element, label, type, placeholder, updateForm, errorMessage }) {
   const [inputState, dispatch] = useReducer(inputReducer, { value: "" });
   const inputRef = useRef(null);
   const [isVisibile, setVisibile] = useState(false);
 
   const handleChange = (event) => {
     dispatch({ type: "CHANGE", value: event.target.value });
-  } 
+  }
 
   const inputElement = element === "input" ? (
     <input id={id} name={name} type={type} placeholder={placeholder} value={inputState.value}
@@ -37,7 +37,9 @@ export default function Input({ id, name, element, label, type, placeholder, upd
 
   return (
     <div className="flex flex-col">
-      <label className="text-sm pl-3 pb-2" htmlFor={id}> {label} </label>
+      <label className="text-sm pl-3 pb-2" htmlFor={id}> 
+        {label} {errorMessage && ` - ${errorMessage}`}
+      </label>
       <div className="relative w-full">
         {inputElement}
         {(id === "password" || id === "confirmPassword") && 
@@ -65,4 +67,5 @@ const inputReducer = (state, action) => {
 Input.defaultProps = {
   element: "input",
   type: "text",
+  errorMessage: ""
 }

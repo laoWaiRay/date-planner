@@ -3,7 +3,7 @@ import pg from 'pg';
 import cors from 'cors';
 
 const app = express();
-const PORT = 3000;
+const PORT = 8000;
 
 app.use(cors());
 app.use(express.urlencoded({extended: false}));
@@ -12,6 +12,11 @@ app.use(express.json());
 const pool = new pg.Pool({
   password: "password"
 });
+
+app.post('/users/login', (req, res, next) => {
+  console.log(req.body);
+  res.send(req.body);
+})
 
 app.post('/users', (req, res, next) => {
 
