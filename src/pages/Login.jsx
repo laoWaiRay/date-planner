@@ -6,12 +6,11 @@ import { useLoaderData, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { renderGoogleBtn } from "../GoogleIdentity";
 import { validateLoginForm } from "../helpers/formValidator";
+import { loginUser } from "../api/internal/postgres";
 
 export default function Login() {
   const [isValid, setIsValid] = useState(true);
   const [formErr, setFormErr] = useState("");
-  const [usernameErr, setUsernameErr] = useState("");
-  const [passwordErr, setPasswordErr] = useState("");
 
   const [formState, handleInputChange] = useForm({
     "username": "",
@@ -24,14 +23,26 @@ export default function Login() {
     renderGoogleBtn("googleSignInBtn", "login")
   }, [])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formState) {
-      const {isValid, formErr, usernameErr, passwordErr} = validateLoginForm(formState);
+      let {isValid, errors: {form} } = validateLoginForm(formState);
+
+      // Input is valid, attempt to login user
+      if (isValid) {
+        const result = await loginUser(formState);
+        
+        // Authentication failed
+        if (result.error) {
+          isValid = false;
+          form = result.error;
+        } else {
+          console.log("Logged in user: ", result);
+        }
+      }
+
       setIsValid(isValid);
-      setFormErr(formErr)
-      setUsernameErr(usernameErr);
-      setPasswordErr(passwordErr);
+      setFormErr(form)
     }
   }
   
@@ -58,9 +69,9 @@ export default function Login() {
           {/* Main Form Section */}
           <section className="space-y-4 border-b-2 pb-8 border-gray-100">
             <Input id="username" name="username" label="Login" placeholder="Email or username" 
-            updateForm={handleInputChange} errorMessage={usernameErr}/>
+            updateForm={handleInputChange} />
             <Input id="password" name="password" label="Password" placeholder="Enter password" 
-            updateForm={handleInputChange} type="password" errorMessage={passwordErr} />
+            updateForm={handleInputChange} type="password" />
 
             <div className="w-full">
               <div className="w-full flex items-center">

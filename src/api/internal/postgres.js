@@ -1,7 +1,7 @@
 // Methods for contacting postgres server
 
 // Params: userData - object containing username/email and password
-async function loginByUsername(userData) {
+async function loginUser(userData) {
   const res = await fetch("http://localhost:8000/users/login", {
     method: "POST",
     headers: {
@@ -10,12 +10,24 @@ async function loginByUsername(userData) {
     body: JSON.stringify(userData)
   });
 
-  const user = await res.json();
-
+  const data = await res.json();
+  
+  return data;
 }
 
-function loginByEmail() {
-  // const user = fetch()
+// Params: userData - object containing signup data
+async function signupUser(userData) {
+  const res = await fetch("http://localhost:8000/users/new", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(userData)
+  });
+
+  const data = await res.json();
+
+  return data;
 }
 
-export { loginByUsername }
+export { loginUser, signupUser }

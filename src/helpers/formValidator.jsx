@@ -1,76 +1,81 @@
-import { loginByUsername } from "../api/internal/postgres";
+function validateSignupForm(formState) {
+  let isValid = true;
+  const errors = {
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  }
 
-// function validateSignupForm(formState) {
-//   let isValid = true;
-//   let formErr = "";
-//   let usernameErr = "";
-//   let emailErr = "";
-//   let passwordErr = "";
-//   let confirmPasswordErr = "";
+  const {username, email, password, confirmPassword} = formState;
 
-//   const {username="", email="", password="", confirmPassword=""} = formState;
+  errors.username = validateUsername(username);
+  errors.email = validateEmail(email);
+  errors.password = validatePassword(password);
 
-//   if (username) {
-//     if (username.trim().length < 3)
-//       usernameErr = "Username must be 3 or more characters"
-//   }
+  if (password !== confirmPassword)
+    errors.confirmPassword = "Passwords must match";
 
-//   if (email) {
-//     console.log("Email", email)
-//   }
-
-//   if (password) {
-//     console.log("PW", password)
-//   }
-
-//   if (confirmPassword) {
-//     console.log("CPW", confirmPassword)
-//   }
-
-//   // If no errors, attempt to register user on database
-//   if (!formErr) {
-    
-//   }
-
-//   return { isValid, formErr, usernameErr, emailErr, passwordErr, confirmPasswordErr };
-// }
+  return { isValid, errors };
+}
 
 // Note: "username" variable can be in either a username or email format
 function validateLoginForm(formState) {
   let isValid = true;
-  let formErr = "";
-  let usernameErr = "";
-  let passwordErr = "";
   let loginMethod; // Either "username" or "email"
+  const errors = {
+    form: "",
+    username: "",
+    password: ""
+  }
 
-  const {username="", password=""} = formState;
+  const {username, password} = formState;
 
   if (username.includes("@")) {
     loginMethod = "email";
     // Email format checks
-    const emailRegex = /.+\@.+\..+/;
-    if (!emailRegex.test(username)) {
-      usernameErr = "Invalid email"
-    }
+    errors.username = validateEmail(username);
   } else {
     loginMethod = "username";
     // Username format checks
-    if (username.trim().length < 3) {
-      usernameErr = "Username must be 3 or more characters"
-    }
+    errors.username = validateUsername(username);
   }
 
-  if (password.trim().length < 3) {
-    passwordErr = "Password must be 3 or more characters"
-  }
-  
+  errors.password = validatePassword(password);
 
-  // If no errors, attempt db lookup
-  if (!formErr) {
-
-  }
-
-  return { isValid, formErr, usernameErr, passwordErr };
+  return { isValid, errors };
 }
 
-export { validateLoginForm }
+// Helpers
+function validateUsername(username) {
+  if (username.trim().length < 3) {
+    return "Username must be 3 or more characters";
+  }
+  return "";
+}
+
+function validateEmail(email) {
+  const emailRegex = /.+\@.+\..+/;
+  if (!emailRegex.test(email)) {
+    return "Invalid email";
+  }
+  return "";
+}
+
+function validatePassword(password) {
+  if (password.trim().length < 3) {
+    return "Password must be 3 or more characters"
+  }
+  return "";
+}
+
+// Return true if there are no error messages in the given errors object
+function isFormValid(errors) {
+  let valid = true;
+  Object.values(errors).forEach((value) => {
+    if (value) valid = false;
+  })
+  return valid;
+}
+
+export { validateLoginForm, validateSignupForm }
