@@ -1,8 +1,10 @@
 import Input from "../components/Input";
 import useForm from "../hooks/useForm";
-import GoogleLogo from '../assets/GoogleLogo.png'
+// import GoogleLogo from '../assets/GoogleLogo.png'
 import Hero from "../assets/Hero.jpg"
 import { Link, useLoaderData } from "react-router-dom";
+import { useEffect } from "react";
+import { renderGoogleBtn } from "../GoogleIdentity";
 
 export default function Signup() {
   const [formState, handleInputChange] = useForm({
@@ -13,6 +15,11 @@ export default function Signup() {
   });
 
   const heroImg = useLoaderData();
+
+  // Render the Google sign in button
+  useEffect(() => {
+    renderGoogleBtn("googleSignInBtn", "signup");
+  }, [])
   
   return (
     <div className="w-full min-h-screen flex">
@@ -41,7 +48,7 @@ export default function Signup() {
             updateForm={handleInputChange} type="password" />
             
             <button 
-              className="w-full bg-blue-500 text-white font-semibold h-10 rounded-md"
+              className="w-full bg-blue-500 text-white font-semibold h-10 rounded-md hover:brightness-110 transition duration-200"
             >
               Register
             </button>
@@ -49,29 +56,8 @@ export default function Signup() {
 
           {/* Alternate Login Section */}
           <section className="mt-6">
-            <button
-              type="button"
-              className="w-full bg-gray-800 text-white h-10 rounded-md text-sm flex 
-              items-center justify-center"
-              id="g_id_onload"
-              data-client_id="138188008135-tc9cmotoa6pblof57om9obfi9m6795ap.apps.googleusercontent.com"
-              data-context="signup"
-              data-ux_mode="popup"
-              data-callback="googleSignUp"
-              data-auto_prompt="false"
-            >
-              <img src={GoogleLogo} className="h-5 w-5 inline-block mr-2"></img>Or sign up with Google
-            </button>
-            {/* Google Identity Button */}
-
-            <div class="g_id_signin"
-                data-type="standard"
-                data-shape="rectangular"
-                data-theme="filled_black"
-                data-text="signin_with"
-                data-size="large"
-                data-logo_alignment="left">
-            </div>
+            {/* Root element for google button */}
+            <div id="googleSignInBtn" />
 
             <div className="text-sm mt-8 flex justify-center">
               Already have an account?

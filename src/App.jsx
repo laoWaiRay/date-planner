@@ -11,13 +11,8 @@ import Signup from './pages/Signup'
 import RequireAuth from './pages/RequireAuth'
 
 export default function App() {
-  // google object is available through the Google Identity script loaded in main.jsx
-  useEffect(() => {
-    console.log(google.accounts.id);
-  }, [])
-
   return (
-    <RouterProvider router={router} />
+      <RouterProvider router={router} />
   )
 }
 

@@ -23,6 +23,8 @@ await pool.query("CREATE TABLE \
                     id serial PRIMARY KEY, \
                     username varchar(255) NOT NULL, \
                     email varchar(255) NOT NULL, \
+                    password varchar(255) NOT NULL, \
+                    password_salt varchar(255) NOT NULL, \
                     avatar_URL text \
                   )");
 
@@ -31,6 +33,8 @@ await pool.query("CREATE TABLE \
                     id serial PRIMARY KEY, \
                     name varchar(255) NOT NULL, \
                     description text, \
+                    category varchar(255), \
+                    location text, \
                     author varchar(255), \
                     date_posted DATE DEFAULT CURRENT_DATE \
                 )");

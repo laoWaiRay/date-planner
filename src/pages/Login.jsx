@@ -1,9 +1,10 @@
 import { Switch } from "@mui/material";
 import Input from "../components/Input";
 import useForm from "../hooks/useForm";
-import GoogleLogo from '../assets/GoogleLogo.png'
 import Hero from "../assets/Hero.jpg"
 import { useLoaderData, Link } from "react-router-dom";
+import { useEffect } from "react";
+import { renderGoogleBtn } from "../GoogleIdentity";
 
 export default function Login() {
   const [formState, handleInputChange] = useForm({
@@ -12,6 +13,10 @@ export default function Login() {
   });
 
   const heroImg = useLoaderData();
+
+  useEffect(() => {
+    renderGoogleBtn("googleSignInBtn", "login")
+  }, [])
   
   return (
     <div className="w-full min-h-screen flex">
@@ -51,12 +56,8 @@ export default function Login() {
 
           {/* Alternate Login Section */}
           <section className="mt-8">
-            <button 
-              className="w-full bg-gray-800 text-white h-10 rounded-md text-sm flex 
-              items-center justify-center"
-            >
-              <img src={GoogleLogo} className="h-5 w-5 inline-block mr-2"></img>Or sign in with Google
-            </button>
+            {/* Root element for google button */}
+            <div id="googleSignInBtn" />
 
             <div className="text-sm mt-8 flex justify-center">
               Don't have an account?
