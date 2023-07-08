@@ -73,6 +73,25 @@ app.post('/users/new', async (req, res, next) => {
   });
 })
 
+// Get list of all users
+app.get('/users', async(req, res, next) => {
+  const usersQuery = "SELECT username, email, avatar_url FROM users";
+  const usersResult = await pool.query(usersQuery);
+  res.json(usersResult.rows);
+})
+
+// Get user with matching email/username
+app.get('/users/query', async(req, res, next) => {
+  const {username, email} = req.query;
+  console.log(username, email)
+  const userExistsQuery = "SELECT * FROM users WHERE username = $1 OR email = $2";
+  const result = await pool.query(userExistsQuery, [username, email]);
+  if (result.rows.length)
+    res.json(result.rows[0]);
+  else
+    res.json({error: "No user with matching username/email found"});
+})
+
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 })

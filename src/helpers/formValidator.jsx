@@ -1,6 +1,7 @@
 function validateSignupForm(formState) {
   let isValid = true;
   const errors = {
+    form: "",
     username: "",
     email: "",
     password: "",
@@ -15,6 +16,8 @@ function validateSignupForm(formState) {
 
   if (password !== confirmPassword)
     errors.confirmPassword = "Passwords must match";
+  
+  isValid = isFormValid(errors);
 
   return { isValid, errors };
 }
@@ -42,6 +45,8 @@ function validateLoginForm(formState) {
   }
 
   errors.password = validatePassword(password);
+
+  isValid = isFormValid(errors);
 
   return { isValid, errors };
 }

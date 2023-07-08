@@ -30,4 +30,18 @@ async function signupUser(userData) {
   return data;
 }
 
-export { loginUser, signupUser }
+// Returns a list of all users
+async function getUsers() {
+  const res = await fetch("http://localhost:8000/users");
+  const data = await res.json();
+  return data;
+}
+
+// Returns user with associated email + username
+async function getUserByLogin(username, email) {
+  const res = await fetch(`http://localhost:8000/users/query?username=${username}&email=${email}`);
+  const data = await res.json();
+  return data;
+}
+
+export { loginUser, signupUser, getUsers, getUserByLogin }

@@ -37,7 +37,7 @@ export default function Input({ id, name, element, label, type, placeholder, upd
 
   return (
     <div className="flex flex-col">
-      <label className="text-sm pl-3 pb-2" htmlFor={id}> 
+      <label className={`text-sm pl-3 pb-2 ${errorMessage && 'text-red-500'}`} htmlFor={id}> 
         {label} {errorMessage && ` - ${errorMessage}`}
       </label>
       <div className="relative w-full">

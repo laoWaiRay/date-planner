@@ -15,7 +15,7 @@ await client.end();
 const pool = new pg.Pool({
   user: process.env.PG_USER,
   password: process.env.PG_PASSWORD,
-  database: process.env.PG_DATABASE
+  database: "dateplanner"
 })
 
 await pool.query("CREATE TABLE \

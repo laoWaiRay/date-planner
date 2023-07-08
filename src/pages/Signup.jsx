@@ -6,7 +6,9 @@ import { Link, useLoaderData } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { renderGoogleBtn } from "../GoogleIdentity";
 import { validateSignupForm } from "../helpers/formValidator";
-import { signupUser } from "../api/internal/postgres";
+import { signupUser, getUserByLogin } from "../api/internal/postgres";
+
+const DEBOUNCE_INTERVAL = 500;
 
 export default function Signup() {
   const [formState, handleInputChange] = useForm({
@@ -15,7 +17,6 @@ export default function Signup() {
     "password": "",
     "confirmPassword": ""
   });
-  const [isValid, setIsValid] = useState(true);
   const [errors, setErrors] = useState({
     form: "",
     username: "",
@@ -23,6 +24,7 @@ export default function Signup() {
     password: "",
     confirmPassword: ""
   })
+  const [errorMessagesEnabled, setErrorMessagesEnabled] = useState(false);
 
   const heroImg = useLoaderData();
 
@@ -30,6 +32,36 @@ export default function Signup() {
   useEffect(() => {
     renderGoogleBtn("googleSignInBtn", "signup");
   }, [])
+
+  // Update error messages on input change if user has attempted to submit form
+  useEffect(() => {
+    if (!errorMessagesEnabled) {
+      return;
+    }
+
+    let { errors: { username, email, password, confirmPassword } } 
+        = validateSignupForm(formState);
+
+    // Debounce queries to DB for login availability
+    const timeoutId = setTimeout(async() => {
+      const result = await getUserByLogin(formState.username, formState.email);
+      // Username is available
+      if (result.error) {
+        setErrors({
+          form: "",
+          username, email, password, confirmPassword
+        })
+      } else {
+        // Username/email is available
+        setErrors({
+          form: "Username/email already taken",
+          username, email, password, confirmPassword
+        })
+      }
+    }, DEBOUNCE_INTERVAL)
+
+    return () => clearTimeout(timeoutId);
+  }, [formState])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,16 +76,17 @@ export default function Signup() {
         // Check for Authentication failed
         if (result.error) {
           isValid = false;
-          form = result.error;
+          form = result.error;  // Set the form error
         } else {
-          // On successful login, store session data and redirect user
+          // TODO: On successful login, store session data and redirect user
           console.log("Logged in!")
           console.table(result);
         }
       }
 
-      setIsValid(isValid);
       setErrors({form, username, email, password, confirmPassword});
+      // Show error messages
+      setErrorMessagesEnabled(true);
     }
   }
   
@@ -73,7 +106,7 @@ export default function Signup() {
           <h2 className="font-semibold text-lg ml-[3px] tracking-wide mb-4">Create a new account</h2>
 
           {/* Error Message Popup */}
-          { !isValid && errors.form &&
+          { errors.form &&
             <div className="my-4 ml-1 text-red-500">{errors.form}</div>
           }
 

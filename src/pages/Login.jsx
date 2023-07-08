@@ -81,7 +81,8 @@ export default function Login() {
             </div>
             
             <button 
-              className="w-full bg-blue-500 text-white font-semibold h-10 rounded-md"
+              className="w-full bg-blue-500 text-white font-semibold h-10 rounded-md 
+              hover:brightness-110 transition duration-200"
             >
               Sign in
             </button>
