@@ -20,6 +20,7 @@ async function loginUser(userData) {
 async function signupUser(userData) {
   const res = await fetch("http://localhost:8000/users/new", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json"
     },
@@ -33,14 +34,17 @@ async function signupUser(userData) {
 
 // Returns a list of all users
 async function getUsers() {
-  const res = await fetch("http://localhost:8000/users");
+  const res = await fetch("http://localhost:8000/users", { credentials: "include" });
   const data = await res.json();
   return data;
 }
 
 // Returns user with associated email + username
 async function getUserByLogin(username, email) {
-  const res = await fetch(`http://localhost:8000/users/query?username=${username}&email=${email}`);
+  const res = await fetch(`http://localhost:8000/users/query?username=${username}&email=${email}`, 
+  {
+    credentials: "include"
+  });
   const data = await res.json();
   return data;
 }
@@ -54,4 +58,22 @@ async function getSession() {
   return data;
 }
 
-export { loginUser, signupUser, getUsers, getUserByLogin, getSession }
+async function logoutUser() {
+  await fetch("http://localhost:8000/logout", {
+    credentials: "include"
+  });
+}
+
+async function loginWithGoogle(token) {
+  await fetch("http://localhost:8000/login/google", {
+    credentials: "include",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+  })
+}
+
+export { loginUser, signupUser, getUsers, getUserByLogin, getSession, 
+  logoutUser, loginWithGoogle }

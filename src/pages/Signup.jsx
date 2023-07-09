@@ -2,11 +2,12 @@ import Input from "../components/Input";
 import useForm from "../hooks/useForm";
 // import GoogleLogo from '../assets/GoogleLogo.png'
 import Hero from "../assets/Hero.jpg"
-import { Link, useLoaderData } from "react-router-dom";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { renderGoogleBtn } from "../GoogleIdentity";
 import { validateSignupForm } from "../helpers/formValidator";
 import { signupUser, getUserByLogin } from "../api/internal/postgres";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const DEBOUNCE_INTERVAL = 500;
 
@@ -25,6 +26,8 @@ export default function Signup() {
     confirmPassword: ""
   })
   const [errorMessagesEnabled, setErrorMessagesEnabled] = useState(false);
+  const { dispatch } = useAuthContext();
+  const navigate = useNavigate();
 
   const heroImg = useLoaderData();
 
@@ -78,9 +81,10 @@ export default function Signup() {
           isValid = false;
           form = result.error;  // Set the form error
         } else {
-          // TODO: On successful login, store session data and redirect user
-          console.log("Logged in!")
-          console.table(result);
+          // On successful login, session data is created on the server.
+          // Store client state and redirect user
+          dispatch({type: "LOGIN", payload: result});
+          navigate("/");
         }
       }
 

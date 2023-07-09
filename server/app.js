@@ -2,8 +2,8 @@ import express from 'express';
 import pg from 'pg';
 import cors from 'cors';
 import bcrypt from 'bcrypt';
-// import cookieParser from 'cookie-parser';
 import session from 'express-session';
+import verifyToken from './VerifyGoogleToken.js';
 
 const app = express();
 const PORT = 8000;
@@ -14,7 +14,6 @@ app.use(cors({
 }));
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
-// app.use(cookieParser("secret"));
 app.use(session({
   secret: "secret",
   resave: false,
@@ -24,11 +23,6 @@ app.use(session({
     httpOnly: false
   }
 }));
-
-const setCookieTest = (req, res, next) => {
-  req.session.user = {username: "hello", email: "world", avatar_url: "lol"};
-  next();
-}
 
 const pool = new pg.Pool({
   password: "password",
@@ -68,11 +62,6 @@ app.post('/users/login', async (req, res, next) => {
           if (err) next(err);
           req.session.user = {...userSession};
           res.json(req.session.user);
-          // req.session.save((err) => {
-          //   if (err) return next(err);
-          //   console.log("Session saved!", req.session, req.session.cookie)
-          //   res.json(req.session.user);
-          // })
         })
       }
     })
@@ -106,7 +95,6 @@ app.post('/users/new', async (req, res, next) => {
       const id = result.rows[0].id;
       const userData = (await pool.query("SELECT * FROM users WHERE id = $1", [id])).rows[0];
       const userSession = createUserSession(userData);
-      console.log(userData, userSession)
       req.session.user = userSession;
       res.json(userSession);
     });
@@ -123,7 +111,6 @@ app.get('/users', async(req, res, next) => {
 // Get user with matching email/username
 app.get('/users/query', async(req, res, next) => {
   const {username, email} = req.query;
-  console.log(username, email)
   const userExistsQuery = "SELECT * FROM users WHERE username = $1 OR email = $2";
   const result = await pool.query(userExistsQuery, [username, email]);
   if (result.rows.length)
@@ -134,7 +121,6 @@ app.get('/users/query', async(req, res, next) => {
 
 // Get session data if exists
 app.get('/session', (req, res, next) => {
-  console.log("DEBUG", req.session)
   if (req.session.user) {
     console.log("Session exists:", req.session.user);
     res.json(req.session.user);
@@ -142,6 +128,26 @@ app.get('/session', (req, res, next) => {
     console.log("Session does not exist", req.session);
     res.json({error: "No session available"});
   }
+})
+
+// Close session
+app.get('/logout', (req, res, next) => {
+  // regenerate wasn't working for some reason
+  req.session.destroy();
+  res.status(200).end();
+})
+
+// Login with google
+app.post('/login/google', async (req, res, next) => {
+  // Extracting Bearer Token from headers
+  const { authorization } = req.headers;
+  const token = authorization.split(" ")[1];
+  const email = await verifyToken(token).catch(console.log);
+  const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+  const {username, avatar_url} = result.rows[0];
+  req.session.user = {username, email, avatar_url};
+  console.log("Logged in successfully as: ", req.session.user)
+  res.status(200).end()
 })
 
 app.listen(PORT, () => {

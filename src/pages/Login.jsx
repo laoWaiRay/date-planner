@@ -2,16 +2,19 @@ import { Switch } from "@mui/material";
 import Input from "../components/Input";
 import useForm from "../hooks/useForm";
 import Hero from "../assets/Hero.jpg"
-import { useLoaderData, Link } from "react-router-dom";
+import { useLoaderData, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { renderGoogleBtn } from "../GoogleIdentity";
 import { validateLoginForm } from "../helpers/formValidator";
 import { loginUser } from "../api/internal/postgres";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function Login() {
   const [isValid, setIsValid] = useState(true);
   const [formErr, setFormErr] = useState("");
   const [rememberMeChecked, setRememberMeChecked] = useState(false);
+  const { dispatch } = useAuthContext();
+  const navigate = useNavigate();
 
   const [formState, handleInputChange] = useForm({
     "username": "",
@@ -32,17 +35,17 @@ export default function Login() {
       // Input is valid, attempt to login user
       if (isValid) {
         const result = await loginUser(formState);
-        console.log("Cookies", document.cookie)
         
         // Authentication failed
         if (result.error) {
           isValid = false;
           form = result.error;
         } else {
-          console.log("Logged in user: ", result);
+          // Auth success - store user data into authContext and redirect back to home
+          dispatch({type: "LOGIN", payload: result});
+          navigate("/");
         }
       }
-
       setIsValid(isValid);
       setFormErr(form)
     }

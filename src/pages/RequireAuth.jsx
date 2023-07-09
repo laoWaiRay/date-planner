@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { getSession } from "../api/internal/postgres";
 
-export default function RequireAuth({ children }) {
-  const [session, setSession] = useState(getSession());
+export default function RequireAuth() {
+  (async () => {
+  let session = await getSession()
 
-  useEffect(() => console.log(session))
-
-  if (!session) {
+  if (!session.username) {
     return <Navigate to="/login" />
   }
 
-  return children;
+  return (
+    <Outlet />
+  )
+  })()
 }
