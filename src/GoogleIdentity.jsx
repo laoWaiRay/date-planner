@@ -1,5 +1,4 @@
-async function initGoogleIdentity(handleCallbackResponse) {
-  // Make sure external Google script is loaded first
+function initGoogleIdentity(handleCallbackResponse) {
   window.google.accounts.id.initialize({
     client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
     callback: handleCallbackResponse
@@ -8,7 +7,7 @@ async function initGoogleIdentity(handleCallbackResponse) {
 
 // params: elementId - id attribute of element to append the button to
 //         type - signup | login
-async function renderGoogleBtn(elementId, type="signup") {
+function renderGoogleBtn(elementId, type="signup") {
   const btnText = type === "signup" ? "signup_with" : "signin_with";
 
   window.google.accounts.id.renderButton(
@@ -22,7 +21,5 @@ async function renderGoogleBtn(elementId, type="signup") {
     }
   )
 }
-
-
 
 export { initGoogleIdentity, renderGoogleBtn }

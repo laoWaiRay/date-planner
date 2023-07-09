@@ -15,8 +15,6 @@ import { useEffect, useState } from 'react'
 import { getSession, getUserByLogin, loginWithGoogle, signupUser } from './api/internal/postgres'
 import { initGoogleIdentity } from './GoogleIdentity'
 
-
-
 export default function App() {
   const { user, isLoaded, dispatch } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);

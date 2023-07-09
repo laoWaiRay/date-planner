@@ -135,7 +135,9 @@ export default function Signup() {
           {/* Alternate Login Section */}
           <section className="mt-6">
             {/* Root element for google button */}
-            <div id="googleSignInBtn" />
+            <div className="h-[40px] relative">
+              <div className="absolute w-full" id="googleSignInBtn" />
+            </div>
 
             <div className="text-sm mt-8 flex justify-center">
               Already have an account?
