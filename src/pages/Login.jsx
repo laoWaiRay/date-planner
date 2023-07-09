@@ -11,6 +11,7 @@ import { loginUser } from "../api/internal/postgres";
 export default function Login() {
   const [isValid, setIsValid] = useState(true);
   const [formErr, setFormErr] = useState("");
+  const [rememberMeChecked, setRememberMeChecked] = useState(false);
 
   const [formState, handleInputChange] = useForm({
     "username": "",
@@ -31,6 +32,7 @@ export default function Login() {
       // Input is valid, attempt to login user
       if (isValid) {
         const result = await loginUser(formState);
+        console.log("Cookies", document.cookie)
         
         // Authentication failed
         if (result.error) {
@@ -75,7 +77,11 @@ export default function Login() {
 
             <div className="w-full">
               <div className="w-full flex items-center">
-                <Switch /> <span className="text-sm">Remember me</span>
+                <Switch 
+                  checked={rememberMeChecked} 
+                  onClick={() => setRememberMeChecked(!rememberMeChecked)}
+                /> 
+                <span className="text-sm">Remember me</span>
                 <a className="text-sm ml-auto mr-4">Forgot password?</a>
               </div>
             </div>

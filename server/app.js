@@ -2,13 +2,33 @@ import express from 'express';
 import pg from 'pg';
 import cors from 'cors';
 import bcrypt from 'bcrypt';
+// import cookieParser from 'cookie-parser';
+import session from 'express-session';
 
 const app = express();
 const PORT = 8000;
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
+// app.use(cookieParser("secret"));
+app.use(session({
+  secret: "secret",
+  resave: false,
+  saveUninitialized: true,
+  cookie: { 
+    maxAge: 1000*60*60,
+    httpOnly: false
+  }
+}));
+
+const setCookieTest = (req, res, next) => {
+  req.session.user = {username: "hello", email: "world", avatar_url: "lol"};
+  next();
+}
 
 const pool = new pg.Pool({
   password: "password",
@@ -16,6 +36,12 @@ const pool = new pg.Pool({
 });
 
 const SALT_ROUNDS = 10;
+
+// Remove fields from database response user object
+const createUserSession = (userData) => {
+  const { username, email, avatar_url } = userData;
+  return { username, email, avatar_url };
+}
 
 // Log in user
 app.post('/users/login', async (req, res, next) => {
@@ -36,7 +62,18 @@ app.post('/users/login', async (req, res, next) => {
         // Invalid password
         res.status(401).send({error: "Invalid login credentials"});
       } else {
-        res.send(userData);
+        // Login success - create a session
+        const userSession = createUserSession(userData);
+        req.session.regenerate((err) => {
+          if (err) next(err);
+          req.session.user = {...userSession};
+          res.json(req.session.user);
+          // req.session.save((err) => {
+          //   if (err) return next(err);
+          //   console.log("Session saved!", req.session, req.session.cookie)
+          //   res.json(req.session.user);
+          // })
+        })
       }
     })
   } else {
@@ -67,8 +104,11 @@ app.post('/users/new', async (req, res, next) => {
       // Insert into DB and then return the newly inserted row
       const result = await pool.query(insertUserQuery, [username, email, hash, salt]);
       const id = result.rows[0].id;
-      const userData = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
-      res.send(userData.rows[0]);
+      const userData = (await pool.query("SELECT * FROM users WHERE id = $1", [id])).rows[0];
+      const userSession = createUserSession(userData);
+      console.log(userData, userSession)
+      req.session.user = userSession;
+      res.json(userSession);
     });
   });
 })
@@ -90,6 +130,18 @@ app.get('/users/query', async(req, res, next) => {
     res.json(result.rows[0]);
   else
     res.json({error: "No user with matching username/email found"});
+})
+
+// Get session data if exists
+app.get('/session', (req, res, next) => {
+  console.log("DEBUG", req.session)
+  if (req.session.user) {
+    console.log("Session exists:", req.session.user);
+    res.json(req.session.user);
+  } else {
+    console.log("Session does not exist", req.session);
+    res.json({error: "No session available"});
+  }
 })
 
 app.listen(PORT, () => {

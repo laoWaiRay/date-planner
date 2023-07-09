@@ -4,6 +4,7 @@
 async function loginUser(userData) {
   const res = await fetch("http://localhost:8000/users/login", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json"
     },
@@ -44,4 +45,13 @@ async function getUserByLogin(username, email) {
   return data;
 }
 
-export { loginUser, signupUser, getUsers, getUserByLogin }
+async function getSession() {
+  const res = await fetch("http://localhost:8000/session", {
+    credentials: "include"
+  });
+  const data = await res.json();
+  console.log(data);
+  return data;
+}
+
+export { loginUser, signupUser, getUsers, getUserByLogin, getSession }
