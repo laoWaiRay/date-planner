@@ -2,19 +2,17 @@ import { Switch } from "@mui/material";
 import Input from "../components/Input";
 import useForm from "../hooks/useForm";
 import Hero from "../assets/Hero.jpg"
-import { useLoaderData, Link, useNavigate } from "react-router-dom";
+import { useLoaderData, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { renderGoogleBtn } from "../GoogleIdentity";
 import { validateLoginForm } from "../helpers/formValidator";
-import { loginUser } from "../api/internal/postgres";
-import { useAuthContext } from "../hooks/useAuthContext";
+import useLogin from "../hooks/useLogin";
 
 export default function Login() {
   const [isValid, setIsValid] = useState(true);
   const [formErr, setFormErr] = useState("");
   const [rememberMeChecked, setRememberMeChecked] = useState(false);
-  const { dispatch } = useAuthContext();
-  const navigate = useNavigate();
+  const login = useLogin();
 
   const [formState, handleInputChange] = useForm({
     "username": "",
@@ -30,22 +28,21 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formState) {
+      // Client-side input validation
       let {isValid, errors: {form} } = validateLoginForm(formState);
 
-      // Input is valid, attempt to login user
+      // Form is validated on client, attempt to login user on server
       if (isValid) {
-        const result = await loginUser(formState);
-        
-        // Authentication failed
-        if (result.error) {
+        try {
+          await login(formState);
+        } catch (error) {
+          console.log(error);
           isValid = false;
-          form = result.error;
-        } else {
-          // Auth success - store user data into authContext and redirect back to home
-          dispatch({type: "LOGIN", payload: result});
-          navigate("/");
+          form = error.message;
         }
       }
+
+      // Set error messages state
       setIsValid(isValid);
       setFormErr(form)
     }

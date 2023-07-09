@@ -1,3 +1,5 @@
+// Google Identity helper functions
+
 function initGoogleIdentity(handleCallbackResponse) {
   window.google.accounts.id.initialize({
     client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,

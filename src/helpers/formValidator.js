@@ -56,6 +56,10 @@ function validateUsername(username) {
   if (username.trim().length < 3) {
     return "Username must be 3 or more characters";
   }
+  const alphaNumRegex = /^[0-9a-zA-Z]+$/;
+  if (!username.trim().match(alphaNumRegex)) {
+    return "Username must be alphanumeric and not contain any spaces";
+  }
   return "";
 }
 

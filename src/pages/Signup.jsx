@@ -1,12 +1,11 @@
 import Input from "../components/Input";
 import useForm from "../hooks/useForm";
-// import GoogleLogo from '../assets/GoogleLogo.png'
 import Hero from "../assets/Hero.jpg"
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { renderGoogleBtn } from "../GoogleIdentity";
 import { validateSignupForm } from "../helpers/formValidator";
-import { signupUser, getUserByLogin } from "../api/internal/postgres";
+import { signupUser, getUserByEmail, getUserByUsername } from "../api/internal/postgres";
 import { useAuthContext } from "../hooks/useAuthContext";
 
 const DEBOUNCE_INTERVAL = 500;
@@ -36,7 +35,7 @@ export default function Signup() {
     renderGoogleBtn("googleSignInBtn", "signup");
   }, [])
 
-  // Update error messages on input change if user has attempted to submit form
+  // Update error messages on input change if user has already attempted to submit form
   useEffect(() => {
     if (!errorMessagesEnabled) {
       return;
@@ -45,17 +44,20 @@ export default function Signup() {
     let { errors: { username, email, password, confirmPassword } } 
         = validateSignupForm(formState);
 
-    // Debounce queries to DB for login availability
+    {/* Debounce queries to DB for login availability.
+        This is to refresh the error message that is set when a login
+        has already been taken whenever the user changes the input. */}
     const timeoutId = setTimeout(async() => {
-      const result = await getUserByLogin(formState.username, formState.email);
-      // Username is available
-      if (result.error) {
+      const resultEmail = await getUserByEmail(formState.email);
+      const resultUsername = await getUserByUsername(formState.username);
+      // Username/email are available
+      if (resultEmail.error || resultUsername.error) {
         setErrors({
           form: "",
           username, email, password, confirmPassword
         })
       } else {
-        // Username/email is available
+        // Username/email are taken
         setErrors({
           form: "Username/email already taken",
           username, email, password, confirmPassword
@@ -72,11 +74,11 @@ export default function Signup() {
       let {isValid, errors: {form, username, email, password, confirmPassword} } 
           = validateSignupForm(formState);
 
-      // Input is valid, attempt to login user
+      // Form is validated on client, attempt to signup user on server
       if (isValid) {
         const result = await signupUser(formState);
         
-        // Check for Authentication failed
+        // Auth failed - username/email already exists on server
         if (result.error) {
           isValid = false;
           form = result.error;  // Set the form error

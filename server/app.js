@@ -108,15 +108,26 @@ app.get('/users', async(req, res, next) => {
   res.json(usersResult.rows);
 })
 
-// Get user with matching email/username
-app.get('/users/query', async(req, res, next) => {
-  const {username, email} = req.query;
-  const userExistsQuery = "SELECT * FROM users WHERE username = $1 OR email = $2";
-  const result = await pool.query(userExistsQuery, [username, email]);
+// Get user with matching email
+app.get('/users/email', async(req, res, next) => {
+  const {email} = req.query;
+  const userExistsQuery = "SELECT * FROM users WHERE email = $1";
+  const result = await pool.query(userExistsQuery, [email]);
   if (result.rows.length)
     res.json(result.rows[0]);
   else
-    res.json({error: "No user with matching username/email found"});
+    res.json({error: "No user with matching email found"});
+})
+
+// Get user with matching username
+app.get('/users/username', async(req, res, next) => {
+  const {username} = req.query;
+  const userExistsQuery = "SELECT * FROM users WHERE username = $1";
+  const result = await pool.query(userExistsQuery, [username]);
+  if (result.rows.length)
+    res.json(result.rows[0]);
+  else
+    res.json({error: "No user with matching username found"});
 })
 
 // Get session data if exists
@@ -146,7 +157,6 @@ app.post('/login/google', async (req, res, next) => {
   const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
   const {username, avatar_url} = result.rows[0];
   req.session.user = {username, email, avatar_url};
-  console.log("Logged in successfully as: ", req.session.user)
   res.status(200).end()
 })
 
