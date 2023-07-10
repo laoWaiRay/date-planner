@@ -1,0 +1,70 @@
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
+
+import Home from "./pages/Home";
+import Login, { loader as loginLoader } from "./pages/Login";
+import ErrorPage from "./pages/ErrorPage";
+import Signup from "./pages/Signup";
+import { useAuthContext } from "./hooks/useAuthContext";
+import { useEffect, useState } from "react";
+import { getSession } from "./api/internal/postgres";
+import { initGoogleIdentity, handleCallbackResponse } from "./GoogleIdentity";
+
+export default function App() {
+  const { user, dispatch } = useAuthContext();
+  const [isLoading, setIsLoading] = useState(false);
+
+  // React Router
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: user ? <Home /> : <Login />,
+      loader: loginLoader,
+      errorElement: <ErrorPage />,
+    },
+    {
+      path: "/login",
+      element: user ? <Navigate to="/" /> : <Login />,
+      loader: loginLoader,
+    },
+    {
+      path: "/signup",
+      element: user ? <Navigate to="/" /> : <Signup />,
+      loader: loginLoader,
+    },
+  ]);
+
+  // On page refresh, make a call to DB to restore client-side state about
+  // any existing sessions
+  useEffect(() => {
+    async function getSessionDetails() {
+      setIsLoading(true);
+      const session = await getSession();
+      if (session.error) {
+        dispatch({ type: "LOGOUT" });
+      } else {
+        dispatch({ type: "LOGIN", payload: session });
+      }
+      setIsLoading(false);
+    }
+
+    getSessionDetails();
+  }, []);
+
+  // Google Identity init
+  useEffect(() => {
+    const callbackWrapper = (response) =>
+      handleCallbackResponse(response, dispatch);
+    initGoogleIdentity(callbackWrapper);
+  }, []);
+
+  return (
+    <>
+      {isLoading && <div>Loading...</div>}
+      {!isLoading && <RouterProvider router={router} />}
+    </>
+  );
+}
