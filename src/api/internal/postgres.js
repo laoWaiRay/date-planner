@@ -74,17 +74,17 @@ async function getUserByUsername(username) {
 
 // Returns
 async function getSession() {
-  const res = await fetch("http://localhost:8000/session", fetchOptions.GET);
+  const res = await fetch("http://localhost:8000/users/session", fetchOptions.GET);
   const data = await res.json();
   return data;
 }
 
 async function logoutUser() {
-  await fetch("http://localhost:8000/logout", fetchOptions.GET);
+  await fetch("http://localhost:8000/users/logout", fetchOptions.GET);
 }
 
 async function loginWithGoogle(token) {
-  await fetch("http://localhost:8000/login/google", fetchOptions.BEARER_TOKEN(token));
+  await fetch("http://localhost:8000/users/login/google", fetchOptions.BEARER_TOKEN(token));
 }
 
 export {

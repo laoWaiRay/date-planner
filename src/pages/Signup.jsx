@@ -27,7 +27,6 @@ export default function Signup() {
   const [errorMessagesEnabled, setErrorMessagesEnabled] = useState(false);
   const { dispatch } = useAuthContext();
   const navigate = useNavigate();
-
   const heroImg = useLoaderData();
 
   // Render the Google sign in button
@@ -41,6 +40,7 @@ export default function Signup() {
       return;
     }
 
+    console.log('changed')
     let { errors: { username, email, password, confirmPassword } } 
         = validateSignupForm(formState);
 
@@ -51,7 +51,8 @@ export default function Signup() {
       const resultEmail = await getUserByEmail(formState.email);
       const resultUsername = await getUserByUsername(formState.username);
       // Username/email are available
-      if (resultEmail.error || resultUsername.error) {
+      console.log(resultEmail, resultUsername)
+      if (resultEmail.error && resultUsername.error) {
         setErrors({
           form: "",
           username, email, password, confirmPassword
@@ -80,18 +81,19 @@ export default function Signup() {
         
         // Auth failed - username/email already exists on server
         if (result.error) {
+          // Set form errors
           isValid = false;
-          form = result.error;  // Set the form error
+          form = result.error;
         } else {
-          // On successful login, session data is created on the server.
+          // On successful signup, session data is created on the server.
           // Store client state and redirect user
           dispatch({type: "LOGIN", payload: result});
           navigate("/");
         }
       }
-
+      
+      // Show error messages if signup failed
       setErrors({form, username, email, password, confirmPassword});
-      // Show error messages
       setErrorMessagesEnabled(true);
     }
   }

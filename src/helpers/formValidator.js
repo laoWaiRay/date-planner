@@ -1,3 +1,6 @@
+// Helper methods for validating form inputs and creating errors messages
+
+// Form validation
 function validateSignupForm(formState) {
   let isValid = true;
   const errors = {
@@ -51,7 +54,7 @@ function validateLoginForm(formState) {
   return { isValid, errors };
 }
 
-// Helpers
+// Input validation
 function validateUsername(username) {
   if (username.trim().length < 3) {
     return "Username must be 3 or more characters";

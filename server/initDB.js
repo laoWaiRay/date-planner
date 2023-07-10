@@ -18,8 +18,7 @@ const pool = new pg.Pool({
   database: "dateplanner"
 })
 
-await pool.query("CREATE TABLE \
-                  users( \
+await pool.query("CREATE TABLE users( \
                     id serial PRIMARY KEY, \
                     username varchar(255) NOT NULL, \
                     email varchar(255) NOT NULL, \
@@ -28,8 +27,7 @@ await pool.query("CREATE TABLE \
                     avatar_URL text \
                   )");
 
-await pool.query("CREATE TABLE \
-                 dates( \
+await pool.query("CREATE TABLE events( \
                     id serial PRIMARY KEY, \
                     name varchar(255) NOT NULL, \
                     description text, \
@@ -38,3 +36,5 @@ await pool.query("CREATE TABLE \
                     author varchar(255), \
                     date_posted DATE DEFAULT CURRENT_DATE \
                 )");
+
+// TODO: Add dates, reviews, user_history tables
