@@ -10,7 +10,10 @@ import useLogin from "../hooks/useLogin";
 
 export default function Login() {
   const [isValid, setIsValid] = useState(true);
-  const [formErr, setFormErr] = useState("");
+  const [errors, setErrors] = useState({
+    form: "",
+  })
+  const [errorMessagesEnabled, setErrorMessagesEnabled] = useState(false);
   const [rememberMeChecked, setRememberMeChecked] = useState(false);
   const login = useLogin();
 
@@ -27,25 +30,25 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formState) {
-      // Client-side input validation
-      let {isValid, errors: {form} } = validateLoginForm(formState);
+    // Client-side input validation
+    let {isValid, errors: {form} } = validateLoginForm(formState);
 
-      // Form is validated on client, attempt to login user on server
-      if (isValid) {
-        try {
-          await login(formState);
-        } catch (error) {
-          console.log(error);
-          isValid = false;
-          form = error.message;
-        }
+    // Form is validated on client, attempt to login user on server
+    if (isValid) {
+      try {
+        await login(formState);
+      } catch (error) {
+        console.log(error);
+        isValid = false;
+        form = error.message;
       }
-
-      // Set error messages state
-      setIsValid(isValid);
-      setFormErr(form)
+    } else {
+      form = "Invalid login credentials"
     }
+
+    // Set error messages state
+    setIsValid(isValid);
+    setErrors({form});
   }
   
   return (
@@ -64,8 +67,8 @@ export default function Login() {
           <h2 className="font-semibold text-lg ml-[3px] tracking-wide mb-4">Nice to see you again</h2>
 
           {/* Error Message Popup */}
-          { !isValid && formErr &&
-            <div className="my-4 ml-1 text-red-500">{formErr}</div>
+          { !isValid && errors.form &&
+            <div className="my-4 ml-1 text-red-500">{errors.form}</div>
           }
 
           {/* Main Form Section */}
