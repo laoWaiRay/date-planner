@@ -18,10 +18,12 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   // React Router
+  // TODO: Uncomment/add protected routes
   const router = createBrowserRouter([
     {
       path: "/",
-      element: user ? <Home /> : <Login />,
+      // element: user ? <Home /> : <Login />,
+      element: <Home />,
       loader: loginLoader,
       errorElement: <ErrorPage />,
     },
