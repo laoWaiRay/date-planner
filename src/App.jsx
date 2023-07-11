@@ -3,6 +3,7 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Home from "./pages/Home";
 import Login, { loader as loginLoader } from "./pages/Login";
@@ -21,7 +22,8 @@ export default function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: user ? <Home /> : <Login />,
+      element: <Home/>,
+      //element: user ? <Home /> : <Login />,
       loader: loginLoader,
       errorElement: <ErrorPage />,
     },
