@@ -3,14 +3,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const client = new pg.Client({
+  user: process.env.PG_USER,
   password: process.env.PG_PASSWORD
 })
 
 // Create DB
-await client.connect({
-  user: process.env.PG_USER,
-  password: process.env.PG_PASSWORD,
-});
+await client.connect();
 await client.query("CREATE DATABASE dateplanner");
 await client.end();
 
