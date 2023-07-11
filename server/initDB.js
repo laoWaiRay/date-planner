@@ -7,7 +7,10 @@ const client = new pg.Client({
 })
 
 // Create DB
-await client.connect();
+await client.connect({
+  user: process.env.PG_USER,
+  password: process.env.PG_PASSWORD,
+});
 await client.query("CREATE DATABASE dateplanner");
 await client.end();
 
