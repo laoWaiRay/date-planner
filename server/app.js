@@ -4,12 +4,14 @@ import cors from 'cors';
 import session from 'express-session';
 import userRouter from './routes/users.js'
 import dotenv from 'dotenv';
+import fetch from 'node-fetch'
 dotenv.config();
 
 const app = express();
 const PORT = 8000;
 const eventbrite_api = process.env.EVENTBRITE_API_KEY
 const ticketmaster_api = process.env.TICKETMASTER_API_KEY
+
 
 const pool = new pg.Pool({
   user: process.env.PG_USER,
@@ -46,7 +48,7 @@ app.get('/mydates', (req, res) => {
 })
 
 app.get('/eventbrite', (req,res) => {
-  let url = `https://www.eventbriteapi.com/v3/venues/1234/?token=${eventbrite_api}`
+  let url = `https://www.eventbriteapi.com/v3/venues/1234/?token=XVEX5DQROS3XG6RL36W5`
   fetch(url)
     .then((response) => {
       return response.json()
@@ -65,6 +67,7 @@ app.get('/ticketmaster', (req,res) => {
   let url = `https://app.ticketmaster.com/discovery/v2/events.json?countryCode=CA&city=Vancouver&startDateTime=${startTime}&endDateTime=${endTime}&apikey=${ticketmaster_api}`
   fetch(url)
     .then((response) => {
+      console.log(response)
       return response.json()
     }) 
     .then((data) => {
