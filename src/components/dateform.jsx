@@ -1,6 +1,5 @@
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import Form from "react-bootstrap/Form";
 
 function DateForm(props) {
   return (
@@ -12,7 +11,9 @@ function DateForm(props) {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Share Your Perfect Date Idea!
+          <span  className='text-blue-600 text-2xl font-display font-semibold italic' style={{ fontWeight: "bold" }}>
+            Share Your Perfect Date Idea! </span>
+          <div style={{ fontSize: '14px', color: '#777' }} className="subtitle">Share Love, Effortlessly</div>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -137,7 +138,7 @@ function DateForm(props) {
           </div>
           <div className="row">
             <div className="col-md-12 text-center mt-2">
-              <Button variant="primary"  type="submit">
+              <Button variant="primary" type="submit">
                 Submit
               </Button>
             </div>
