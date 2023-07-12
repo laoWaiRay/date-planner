@@ -1,7 +1,7 @@
 import React from "react";
 import "./HomeScreen.css";
 import CoupleImage from "../assets/home_screen.png";
-import DateForm from "./dateform";
+import DateForm from "./DateForm";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
 

@@ -96,7 +96,7 @@ function DateForm(props) {
             </div>
             <div className="col-md-6">
               <div className="form-group">
-                <label htmlFor="Category">Category/</label>
+                <label htmlFor="Category">Category</label>
                 <select className="form-control" id="Category" name="mood">
                   <option value="">Select a Category</option>
                   <option value="romantic">Romantic</option>
