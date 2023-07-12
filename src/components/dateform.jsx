@@ -96,9 +96,9 @@ function DateForm(props) {
             </div>
             <div className="col-md-6">
               <div className="form-group">
-                <label htmlFor="mood">Mood/Filter</label>
-                <select className="form-control" id="mood" name="mood">
-                  <option value="">Select a mood/filter</option>
+                <label htmlFor="Category">Category/</label>
+                <select className="form-control" id="Category" name="mood">
+                  <option value="">Select a Category</option>
                   <option value="romantic">Romantic</option>
                   <option value="stayathome">Stay at home</option>
                   <option value="adventurous">Adventurous</option>
