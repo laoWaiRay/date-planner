@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import Login, { loader as loginLoader } from "./pages/Login";
 import ErrorPage from "./pages/ErrorPage";
 import Signup from "./pages/Signup";
+import PublicDates from "./pages/PublicDates";
+import MyDates from "./pages/MyDates";
 import { useAuthContext } from "./hooks/useAuthContext";
 import { useEffect, useState } from "react";
 import { getSession } from "./api/internal/postgres";
@@ -33,6 +35,16 @@ export default function App() {
     {
       path: "/signup",
       element: user ? <Navigate to="/" /> : <Signup />,
+      loader: loginLoader,
+    },
+    {
+      path: "/dates",
+      element: user ? <Navigate to="/" /> : <PublicDates />,
+      loader: loginLoader,
+    },
+    {
+      path: "/mydates",
+      element: user ? <Navigate to="/" /> : <MyDates />,
       loader: loginLoader,
     },
   ]);
