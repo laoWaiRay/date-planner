@@ -3,6 +3,7 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Home from "./pages/Home";
 import Login, { loader as loginLoader } from "./pages/Login";
