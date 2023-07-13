@@ -1,22 +1,44 @@
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import { useState } from "react";
 
 function DateForm(props) {
+  const newDate = {
+    title: "",
+    date_idea: "",
+    location: "",
+    city: "",
+    country: "",
+    price_range: "",
+    category: "",
+    preferred_time: "",
+    comments: "",
+  };
 
-   const newData = {
-    "title" : "",
-    "dateIdea" : "",
-    "location" : "",
-    "city" : "",
-    "country": "",
-    "priceRange" : "",
-    "category" : "",
-    "preferredTime" : "",
-    "comments" : "",
-  }
+  const handleFormChange = () => {
+    const { name, value } = event.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
 
-  // const [formValues, setFormValues] = useState(newData);
- 
+   const handleFormSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const body = {
+        "date" :formValues
+      };
+      console.log(body)
+      const response = await fetch("http://localhost:8080/dates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      setFormValues({ ...newRecipe });
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const [formValues, setFormValues] = useState(newDate);
 
   return (
     <Modal
@@ -27,23 +49,31 @@ function DateForm(props) {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          <span  className='text-blue-600 text-2xl font-display font-semibold italic' style={{ fontWeight: "bold" }}>
-            Share Your Perfect Date Idea! </span>
-          <div style={{ fontSize: '14px', color: '#777' }} className="subtitle">Share Love, Effortlessly</div>
+          <span
+            className="text-blue-600 text-2xl font-display font-semibold italic"
+            style={{ fontWeight: "bold" }}
+          >
+            Share Your Perfect Date Idea!{" "}
+          </span>
+          <div style={{ fontSize: "14px", color: "#777" }} className="subtitle">
+            Share Love, Effortlessly
+          </div>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <form>
+        <form onSubmit={handleFormSubmit}>
           <div className="mb-3">
             <label htmlFor="Title" className="form-label">
               Title
             </label>
             <input
               type="text"
-              name="Title"
+              name="title"
               className="form-control"
-              id="Title"
+              id="title"
               required
+              value={formValues.title}
+              onChange={handleFormChange}
             />
           </div>
           <div className="mb-3">
@@ -55,6 +85,8 @@ function DateForm(props) {
               className="form-control"
               id="date_idea"
               required
+              value={formValues.date_idea}
+              onChange={handleFormChange}
             ></textarea>
           </div>
           <div className="row">
@@ -67,6 +99,8 @@ function DateForm(props) {
                   className="form-control"
                   id="location"
                   required
+                  value={formValues.location}
+                  onChange={handleFormChange}
                 />
               </div>
             </div>
@@ -79,6 +113,8 @@ function DateForm(props) {
                   className="form-control"
                   id="city"
                   required
+                  value={formValues.city}
+                  onChange={handleFormChange}
                 />
               </div>
             </div>
@@ -91,6 +127,8 @@ function DateForm(props) {
                   className="form-control"
                   id="country"
                   required
+                  value={formValues.country}
+                  onChange={handleFormChange}
                 />
               </div>
             </div>
@@ -103,6 +141,8 @@ function DateForm(props) {
                   className="form-control"
                   id="price_range"
                   name="price_range"
+                  value={formValues.price_range}
+                  onChange={handleFormChange}
                 >
                   <option value="">$</option>
                   <option value="$$">$$</option>
@@ -112,8 +152,14 @@ function DateForm(props) {
             </div>
             <div className="col-md-6">
               <div className="form-group">
-                <label htmlFor="Category">Category</label>
-                <select className="form-control" id="Category" name="mood">
+                <label htmlFor="category">Category</label>
+                <select
+                  className="form-control"
+                  id="category"
+                  name="category"
+                  value={formValues.category}
+                  onChange={handleFormChange}
+                >
                   <option value="">Select a Category</option>
                   <option value="romantic">Romantic</option>
                   <option value="stayathome">Stay at home</option>
@@ -127,11 +173,13 @@ function DateForm(props) {
           <div className="row">
             <div className="col-md-6">
               <div className="form-group">
-                <label htmlFor="time_of_day">Preferred Time of Day</label>
+                <label htmlFor="preferred_time">Preferred Time of Day</label>
                 <select
                   className="form-control"
-                  id="time_of_day"
-                  name="time_of_day"
+                  id="preferred_time"
+                  name="preferred_time"
+                  value={formValues.preferred_time}
+                  onChange={handleFormChange}
                 >
                   <option value="">Select a preferred time</option>
                   <option value="morning">Morning</option>
@@ -148,6 +196,8 @@ function DateForm(props) {
                   name="comments"
                   className="form-control"
                   id="comments"
+                  value={formValues.comments}
+                  onChange={handleFormChange}
                 ></input>
               </div>
             </div>
