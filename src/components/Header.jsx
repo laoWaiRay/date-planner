@@ -13,42 +13,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
-// interface Props {
-//   /**
-//    * Injected by the documentation to work in an iframe.
-//    * You won't need it on your project.
-//    */
-//   window?: () => Window;
-// }
 
 const key = "user_session";
-
-// async function logout(router: NextRouter) {
-//   await signOut(auth);
-//   sessionStorage.removeItem(key)
-//   router.push({
-//     pathname: '/',
-//   });
-// }
-
-// function changePage(page: string, router: NextRouter) {
-//   router.push({
-//     pathname: '/' + page,
-//   });
-// }
-
-// function navButtonClick(item: string, router: NextRouter) {
-//   switch (item) {
-//     case "Logout":
-//       logout(router);
-//       break;
-//     case "Home":
-//       changePage("Home", router);
-//       break;
-
-//   }
-
-// }
 
 const drawerWidth = 240;
 const navItems = ['Home', 'About', 'Contact', 'Logout'];
