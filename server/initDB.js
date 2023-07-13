@@ -21,6 +21,15 @@ const createTables = async () => {
   });
 
   await pool.query(`
+    CREATE TABLE locations(
+      id serial PRIMARY KEY,
+      name varchar(255) NOT NULL,
+      city text,
+      country text
+    );
+  `);
+
+  await pool.query(`
     CREATE TABLE users(
       id serial PRIMARY KEY,
       username varchar(255) NOT NULL,
@@ -37,21 +46,12 @@ const createTables = async () => {
       title varchar(255) NOT NULL,
       description text,
       location_id integer,
-      price price_enum,
-      category category_enum,
-      preferred_time preferred_time_enum,
+      price varchar(255),
+      category varchar(255),
+      preferred_time varchar(255),
       author varchar(255),
       date_posted DATE DEFAULT CURRENT_DATE,
       FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
-    );
-  `);
-
-  await pool.query(`
-    CREATE TABLE locations(
-      id serial PRIMARY KEY,
-      name varchar(255) NOT NULL,
-      city text,
-      country text
     );
   `);
 
