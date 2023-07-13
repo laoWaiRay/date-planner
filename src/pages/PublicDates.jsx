@@ -8,6 +8,13 @@ export default function PublicDates() {
     const [dates, setDates] = useState([]);
     const [events, setEvents] = useState([]);
     const [tabValue, setTabValue] = useState("0");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [cardsPerPage] = useState(12);
+
+    const lastCardIndex =  currentPage * cardsPerPage
+    const firstCardIndex = lastCardIndex - cardsPerPage
+    const totalDatePageCount = Math.ceil(dates.length/cardsPerPage)
+    const totalEventPageCount = Math.ceil(events.length/cardsPerPage)
 
     useEffect(() => {
         retrieveEvents();
@@ -46,36 +53,44 @@ export default function PublicDates() {
         })
     }
 
-    var eventsList = events.map(function(date) {
-        var name = date.name
-        var description = date.info
-        var category = date.classifications[0].genre.name
-        var location = date._embedded.venues[0].name
-        var id = date.id
+    const displayEvents = (() => 
+        events.slice(firstCardIndex, lastCardIndex).map(function(date) {
+            var name = date.name
+            var description = date.info
+            var category = date.classifications[0].genre.name
+            var location = date._embedded.venues[0].name
+            var id = date.id
 
-        if (date.images[1]) {
-            var image = date.images[1].url
-        } else {
-            var image = date.images[0].url
-        }
+            if (date.images[1]) {
+                var image = date.images[1].url
+            } else {
+                var image = date.images[0].url
+            }
 
-        return (
-            <DateCard key={id} name={name} category={category} location={location} image={image}></DateCard>
-        )
-        
-    })
+            return (
+                <DateCard key={id} name={name} category={category} location={location} image={image}></DateCard>
+            )
+            
+        })
+    )
     
 
-    var datesList = dates.map(function(date) {
-        let name = date.name
-        let description = date.description
-        let category = date.category
-        let location = date.location
-        let id = date.id
+    const displayDates = (() => 
+        dates.slice(firstCardIndex, lastCardIndex).map(function(date) {
+            let name = date.name
+            let description = date.description
+            let category = date.category
+            let location = date.location
+            let id = date.id
 
-        return (
-            <DateCard key={id} name={name} category={category} location={location}></DateCard>
-        )
+            return (
+                <DateCard key={id} name={name} category={category} location={location}></DateCard>
+            )
+        })
+    )
+
+    const onPageChange = ((evt, page) => {
+        setCurrentPage(page)
     })
 
     return (
@@ -88,10 +103,12 @@ export default function PublicDates() {
             <Tab value="1" label="Events/Concerts" />
         </Tabs>
             <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
-            
-                {tabValue == "0" ? <>{datesList}</>: <>{eventsList}</>}
+                {tabValue == "0" ? <>{displayDates()}</>: <>{displayEvents()}</>}
             </div>
-            <Pagination className="mx-auto" count={10} color="primary" />
+            {tabValue == "0" ?
+                <><Pagination className="mx-auto" page={currentPage} count={totalDatePageCount} color="primary" onChange={onPageChange} /></>:
+                <><Pagination className="mx-auto" page={currentPage} count={totalEventPageCount} color="primary" onChange={onPageChange} /></>
+            }   
         </div>
         
         </>

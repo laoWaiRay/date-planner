@@ -61,7 +61,7 @@ app.get('/eventbrite', (req,res) => {
 
 app.get('/ticketmaster', (req,res) => {
   let startTime = "2023-07-09T01:00:00Z"
-  let endTime = "2023-07-14T23:59:00Z"
+  let endTime = "2023-07-30T23:59:00Z"
   let url = `https://app.ticketmaster.com/discovery/v2/events.json?countryCode=CA&city=Vancouver&startDateTime=${startTime}&endDateTime=${endTime}&apikey=${ticketmaster_api}`
   fetch(url)
     .then((response) => {
