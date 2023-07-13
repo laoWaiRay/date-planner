@@ -15,6 +15,7 @@ import { useAuthContext } from "./hooks/useAuthContext";
 import { useEffect, useState } from "react";
 import { getSession } from "./api/internal/postgres";
 import { initGoogleIdentity, handleCallbackResponse } from "./GoogleIdentity";
+import DrawerAppBar from "./components/Header";
 
 export default function App() {
   const { user, dispatch } = useAuthContext();
@@ -42,12 +43,12 @@ export default function App() {
     },
     {
       path: "/dates",
-      element: user ? <Navigate to="/" /> : <PublicDates />,
+      element: user ? <Navigate to="/" /> : <div><DrawerAppBar /> <PublicDates /> </div>,
       loader: loginLoader,
     },
     {
       path: "/mydates",
-      element: user ? <Navigate to="/" /> : <MyDates />,
+      element: user ? <Navigate to="/" /> : <div><DrawerAppBar /> <MyDates /> </div>,
       loader: loginLoader,
     },
   ]);

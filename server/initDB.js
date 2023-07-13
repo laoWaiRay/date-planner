@@ -9,7 +9,7 @@ const client = new pg.Client({
 
 // Create DB
 await client.connect();
-await client.query("CREATE DATABASE IF NOT EXISTS dateplanner");
+await client.query("CREATE DATABASE dateplanner");
 await client.end();
 
 // Add tables
