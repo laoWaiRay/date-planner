@@ -20,15 +20,16 @@ function DateForm(props) {
     setFormValues({ ...formValues, [name]: value });
   };
 
-   const handleFormSubmit = async (event) => {
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
       const body = {
-        "date" :formValues
+        date: formValues,
       };
-      console.log(body)
-      const response = await fetch("http://localhost:8080/dates", {
+      console.log(body);
+      const response = await fetch("http://localhost:8000/mydates", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
@@ -141,10 +142,12 @@ function DateForm(props) {
                   className="form-control"
                   id="price_range"
                   name="price_range"
+                  required
                   value={formValues.price_range}
                   onChange={handleFormChange}
                 >
-                  <option value="">$</option>
+                  <option value="">Select Price</option>
+                  <option value="$">$</option>
                   <option value="$$">$$</option>
                   <option value="$$$">$$$</option>
                 </select>
@@ -157,6 +160,7 @@ function DateForm(props) {
                   className="form-control"
                   id="category"
                   name="category"
+                  required
                   value={formValues.category}
                   onChange={handleFormChange}
                 >
@@ -178,6 +182,7 @@ function DateForm(props) {
                   className="form-control"
                   id="preferred_time"
                   name="preferred_time"
+                  required
                   value={formValues.preferred_time}
                   onChange={handleFormChange}
                 >
