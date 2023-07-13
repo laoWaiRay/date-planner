@@ -2,6 +2,22 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
 function DateForm(props) {
+
+   const newData = {
+    "title" : "",
+    "dateIdea" : "",
+    "location" : "",
+    "city" : "",
+    "country": "",
+    "priceRange" : "",
+    "category" : "",
+    "preferredTime" : "",
+    "comments" : "",
+  }
+
+  // const [formValues, setFormValues] = useState(newData);
+ 
+
   return (
     <Modal
       {...props}
