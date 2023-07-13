@@ -3,12 +3,15 @@
 CMPT 372 Group Project
 
 # STEPS TO RUN
-# cd server
-#node initDB -> for Initializing Database
+# for Initializing Database
+cd server 
+then node initDB
 
-# cd server
-# nodemon app -> for running server 
+# for running server 
+cd server
+nodemon app 
 
 
-#in the root directory
-# npm run dev
+
+# for running frontend (must be in root directory)
+ npm run dev
