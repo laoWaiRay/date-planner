@@ -43,25 +43,22 @@ export default function MyDates() {
     );
   });
 
-  return (
-    <>
+ return (
+  <>
+    {datesList.length === 0 ? (
+      <HomeScreen />
+    ) : (
       <div className="md:container mx-auto">
-        {datesList.length === 0 ? (
-          <>
-            <HomeScreen />
-          </>
-        ) : (
-          <>
-            <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-5">
-              Your Personal Date Ideas
-            </h1>
-            <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
-              {datesList}
-            </div>
-            <Pagination className="mx-auto" count={10} color="primary" />
-          </>
-        )}
+        <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-5">
+          Your Personal Date Ideas
+        </h1>
+        <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
+          {datesList}
+        </div>
+        <Pagination className="mx-auto" count={10} color="primary" />
       </div>
-    </>
-  );
+    )}
+  </>
+);
+
 }
