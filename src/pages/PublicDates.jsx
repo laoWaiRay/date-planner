@@ -74,7 +74,7 @@ export default function PublicDates() {
         let id = date.id
 
         return (
-            <DateCard key={id} name={name} category={category} location={location}></DateCard>
+            <DateCard key={id} id={id} name={name} category={category} location={location}></DateCard>
         )
     })
 
