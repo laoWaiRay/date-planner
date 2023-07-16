@@ -21,22 +21,22 @@ const createTables = async () => {
   });
 
   await pool.query(`
-    CREATE TABLE locations(
+    CREATE TABLE users(
       id serial PRIMARY KEY,
-      name varchar(255) NOT NULL,
-      city text,
-      country text
+      username varchar(255) NOT NULL UNIQUE,
+      email varchar(255) NOT NULL UNIQUE,
+      password varchar(255) NOT NULL,
+      password_salt varchar(255) NOT NULL,
+      avatar_URL text
     );
   `);
 
   await pool.query(`
-    CREATE TABLE users(
-      id serial PRIMARY KEY,
-      username varchar(255) NOT NULL,
-      email varchar(255) NOT NULL,
-      password varchar(255) NOT NULL,
-      password_salt varchar(255) NOT NULL,
-      avatar_URL text
+    CREATE TABLE locations(
+      city text,
+      country text,
+      detailed_address text,
+      PRIMARY KEY(city, country)
     );
   `);
 
@@ -45,18 +45,68 @@ const createTables = async () => {
       id serial PRIMARY KEY,
       title varchar(255) NOT NULL,
       description text,
-      location_id integer,
+      author INT,
       price varchar(255),
       category varchar(255),
       preferred_time varchar(255),
-      author varchar(255),
+      city text,
+      country text,
       date_posted DATE DEFAULT CURRENT_DATE,
-      FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
+      private boolean DEFAULT FALSE,
+      FOREIGN KEY (author) REFERENCES users(id),
+      FOREIGN KEY (city, country) REFERENCES locations(city, country) ON DELETE CASCADE
+    );
+  `);
+
+  await pool.query(`
+    CREATE TABLE invitations(
+      id serial PRIMARY KEY,
+      sender_id int REFERENCES users(id) ON DELETE CASCADE,
+      receiver_id int REFERENCES users(id) ON DELETE CASCADE,
+      event_id int REFERENCES events(id) ON DELETE CASCADE,
+      status text,
+      date DATE,
+      start_time TIME,
+      end_time TIME
+    );
+  `);
+
+  await pool.query(`
+    CREATE TABLE reviews(
+      id serial PRIMARY KEY,
+      event_id INT REFERENCES events(id) ON DELETE CASCADE,
+      author_id INT REFERENCES users(id) ON DELETE CASCADE,
+      comment TEXT,
+      date DATE DEFAULT CURRENT_DATE,
+      score NUMERIC
     );
   `);
 
   await pool.end();
 };
+
+const insertMockData = async () => {
+  const pool = new pg.Pool({
+    user: process.env.PG_USER,
+    password: process.env.PG_PASSWORD,
+    database: "dateplanner"
+  });
+
+  try {
+    await pool.query(`
+      INSERT INTO users (username, email, password, password_salt, avatar_url) VALUES 
+      ('shaquille.oatmeal', 'shaquille.oatmeal@gmail.com', '123', '123', 'https://i.pravatar.cc/150?img=14'),
+      ('hoosier-daddy', 'hoosier-daddy@gmail.com', '123', '123', 'https://i.pravatar.cc/150?img=67'),
+      ('applebottomjeans', 'applebottomjeans@gmail.com', '123', '123', 'https://i.pravatar.cc/150?img=61'),
+      ('oprahwindfury', 'oprahwindfury@gmail.com', '123', '123', 'https://i.pravatar.cc/150?img=47'),
+      ('anonymouse', 'anonymouse@gmail.com', '123', '123', 'https://i.pravatar.cc/150?img=26')
+    `);
+
+    console.log("Successfully inserted mock data");
+  } catch (error) {
+    console.error("Error inserting mock data:", error);
+  }
+}
 
 const createSchema = async () => {
   try {
@@ -68,4 +118,5 @@ const createSchema = async () => {
   }
 };
 
-createSchema();
+await createSchema();
+await insertMockData();
