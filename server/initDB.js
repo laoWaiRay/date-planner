@@ -55,6 +55,34 @@ const createTables = async () => {
     );
   `);
 
+  await pool.query(`INSERT INTO users (username, email, password, password_salt, avatar_URL)
+  VALUES ('JohnDoe', 'johndoe@example.com', 'password1', 'salt1', 'https://example.com/avatar1.jpg');
+  `);
+
+  await pool.query(`INSERT INTO users (username, email, password, password_salt, avatar_URL)
+  VALUES ('JaneSmith', 'janesmith@example.com', 'password2', 'salt2', 'https://example.com/avatar2.jpg');
+  `)
+
+    const query = `
+    INSERT INTO locations (name, city, country)
+    VALUES
+      ('Location 1', 'New York', 'United States'),
+      ('Location 2', 'London', 'United Kingdom');
+  `;
+
+  await pool.query(query);
+
+  const query2 = `
+  INSERT INTO events (title, description, location_id, price, category, preferred_time, author)
+  VALUES
+    ('Event 1', 'Description of Event 1', 1, 'Free', 'Concert', 'Evening', 'John Doe'),
+    ('Event 2', 'Description of Event 2', 2, '$10', 'Conference', 'Morning', 'Jane Smith');
+`;
+
+await pool.query(query2);
+
+
+
   await pool.end();
 };
 
