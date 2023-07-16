@@ -2,6 +2,7 @@ import DateCard from "../components/DateCard";
 import Pagination from "@mui/material/Pagination";
 import { useState, useEffect } from "react";
 import HomeScreen from "../components/HomeScreen";
+import Modal from "react-bootstrap/Modal";
 
 
 export default function MyDates() {
@@ -35,6 +36,7 @@ export default function MyDates() {
     return (
       <DateCard
         key={id}
+        id={id}
         name={name}
         description={description}
         category={category}
