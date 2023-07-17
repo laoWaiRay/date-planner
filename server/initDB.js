@@ -66,8 +66,7 @@ const createTables = async () => {
       event_id int REFERENCES events(id) ON DELETE CASCADE,
       status text,
       date DATE,
-      start_time TIME,
-      end_time TIME
+      start_time TIME
     );
   `);
 
@@ -102,10 +101,39 @@ const insertMockData = async () => {
       ('anonymouse', 'anonymouse@gmail.com', '123', '123', 'https://i.pravatar.cc/150?img=26')
     `);
 
-    console.log("Successfully inserted mock data");
+    console.log("Successfully inserted users table mock data");
   } catch (error) {
     console.error("Error inserting mock data:", error);
   }
+
+    //mock data for location table
+    try{
+      await pool.query(`
+        INSERT INTO locations (city, country, detailed_address)
+        VALUES
+          ('New York City', 'United States', '123 Main Street'),
+          ('London', 'United Kingdom', '456 High Street');
+      `);
+      console.log("Successfully inserted locations table mock data");
+    } catch(e){
+      console.log("Error inserting mock data:", e)
+    }
+
+  //mock data for events table
+  try{
+    await pool.query(`
+      INSERT INTO events (title, description, author, price, category, preferred_time, city, country)
+      VALUES
+        ('Event 1', 'Description of Event 1', 1, 'Free', 'Concert', 'Evening', 'New York City', 'United States'),
+        ('Event 2', 'Description of Event 2', 2, '$10', 'Conference', 'Morning', 'London', 'United Kingdom');
+    `);
+
+    console.log("Successfully inserted events table mock data");
+
+  } catch(e){
+    console.log("Error inserting mock data:", e)
+  }
+
 }
 
 const createSchema = async () => {
