@@ -1,9 +1,11 @@
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 function DateForm(props) {
-  const newDate = {
+  const { user } = useAuthContext();
+  const newEvent = {
     title: "",
     date_idea: "",
     location: "",
@@ -20,26 +22,33 @@ function DateForm(props) {
     setFormValues({ ...formValues, [name]: value });
   };
 
+  const handlePrivateCheckboxChange = () => {
+    setIsPrivate(!isPrivate);
+  };
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
       const body = {
-        date: formValues,
+        date: {...formValues, "isPrivate": isPrivate, "author" :1}
       };
-      console.log(body);
+
       const response = await fetch("http://localhost:8000/mydates", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      setFormValues({ ...newRecipe });
+      setFormValues({ ...newEvent });
+      setIsPrivate(false);
+
     } catch (error) {
       console.error(error.message);
     }
   };
 
-  const [formValues, setFormValues] = useState(newDate);
+  const [formValues, setFormValues] = useState(newEvent);
+  const [isPrivate, setIsPrivate] = useState(false);
 
   return (
     <Modal
@@ -207,9 +216,35 @@ function DateForm(props) {
               </div>
             </div>
           </div>
-          <div className="row">
-            <div className="col-md-12 text-center mt-2">
-              <Button variant="primary" type="submit">
+          <div className="row" style={{ marginTop: "2%" }}>
+            <div className="col-md-12">
+              <div className="form-group">
+                <div className="form-check">
+                  <label htmlFor="private">Make this date idea private?</label>
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="private"
+                    name="private"
+                    checked={isPrivate}
+                    onChange={handlePrivateCheckboxChange}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row" style={{ marginTop: "2%" }}>
+             <div className="col-md-12 text-center">
+              <Button
+                variant="primary"
+                type="reset"
+                className="w-50"
+              >
+                Reset
+              </Button>
+            </div>
+            <div className="col-md-12 text-center">
+              <Button variant="primary" type="submit"  className="w-50 mt-2">
                 Submit
               </Button>
             </div>
