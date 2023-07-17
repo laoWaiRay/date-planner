@@ -63,22 +63,13 @@ app.get('/eventbrite', (req,res) => {
 
 app.post('/mydates', async (req, res) => {
  try{
-    const { date} = req.body;
-    await pool.query(
-  `INSERT INTO events (title, description, location_id, price, category, preferred_time, author)
-   VALUES ($1, $2, (SELECT id FROM locations WHERE name = $3 AND city = $4 AND country = $5), $6, $7, $8, $9)`,
-  [
-    date.title,
-    date.date_idea,
-    date.location,
-    date.city,
-    date.country,
-    date.price_range,
-    date.category,
-    date.preferred_time,
-    date.comments,
-  ]
-);
+  const {date} = req.body
+
+    //Update location table first 
+    let locationQuery = 'INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3)';
+    let locationValues =  [date.city, date.country, date.location];
+    await pool.query(locationQuery, locationValues);
+
   } catch (error) {
     console.error(error.message);
   }

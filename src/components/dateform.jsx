@@ -1,8 +1,10 @@
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
+import { useAuthContext} from "../hooks/useAuthContext"
 
 function DateForm(props) {
+   const { user } = useAuthContext();
   const newDate = {
     title: "",
     date_idea: "",
@@ -26,14 +28,15 @@ function DateForm(props) {
       const body = {
         date: formValues,
       };
-      console.log(body);
+
+     
       const response = await fetch("http://localhost:8000/mydates", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      setFormValues({ ...newRecipe });
+      setFormValues({ ...newDate });
     } catch (error) {
       console.error(error.message);
     }
