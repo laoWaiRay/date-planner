@@ -6,8 +6,8 @@ const SALT_ROUNDS = 10;
 
 // Helper function: Remove fields from database response user object
 const createUserSession = (userData) => {
-  const { username, email, avatar_url } = userData;
-  return { username, email, avatar_url };
+  const { id, username, email, avatar_url } = userData;
+  return { id, username, email, avatar_url };
 }
 
 const userController = {};
