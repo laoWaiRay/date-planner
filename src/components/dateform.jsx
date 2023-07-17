@@ -30,7 +30,7 @@ function DateForm(props) {
     event.preventDefault();
     try {
       const body = {
-        date: formValues,
+        date: {...formValues, "isPrivate": isPrivate, "author" :1}
       };
 
       const response = await fetch("http://localhost:8000/mydates", {
@@ -40,6 +40,8 @@ function DateForm(props) {
         body: JSON.stringify(body),
       });
       setFormValues({ ...newEvent });
+      setIsPrivate(false);
+
     } catch (error) {
       console.error(error.message);
     }
@@ -246,7 +248,6 @@ function DateForm(props) {
                 Submit
               </Button>
             </div>
-           
           </div>
         </form>
       </Modal.Body>
