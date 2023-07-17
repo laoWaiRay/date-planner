@@ -1,10 +1,10 @@
-import pg from 'pg';
-import dotenv from 'dotenv';
+import pg from "pg";
+import dotenv from "dotenv";
 dotenv.config();
 
 const client = new pg.Client({
   user: process.env.PG_USER,
-  password: process.env.PG_PASSWORD
+  password: process.env.PG_PASSWORD,
 });
 
 const createDatabase = async () => {
@@ -17,7 +17,7 @@ const createTables = async () => {
   const pool = new pg.Pool({
     user: process.env.PG_USER,
     password: process.env.PG_PASSWORD,
-    database: "dateplanner"
+    database: "dateplanner",
   });
 
   await pool.query(`
@@ -33,10 +33,10 @@ const createTables = async () => {
 
   await pool.query(`
     CREATE TABLE locations(
+      id serial PRIMARY KEY,
       city text,
       country text,
-      detailed_address text,
-      PRIMARY KEY(city, country)
+      detailed_address text
     );
   `);
 
@@ -49,12 +49,12 @@ const createTables = async () => {
       price varchar(255),
       category varchar(255),
       preferred_time varchar(255),
-      city text,
-      country text,
+      location_id INT,
       date_posted DATE DEFAULT CURRENT_DATE,
       private boolean DEFAULT FALSE,
+      comments text,
       FOREIGN KEY (author) REFERENCES users(id),
-      FOREIGN KEY (city, country) REFERENCES locations(city, country) ON DELETE CASCADE
+      FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
     );
   `);
 
@@ -88,7 +88,7 @@ const insertMockData = async () => {
   const pool = new pg.Pool({
     user: process.env.PG_USER,
     password: process.env.PG_PASSWORD,
-    database: "dateplanner"
+    database: "dateplanner",
   });
 
   try {
@@ -103,48 +103,100 @@ const insertMockData = async () => {
 
     console.log("Successfully inserted users table mock data");
   } catch (error) {
-    console.error("Error inserting mock data:", error);
+    console.error("Error inserting mock data for users table:", error);
   }
 
-    //mock data for location table
-    try{
-      await pool.query(`
+  // mock data for locations table
+  try {
+    const locationData = [
+      {
+        city: 'New York City',
+        country: 'United States',
+        detailed_address: '123 Main Street'
+      },
+      {
+        city: 'London',
+        country: 'United Kingdom',
+        detailed_address: '456 High Street'
+      }
+    ];
+
+    for (const location of locationData) {
+      await pool.query(
+        `
         INSERT INTO locations (city, country, detailed_address)
-        VALUES
-          ('New York City', 'United States', '123 Main Street'),
-          ('London', 'United Kingdom', '456 High Street');
-      `);
-      console.log("Successfully inserted locations table mock data");
-    } catch(e){
-      console.log("Error inserting mock data:", e)
+        VALUES ($1, $2, $3)
+        `,
+        [location.city, location.country, location.detailed_address]
+      );
     }
 
-  //mock data for events table
-  try{
-    await pool.query(`
-      INSERT INTO events (title, description, author, price, category, preferred_time, city, country)
-      VALUES
-        ('Event 1', 'Description of Event 1', 1, 'Free', 'Concert', 'Evening', 'New York City', 'United States'),
-        ('Event 2', 'Description of Event 2', 2, '$10', 'Conference', 'Morning', 'London', 'United Kingdom');
-    `);
-
-    console.log("Successfully inserted events table mock data");
-
-  } catch(e){
-    console.log("Error inserting mock data:", e)
+    console.log("Successfully inserted locations table mock data");
+  } catch (e) {
+    console.log("Error inserting mock data for locations table:", e);
   }
 
-}
+  // mock data for events table
+  try {
+    const eventData = [
+      {
+        title: 'Event 1',
+        description: 'Description of Event 1',
+        author: 1,
+        price: 'Free',
+        category: 'Concert',
+        preferred_time: 'Evening',
+        location_city: 'New York City', // Use new location data
+        location_country: 'United States' // Use new location data
+      },
+      {
+        title: 'Event 2',
+        description: 'Description of Event 2',
+        author: 2,
+        price: '$10',
+        category: 'Conference',
+        preferred_time: 'Morning',
+        location_city: 'London', // Use new location data
+        location_country: 'United Kingdom' // Use new location data
+      }
+    ];
+
+    for (const event of eventData) {
+      await pool.query(
+        `
+        INSERT INTO events (title, description, author, price, category, preferred_time, location_id)
+        SELECT $1, $2, $3, $4, $5, $6, id
+        FROM locations
+        WHERE city = $7 AND country = $8
+        `,
+        [
+          event.title,
+          event.description,
+          event.author,
+          event.price,
+          event.category,
+          event.preferred_time,
+          event.location_city,
+          event.location_country
+        ]
+      );
+    }
+
+    console.log("Successfully inserted events table mock data");
+  } catch (e) {
+    console.log("Error inserting mock data for events table:", e);
+  }
+};
 
 const createSchema = async () => {
   try {
     await createDatabase();
     await createTables();
     console.log("Schema creation successful!");
+    await insertMockData();
   } catch (error) {
     console.error("Error creating schema:", error);
   }
 };
 
-await createSchema();
-await insertMockData();
+createSchema();
