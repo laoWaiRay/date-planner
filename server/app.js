@@ -65,10 +65,16 @@ app.post('/mydates', async (req, res) => {
  try{
   const {date} = req.body
 
-    //Update location table first 
+    //Insert location table first 
     let locationQuery = 'INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3)';
     let locationValues =  [date.city, date.country, date.location];
     await pool.query(locationQuery, locationValues);
+
+    //to be done insert into user, and get id ? or you have user id just insert it 
+    //for mock data im making user 1 
+
+    //Insert into events table 
+     let eventQuery = `INSERT INTO events (title, description, author, price, category, preferred_time, city, country) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
 
   } catch (error) {
     console.error(error.message);
