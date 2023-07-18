@@ -90,7 +90,16 @@ app.post("/mydates", async (req, res) => {
       date.isPrivate,
       date.comments,
     ];
-    await pool.query(eventQuery, eventValues);
+    const response = await pool.query(eventQuery, eventValues);
+
+    if (response.error) {
+      let error_message = {
+        error: "Cannot insert into ingredient model",
+      };
+      res.status(500).json(error_message);
+    } else {
+      res.status(200).end();
+    }
      
   } catch (error) {
     console.error(error.message);
