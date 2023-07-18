@@ -17,7 +17,7 @@ function DateForm(props) {
     comments: "",
   };
 
-  const handleFormChange = () => {
+  const handleFormChange = (event) => {
     const { name, value } = event.target;
     setFormValues({ ...formValues, [name]: value });
   };
@@ -30,9 +30,8 @@ function DateForm(props) {
     event.preventDefault();
     try {
       const body = {
-        date: {...formValues, "isPrivate": isPrivate, "author" :1}
+        date: { ...formValues, isPrivate: isPrivate, author: 1 },
       };
-
       const response = await fetch("http://localhost:8000/mydates", {
         method: "POST",
         credentials: "include",
@@ -41,7 +40,7 @@ function DateForm(props) {
       });
       setFormValues({ ...newEvent });
       setIsPrivate(false);
-
+      props.formSubmitted();
     } catch (error) {
       console.error(error.message);
     }
@@ -52,7 +51,8 @@ function DateForm(props) {
 
   return (
     <Modal
-      {...props}
+      show={props.show}
+      onHide={props.onHide}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -234,17 +234,13 @@ function DateForm(props) {
             </div>
           </div>
           <div className="row" style={{ marginTop: "2%" }}>
-             <div className="col-md-12 text-center">
-              <Button
-                variant="primary"
-                type="reset"
-                className="w-50"
-              >
+            <div className="col-md-12 text-center">
+              <Button variant="primary" type="reset" className="w-50">
                 Reset
               </Button>
             </div>
             <div className="col-md-12 text-center">
-              <Button variant="primary" type="submit"  className="w-50 mt-2">
+              <Button variant="primary" type="submit" className="w-50 mt-2">
                 Submit
               </Button>
             </div>

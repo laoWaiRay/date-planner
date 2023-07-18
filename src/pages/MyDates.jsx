@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import HomeScreen from "../components/HomeScreen";
 import Modal from "react-bootstrap/Modal";
 
-
 export default function MyDates() {
   const [dates, setDates] = useState([]);
 
@@ -14,7 +13,6 @@ export default function MyDates() {
 
   const retrieveDates = () => {
     let url = `http://localhost:8000/mydates`;
-
     fetch(url)
       .then((response) => {
         return response.json();
@@ -45,22 +43,21 @@ export default function MyDates() {
     );
   });
 
- return (
-  <>
-    {datesList.length === 0 ? (
-      <HomeScreen />
-    ) : (
-      <div className="md:container mx-auto">
-        <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-5">
-          Your Personal Date Ideas
-        </h1>
-        <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
-          {datesList}
+  return (
+    <>
+      {datesList.length === 0 ? (
+        <HomeScreen retrieveDates={retrieveDates} />
+      ) : (
+        <div className="md:container mx-auto">
+          <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-5">
+            Your Personal Date Ideas
+          </h1>
+          <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
+            {datesList}
+          </div>
+          <Pagination className="mx-auto" count={10} color="primary" />
         </div>
-        <Pagination className="mx-auto" count={10} color="primary" />
-      </div>
-    )}
-  </>
-);
-
+      )}
+    </>
+  );
 }
