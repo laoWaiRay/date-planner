@@ -42,7 +42,7 @@ export default function MyDates() {
             let id = date.id
             // let price = date.price     // TO ADD IN PRICE
             return (
-                <DateCard key={id} name={name} description={description} category={category} location={location}></DateCard>
+                <DateCard key={id} id={id} name={name} description={description} category={category} location={location}></DateCard>
             )
         })
     )
@@ -79,7 +79,9 @@ export default function MyDates() {
             <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
                 {displayCards()}
             </div>
-            <Pagination className="mx-auto" page={currentPage} count={totalPageCount} color="primary" onChange={onPageChange}/>
+            <div className="flex">
+              <Pagination className="mx-auto my-4" page={currentPage} count={totalPageCount} color="primary" onChange={onPageChange}/>
+            </div>
         </div>
       )}
     </>

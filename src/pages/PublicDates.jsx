@@ -105,10 +105,12 @@ export default function PublicDates() {
             <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
                 {tabValue == "0" ? <>{displayDates()}</>: <>{displayEvents()}</>}
             </div>
-            {tabValue == "0" ?
-                <><Pagination className="mx-auto" page={currentPage} count={totalDatePageCount} color="primary" onChange={onPageChange} /></>:
-                <><Pagination className="mx-auto" page={currentPage} count={totalEventPageCount} color="primary" onChange={onPageChange} /></>
-            }   
+            <div className="flex">
+                {tabValue == "0" ?
+                    <><Pagination className="mx-auto my-4" page={currentPage} count={totalDatePageCount} color="primary" onChange={onPageChange} /></>:
+                    <><Pagination className="mx-auto my-4" page={currentPage} count={totalEventPageCount} color="primary" onChange={onPageChange} /></>
+                }  
+            </div>
         </div>
         
         </>
