@@ -6,8 +6,21 @@ import Button from '@mui/material/Button';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import IconButton from '@mui/material/IconButton';
 import Hero from "../assets/Hero.jpg"
+import CreateDateInvite from "./DateInviteModal"
+import { useState } from 'react';
 
-export default function DateCard({ name, description, category, location, image }) {
+
+export default function DateCard({ id, name, description, category, location, image }) {
+
+    const [showInviteModal, setShowInviteModal] = useState(false);
+
+    const handleInviteClick = () => {
+        setShowInviteModal(true);
+      };
+
+      const handleCloseModal = () => {
+        setShowInviteModal(false);
+      };
     
     return (
         <Card variant="outlined" sx={{ maxWidth: 250 }}>
@@ -22,9 +35,11 @@ export default function DateCard({ name, description, category, location, image 
                 <p className="text-sm">{description}</p>
             </CardContent>
             <CardActions>
-                <Button size="small">Test</Button>
+                <Button onClick={handleInviteClick} size="small">Invite</Button>
                 <IconButton color="default"><FavoriteBorderIcon></FavoriteBorderIcon></IconButton>
             </CardActions>
+
+            {showInviteModal && (<CreateDateInvite onClose={handleCloseModal}/>)}
         </Card>
     )
 }
