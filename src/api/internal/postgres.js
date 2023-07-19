@@ -48,6 +48,12 @@ async function signupUser(userData) {
   return data;
 }
 
+async function createInvitation(sender_id, receiver_id, event_id, status, date, start_time){
+  const res = await fetch(`http://localhost:8000/createInvite?sender_id=${sender_id}&receiver_id=${receiver_id}&event_id=${event_id}&status=${status}&date=${date}&start_time=${start_time}`, {
+    ...fetchOptions.POST
+  });
+}
+
 // Returns a list of all users
 async function getUsers() {
   const res = await fetch("http://localhost:8000/users", fetchOptions.GET);
@@ -96,4 +102,5 @@ export {
   getSession,
   logoutUser,
   loginWithGoogle,
+  createInvitation
 };

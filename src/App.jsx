@@ -26,7 +26,7 @@ export default function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      // element: user ? <Home /> : <Login />,
+      //element: user ? <Home /> : <Login />,
       element: <Home />,
       loader: loginLoader,
       errorElement: <ErrorPage />,
@@ -48,7 +48,7 @@ export default function App() {
     },
     {
       path: "/mydates",
-      element: user ? <Navigate to="/" /> : <div><DrawerAppBar /> <MyDates /> </div>,
+      element: user ? <div><DrawerAppBar /> <MyDates /> </div> : <Navigate to="/" />, 
       loader: loginLoader,
     },
   ]);

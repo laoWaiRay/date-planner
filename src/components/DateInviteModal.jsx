@@ -1,12 +1,15 @@
+import { Pending } from '@mui/icons-material';
 import React, { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { getUserByUsername } from '../api/internal/postgres'
-import { Alert } from 'react-bootstrap';
+import { createInvitation } from '../api/internal/postgres'
+import { useAuthContext } from '../hooks/useAuthContext';
 
-function CreateDateInviteModal({ onClose }) {
+function CreateDateInviteModal({ onClose, eventID }) {
   const [username, setUsername] = useState('');
   const [datetime, setDatetime] = useState('');
   const [userError, setUserError] = useState(false);
+  const currentUser = useAuthContext();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +22,17 @@ function CreateDateInviteModal({ onClose }) {
       //let user try again
     } else{
       //console.log('Date and Time:', datetime);
-      console.log(invitedUser);
+      //console.log(invitedUser.id);
+      const currentUserID = currentUser.user.id;
+      const invitedUserID = invitedUser.id;
+      //console.log(currentUser.user.id);
+      const splitDate = datetime.split("T");
+      //console.log(splitDate[0]);
+      const date = splitDate[0];
+      const time = splitDate[1];
+      const status = "pending";
+      //createInvitation
+      createInvitation(currentUserID, invitedUserID, eventID, status, date, time );
       onClose(); // Close the modal after form submission
     }
   

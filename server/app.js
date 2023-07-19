@@ -123,6 +123,33 @@ app.get("/ticketmaster", (req, res) => {
     });
 });
 
+app.post("/createInvite", async (req, res) =>{
+  //URL parmaters
+  const sender_id = req.query.sender_id;
+  const receiver_id = req.query.receiver_id;
+  const event_id = req.query.event_id;
+  const status = req.query.status;
+  const date = req.query.date;
+  const start_time = req.query.start_time;  
+
+  // Define INSERT query
+  const insertQuery = `
+    INSERT INTO invitations (sender_id, receiver_id, event_id, status, date, start_time)
+    VALUES ($1, $2, $3, $4, $5, $6)
+    RETURNING *;`;
+
+// Defining parameter values for the INSERT query
+  const values = [sender_id, receiver_id, event_id, status, date, start_time];
+  try {
+    const result = await pool.query(insertQuery, values);
+    res.status(200).end();
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Cannot insert into invitation model" });
+  }
+
+})
+
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
