@@ -1,0 +1,23 @@
+.card-container {
+  border-radius: 20px; /* Slightly reduced border-radius for less rounded edges */
+  margin-top: 0 !important;
+  margin-bottom: 3%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+  background: linear-gradient(to bottom, #f8f8f8, #eaeaea);
+  width: 100%;
+  height: fit-content;
+}
+
+.card-container .parent-container {
+  margin-top: 1%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
