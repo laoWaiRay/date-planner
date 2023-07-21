@@ -3,6 +3,7 @@ import useLogout from "../hooks/useLogout";
 import "./Home.css";
 
 import InvitationCard from '../components/InvitationCard';
+import UpcomingCard from '../components/UpcomingCard';
 
 export default function Home() {
   const { user } = useAuthContext();
@@ -35,9 +36,10 @@ export default function Home() {
           <InvitationCard/>
         </div>
         <div className="floating-card-upcoming">
-          <h2>UPCOMING DATES</h2>
-          <InvitationCard/>
-          <InvitationCard/>
+          <h2 className="text-center">UPCOMING DATES</h2>
+          <UpcomingCard />
+           <UpcomingCard />
+            <UpcomingCard />
         </div>
       </div>
     </>
