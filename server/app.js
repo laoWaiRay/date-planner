@@ -148,6 +148,29 @@ app.post("/createInvite", async (req, res) =>{
     res.status(500).json({ error: "Cannot insert into invitation model" });
   }
 
+});
+
+app.post("/updateInviteStatus", async (req, res) =>{
+  //URL parmaters
+  const invite_id = req.query.invite_id;
+  const newStatus = req.query.status;
+
+  // Define INSERT query
+  const updateQuery = `
+    UPDATE invitations
+    SET status = $1
+    WHERE id = $2;
+  `;
+  const values = [newStatus, invite_id];
+
+  try {
+    const result = await pool.query(updateQuery, values);
+    res.status(200).end();
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Cannot update invitation" });
+  }
+
 })
 
 app.listen(PORT, () => {

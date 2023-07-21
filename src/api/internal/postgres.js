@@ -54,6 +54,12 @@ async function createInvitation(sender_id, receiver_id, event_id, status, date, 
   });
 }
 
+async function updateInviteStatus(invite_id, status){
+  const res = await fetch(`http://localhost:8000/updateInviteStatus?invite_id=${invite_id}&status=${status}`,
+    ...fetchOptions.POST
+  );
+}
+
 // Returns a list of all users
 async function getUsers() {
   const res = await fetch("http://localhost:8000/users", fetchOptions.GET);
