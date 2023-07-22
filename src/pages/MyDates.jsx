@@ -2,7 +2,6 @@ import DateCard from "../components/DateCard";
 import Pagination from "@mui/material/Pagination";
 import { useState, useEffect } from "react";
 import HomeScreen from "../components/HomeScreen";
-import Modal from "react-bootstrap/Modal";
 
 export default function MyDates() {
     const [dates, setDates] = useState([]);

@@ -40,7 +40,7 @@ export default function DateCard({ id, name, description, category, location, im
                 <IconButton color="default"><FavoriteBorderIcon></FavoriteBorderIcon></IconButton>
             </CardActions>
 
-            {showInviteModal && (<CreateDateInvite onClose={handleCloseModal}/>)}
+            {showInviteModal && (<CreateDateInvite onClose={handleCloseModal} eventID={id}/>)}
         </Card>
     )
 }

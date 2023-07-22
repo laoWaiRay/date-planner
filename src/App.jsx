@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { getSession } from "./api/internal/postgres";
 import { initGoogleIdentity, handleCallbackResponse } from "./GoogleIdentity";
 import DrawerAppBar from "./components/Header";
+import HomeScreen from "./components/HomeScreen";
 
 export default function App() {
   const { user, dispatch } = useAuthContext();
@@ -27,7 +28,7 @@ export default function App() {
     {
       path: "/",
       // element: user ? <Home /> : <Login />,
-      element: <Home />,
+      element: user ? <div><DrawerAppBar /> <HomeScreen /></div> : <Login />,
       loader: loginLoader,
       errorElement: <ErrorPage />,
     },
@@ -48,7 +49,7 @@ export default function App() {
     },
     {
       path: "/mydates",
-      element: user ? <Navigate to="/" /> : <div><DrawerAppBar /> <MyDates /> </div>,
+      element: user ? <div><DrawerAppBar /> <MyDates /> </div> : <Navigate to="/" />, 
       loader: loginLoader,
     },
   ]);
