@@ -23,7 +23,7 @@ export default function DateCard({ id, name, description, category, location, im
       };
     
     return (
-        <Card className="h-full flex flex-col bg-red-200" variant="outlined" sx={{ maxWidth: 250, maxHeight: 400 }}>
+        <Card className="h-full flex flex-col bg-red-200" variant="outlined" sx={{ maxWidth: 350, maxHeight: 350 }}>
             <CardMedia
                 sx={{ height: 180 }}
                 image= {image ? image: Hero}

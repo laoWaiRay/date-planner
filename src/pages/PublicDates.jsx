@@ -19,7 +19,7 @@ export default function PublicDates() {
     // For pagination viewing
     const [tabValue, setTabValue] = useState("0");
     const [currentPage, setCurrentPage] = useState(1);
-    const [cardsPerPage] = useState(12);
+    const [cardsPerPage] = useState(4);
     const lastCardIndex =  currentPage * cardsPerPage
     const firstCardIndex = lastCardIndex - cardsPerPage
     const totalDatePageCount = Math.ceil(dates.length/cardsPerPage)
@@ -165,29 +165,25 @@ export default function PublicDates() {
 
     return (
         <>
-        
-        <div className="md:container mx-auto">
-        <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4">Find Date Ideas</h1>
-        <Tabs className="mb-2" value ={tabValue} onChange={handleChange} centered>
-            <Tab value="0" label="Shared by Users" />
-            <Tab value="1" label="Events/Concerts" />
-        </Tabs>
-        <div className="flex">
-            <div className="mx-auto my-3">
-                {tabValue == "0" ?<>{FilterBar()} </>: <></>}
-            </div>
-        </div>
-            <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
-                {tabValue == "0" ? <>{displayDates()}</>: <>{displayEvents()}</>}
-            </div>
-            <div className="flex">
-                {tabValue == "0" ?
-                    <><Pagination className="mx-auto my-4" page={currentPage} count={totalDatePageCount} color="primary" onChange={onPageChange} /></>:
-                    <><Pagination className="mx-auto my-4" page={currentPage} count={totalEventPageCount} color="primary" onChange={onPageChange} /></>
-                }  
-            </div>
-        </div>
-        
+          <h1 className="font-display text-blue-500 font-bold text-4xl text-center mb-0 -mt-2">Find Date Ideas</h1>
+          <Tabs className="mb-2" value ={tabValue} onChange={handleChange} centered>
+              <Tab value="0" label="Shared by Users" />
+              <Tab value="1" label="Events/Concerts" />
+          </Tabs>
+          <div className="flex">
+              <div className="mx-auto my-2">
+                  {tabValue == "0" ?<>{FilterBar()} </>: <></>}
+              </div>
+          </div>
+          <div className="grid grid-cols-4 gap-4 max-w-6xl mx-auto">
+              {tabValue == "0" ? <>{displayDates()}</>: <>{displayEvents()}</>}
+          </div>
+          <div className="flex">
+              {tabValue == "0" ?
+                  <><Pagination className="mx-auto my-4" page={currentPage} count={totalDatePageCount} color="primary" onChange={onPageChange} /></>:
+                  <><Pagination className="mx-auto my-4" page={currentPage} count={totalEventPageCount} color="primary" onChange={onPageChange} /></>
+              }  
+          </div>
         </>
     )
   }
