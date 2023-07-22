@@ -35,10 +35,11 @@ export default function MyDates() {
 
     const displayCards = (() => 
         dates.slice(firstCardIndex, lastCardIndex).map(function(date) {
-            let name = date.name
+            // console.log(date)
+            let name = date.title
             let description = date.description
             let category = date.category
-            let location = date.location
+            let location = date.city
             let id = date.id
             // let price = date.price     // TO ADD IN PRICE
             return (
@@ -51,31 +52,31 @@ export default function MyDates() {
         setCurrentPage(page)
     })
 
-  var datesList = dates.map(function (date) {
-    let name = date.name;
-    let description = date.description;
-    let category = date.category;
-    let location = date.location;
-    let id = date.id;
-    return (
-      <DateCard
-        key={id}
-        id={id}
-        name={name}
-        description={description}
-        category={category}
-        location={location}
-      ></DateCard>
-    );
-  });
+  // var datesList = dates.map(function (date) {
+  //   let name = date.name;
+  //   let description = date.description;
+  //   let category = date.category;
+  //   let location = date.location;
+  //   let id = date.id;
+  //   return (
+  //     <DateCard
+  //       key={id}
+  //       id={id}
+  //       name={name}
+  //       description={description}
+  //       category={category}
+  //       location={location}
+  //     ></DateCard>
+  //   );
+  // });
 
   return (
     <>
-      {datesList.length === 0 ? (
+      {dates.length === 0 ? (
         <HomeScreen retrieveDates={retrieveDates} />
       ) : (
         <div className="md:container mx-auto">
-        <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-5">Your Personal Date Ideas</h1>
+        <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4">Your Personal Date Ideas</h1>
             <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
                 {displayCards()}
             </div>

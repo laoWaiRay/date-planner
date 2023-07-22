@@ -10,7 +10,7 @@ import CreateDateInvite from "./DateInviteModal"
 import { useState } from 'react';
 
 
-export default function DateCard({ id, name, description, category, location, image }) {
+export default function DateCard({ id, name, description, category, location, image, price }) {
 
     const [showInviteModal, setShowInviteModal] = useState(false);
 
@@ -30,8 +30,9 @@ export default function DateCard({ id, name, description, category, location, im
             />
             <CardContent>
                 <h1 className="text-xl font-medium">{name}</h1>
-                <p className="text-sm text-slate-500">Location: {location}</p>
-                <p className="text-sm text-slate-500">Category: {category}</p>
+                <p className="text-sm text-slate-500 my-0">Location: {location}</p>
+                <p className="text-sm text-slate-500 my-0">Category: <span style={{textTransform:'capitalize'}}>{category}</span></p>
+                {price ? <p className="text-sm text-slate-500 my-0">Price: {price}</p>:<></>}
                 <p className="text-sm">{description}</p>
             </CardContent>
             <CardActions>

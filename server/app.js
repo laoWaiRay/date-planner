@@ -12,6 +12,7 @@ const PORT = 8000;
 const eventbrite_api = process.env.EVENTBRITE_API_KEY;
 const ticketmaster_api = process.env.TICKETMASTER_API_KEY;
 
+
 const pool = new pg.Pool({
   user: process.env.PG_USER,
   password: process.env.PG_PASSWORD,
@@ -40,15 +41,40 @@ app.use(
 
 app.use("/users", userRouter);
 
-app.get("/mydates", (req, res) => {
-  let myDatesQuery = `SELECT * FROM events`;
-  pool.query(myDatesQuery, (err, result) => {
+app.get("/mydates", async (req, res) => {
+  var category = req.query.category
+  var price = req.query.price
+  // var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments FROM events`;
+
+  if ((category == "all" && price == "all") || (category === undefined && price === undefined)) {
+    var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments,
+                      locations.city, locations.country, locations.detailed_address  
+                      FROM events INNER JOIN locations ON events.location_id = locations.id;`
+  } else if (category !== undefined && (price == "all" || price === undefined)) {
+    var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments,
+                        locations.city, locations.country, locations.detailed_address  
+                        FROM events INNER JOIN locations ON events.location_id = locations.id
+                        WHERE category='${category}';`
+  } else if (price !== undefined && (category == "all" || category === undefined)) {
+    var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments,
+                        locations.city, locations.country, locations.detailed_address  
+                        FROM events INNER JOIN locations ON events.location_id = locations.id
+                        WHERE price='${price}';`
+  } else if (category !== undefined && price !== undefined) {
+    var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments,
+                        locations.city, locations.country, locations.detailed_address  
+                        FROM events INNER JOIN locations ON events.location_id = locations.id
+                        WHERE category='${category}' AND price='${price}';`
+  }
+
+  await pool.query(myDatesQuery, (err, result) => {
     if (err) {
       res.end(err);
     }
-    res.send(result.rows);
+    res.send(result.rows)
   });
 });
+
 
 app.get("/eventbrite", (req, res) => {
   let url = `https://www.eventbriteapi.com/v3/venues/1234/?token=XVEX5DQROS3XG6RL36W5`;
