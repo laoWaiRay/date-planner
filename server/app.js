@@ -75,19 +75,19 @@ app.get("/mydates", async (req, res) => {
 });
 
 
-app.get("/eventbrite", (req, res) => {
-  let url = `https://www.eventbriteapi.com/v3/venues/1234/?token=XVEX5DQROS3XG6RL36W5`;
-  fetch(url)
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((error) => {
-      res.end(error);
-    });
-});
+// app.get("/eventbrite", (req, res) => {
+//   let url = `https://www.eventbriteapi.com/v3/venues/1234/?token=XVEX5DQROS3XG6RL36W5`;
+//   fetch(url)
+//     .then((response) => {
+//       return response.json();
+//     })
+//     .then((data) => {
+//       res.send(data);
+//     })
+//     .catch((error) => {
+//       res.end(error);
+//     });
+// });
 
 app.post("/mydates", async (req, res) => {
   try {
@@ -134,17 +134,16 @@ app.post("/mydates", async (req, res) => {
 app.get("/ticketmaster", (req, res) => {
   let startTime = "2023-07-09T01:00:00Z";
   let endTime = "2023-07-14T23:59:00Z";
-  let url = `https://app.ticketmaster.com/discovery/v2/events.json?countryCode=CA&city=Vancouver&startDateTime=${startTime}&endDateTime=${endTime}&apikey=${ticketmaster_api}`;
+  let url = `https://app.ticketmaster.com/discovery/v2/events.json?size=20&countryCode=CA&city=Vancouver&startDateTime=${startTime}&endDateTime=${endTime}&apikey=${ticketmaster_api}`;
   fetch(url)
     .then((response) => {
-      console.log(response);
       return response.json();
     })
     .then((data) => {
       res.send(data._embedded.events);
     })
     .catch((error) => {
-      res.end(error);
+      res.send(error);
     });
 });
 

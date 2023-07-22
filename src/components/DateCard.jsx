@@ -8,19 +8,25 @@ import IconButton from '@mui/material/IconButton';
 import Hero from "../assets/Hero.jpg"
 import CreateDateInvite from "./DateInviteModal"
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function DateCard({ id, name, description, category, location, image, price }) {
-
     const [showInviteModal, setShowInviteModal] = useState(false);
+    const navigate = useNavigate();
 
     const handleInviteClick = () => {
         setShowInviteModal(true);
       };
 
-      const handleCloseModal = () => {
-        setShowInviteModal(false);
-      };
+    const handleCloseModal = () => {
+      setShowInviteModal(false);
+    };
+
+    const handleClickDetails = () => {
+      console.log("NAVIGATE TO ID: ", id)
+      navigate(`/dates/${id}`);
+    }
     
     return (
         <Card className="h-full flex flex-col bg-red-200" variant="outlined" sx={{ maxWidth: 350, maxHeight: 350 }}>
@@ -36,6 +42,7 @@ export default function DateCard({ id, name, description, category, location, im
                 <p className="text-sm">{description}</p>
             </CardContent>
             <CardActions>
+                <Button onClick={handleClickDetails}>Details</Button>
                 <Button onClick={handleInviteClick} size="small">Invite</Button>
                 <IconButton color="default"><FavoriteBorderIcon></FavoriteBorderIcon></IconButton>
             </CardActions>

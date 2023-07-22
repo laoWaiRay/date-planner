@@ -19,7 +19,7 @@ export default function PublicDates() {
     // For pagination viewing
     const [tabValue, setTabValue] = useState("0");
     const [currentPage, setCurrentPage] = useState(1);
-    const [cardsPerPage] = useState(4);
+    const [cardsPerPage] = useState(12);
     const lastCardIndex =  currentPage * cardsPerPage
     const firstCardIndex = lastCardIndex - cardsPerPage
     const totalDatePageCount = Math.ceil(dates.length/cardsPerPage)
@@ -86,7 +86,7 @@ export default function PublicDates() {
             }
 
             return (
-                <DateCard key={event_id} name={name} category={category} location={location} image={image}></DateCard>
+                <DateCard key={event_id} id={event_id} name={name} category={category} location={location} image={image}></DateCard>
             )
             
         })
@@ -102,7 +102,7 @@ export default function PublicDates() {
             let id = date.id
 
             return (
-                <DateCard key={id} name={name} category={category} location={location} price={price}></DateCard>
+                <DateCard key={id} id={id} name={name} category={category} location={location} price={price}></DateCard>
             )
         })
     )
