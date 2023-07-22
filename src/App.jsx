@@ -44,16 +44,12 @@ export default function App() {
     },
     {
       path: "/dates",
-      element: user ? <Navigate to="/" /> : <> <DrawerAppBar /> <PublicDates /> </>,
+      element: !user ? <Navigate to="/" /> : <> <DrawerAppBar /> <PublicDates /> </>,
       loader: loginLoader,
     },
     {
       path: "/mydates",
-<<<<<<< HEAD
-      element: user ? <Navigate to="/" /> : <> <DrawerAppBar /> <MyDates /> </>,
-=======
-      element: user ? <div><DrawerAppBar /> <MyDates /> </div> : <Navigate to="/" />, 
->>>>>>> origin
+      element: user ? <> <DrawerAppBar /> <MyDates /> </> : <Navigate to="/" />, 
       loader: loginLoader,
     },
   ]);

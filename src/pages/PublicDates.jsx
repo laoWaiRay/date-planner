@@ -1,5 +1,5 @@
 import DateCard from "../components/DateCard";
-import Pagination from "@mui/material/Pagination";
+import Pagination from '@mui/material/Pagination';
 import { useState, useEffect } from "react";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -25,10 +25,10 @@ export default function PublicDates() {
     const totalDatePageCount = Math.ceil(dates.length/cardsPerPage)
     const totalEventPageCount = Math.ceil(events.length/cardsPerPage)
 
-  useEffect(() => {
-    retrieveEvents();
-    retrieveDates();
-  }, []);
+    useEffect(() => {
+        retrieveEvents();
+        retrieveDates();
+    }, []);
 
     useEffect(() => {
         retrieveDates();
@@ -38,10 +38,19 @@ export default function PublicDates() {
         setTabValue(newValue);
     };
 
-  const handlePageChange = (event, value) => {
-    console.log(value)
-    setPage(value);
-  };
+    const retrieveEvents = () => {
+        let url = `http://localhost:8000/ticketmaster`
+        fetch(url)
+        .then((response) => {
+            return response.json()
+          }) 
+          .then((data) => {
+            setEvents(data)
+          })
+        .catch (error => {
+            console.log(error)
+        })
+    }
 
     const retrieveDates = () => {
         if (categorySelect == "all" && priceSelect == "all") {
@@ -178,14 +187,7 @@ export default function PublicDates() {
                 }  
             </div>
         </div>
-      </div>
-
-      <Pagination
-        className="flex justify-center fixed bottom-4 w-full"
-        count={10}
-        color="primary"
-        onChange={handlePageChange}
-      />
-    </>
-  );
-}
+        
+        </>
+    )
+  }
