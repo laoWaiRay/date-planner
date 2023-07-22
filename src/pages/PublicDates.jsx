@@ -1,119 +1,182 @@
 import DateCard from "../components/DateCard";
 import Pagination from "@mui/material/Pagination";
 import { useState, useEffect } from "react";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 export default function PublicDates() {
-  const [dates, setDates] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [tabValue, setTabValue] = useState("0");
-  const [page, setPage] = useState(0);
+    const [dates, setDates] = useState([]);
+    const [events, setEvents] = useState([]);
+
+    // For filtering
+    const [categorySelect, setCategorySelect] = useState("all");
+    const [priceSelect, setPriceSelect] = useState("all");
+
+    // For pagination viewing
+    const [tabValue, setTabValue] = useState("0");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [cardsPerPage] = useState(12);
+    const lastCardIndex =  currentPage * cardsPerPage
+    const firstCardIndex = lastCardIndex - cardsPerPage
+    const totalDatePageCount = Math.ceil(dates.length/cardsPerPage)
+    const totalEventPageCount = Math.ceil(events.length/cardsPerPage)
 
   useEffect(() => {
     retrieveEvents();
     retrieveDates();
   }, []);
 
-  const handleChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
+    useEffect(() => {
+        retrieveDates();
+      }, [categorySelect, priceSelect]);
+
+    const handleChange = (event, newValue) => {
+        setTabValue(newValue);
+    };
 
   const handlePageChange = (event, value) => {
     console.log(value)
     setPage(value);
   };
 
-  const retrieveEvents = () => {
-    let url = `http://localhost:8000/ticketmaster`;
+    const retrieveDates = () => {
+        if (categorySelect == "all" && priceSelect == "all") {
+            var url = `http://localhost:8000/mydates`
+        } else {
+            var url = `http://localhost:8000/mydates?category=${categorySelect}&price=${priceSelect}`
+        }
+        
+        fetch(url)
+        .then((response) => {
+            return response.json()
+          }) 
+          .then((data) => {
+            setDates(data)
+          })
+        .catch (error => {
+            console.log(error)
+        })
+    }
 
-    fetch(url)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        setEvents(data);
-        console.log(data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+    const displayEvents = (() => 
+        events.slice(firstCardIndex, lastCardIndex).map(function(event) {
+            var name = event.name
+            var description = event.info
+            var category = event.classifications[0].genre.name
+            var location = event._embedded.venues[0].name
+            var event_id = event.id
 
-  const retrieveDates = () => {
-    let url = `http://localhost:8000/mydates`;
-    fetch(url)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        setDates(data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+            if (event.images[1]) {
+                var image = event.images[1].url
+            } else {
+                var image = event.images[0].url
+            }
 
-  const getEventsList = () => {
-    return events.slice(((page - 1) * 4), ((page - 1) * 4) + 4).map(function (date) {
-      var name = date.name;
-      var description = date.info;
-      var category = date.classifications[0].genre.name;
-      var location = date._embedded.venues[0].name;
-      var id = date.id;
+            return (
+                <DateCard key={event_id} name={name} category={category} location={location} image={image}></DateCard>
+            )
+            
+        })
+    )
+    
+    const displayDates = (() => 
+        dates.slice(firstCardIndex, lastCardIndex).map(function(date) {
+            let name = date.title
+            let description = date.description
+            let category = date.category;
+            let location = date.city
+            let price = date.price
+            let id = date.id
 
-      if (date.images[1]) {
-        var image = date.images[1].url;
-      } else {
-        var image = date.images[0].url;
-      }
+            return (
+                <DateCard key={id} name={name} category={category} location={location} price={price}></DateCard>
+            )
+        })
+    )
 
-      return (
-        <DateCard
-          key={id}
-          name={name}
-          category={category}
-          location={location}
-          image={image}
-        />
-      );
-    });
-  };
+    const onPageChange = ((evt, page) => {
+        setCurrentPage(page)
+    })
 
-  var datesList = dates.map(function (date) {
-    let name = date.name;
-    let description = date.description;
-    let category = date.category;
-    let location = date.location;
-    let id = date.id;
+    const onCategorySelect = (event, value)  =>{
+        let category = value.props.value
+        setCategorySelect(category)
+    }
+
+    const onPriceSelect = (event, value)  =>{
+        setPriceSelect(value.props.value)
+    }
+
+    const FilterBar = () => {
+
+        return (
+            <>
+                <FormControl sx={{ mx: 2, minWidth: 160 }}>
+                    <InputLabel id="category-select-label">Category</InputLabel>
+                    <Select
+                        labelId="category-select-label"
+                        id="category-select"
+                        value={categorySelect}
+                        label="Category"
+                        onChange={onCategorySelect}
+                    >   
+                        <MenuItem value="all">All</MenuItem>
+                        <MenuItem value="romantic">Romantic</MenuItem>
+                        <MenuItem value="indoor">Indoors</MenuItem>
+                        <MenuItem value="adventurous">Adventurous</MenuItem>
+                        <MenuItem value="relaxing">Relaxing</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <FormControl sx={{ mx: 2, minWidth: 140 }}>
+                    <InputLabel id="price-select-label">Price</InputLabel>
+                    <Select
+                        labelId="price-select-label"
+                        id="price-select"
+                        value={priceSelect}
+                        label="Price"
+                        onChange={onPriceSelect}
+                    >   
+                        <MenuItem value="all">All</MenuItem>
+                        <MenuItem value="Free">Free</MenuItem>
+                        <MenuItem value="$">$</MenuItem>
+                        <MenuItem value="$$">$$</MenuItem>
+                        <MenuItem value="$$$">$$$</MenuItem>
+                        <MenuItem value="$$$$">$$$$</MenuItem>
+                    </Select>
+                </FormControl>
+            </>
+        )
+
+    }
 
     return (
-      <DateCard
-        key={id}
-        name={name}
-        category={category}
-        location={location}
-      />
-    );
-  });
-
-  return (
-    <>
-      <div className="mx-auto -mt-4">
-        <h1 className="font-display text-blue-500 font-bold text-4xl flex justify-center">
-          Find Date Ideas
-        </h1>
-        <Tabs
-          className="mb-2"
-          value={tabValue}
-          onChange={handleChange}
-          centered
-        >
-          <Tab value="0" label="Shared by Users" />
-          <Tab value="1" label="Events/Concerts" />
+        <>
+        
+        <div className="md:container mx-auto">
+        <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4">Find Date Ideas</h1>
+        <Tabs className="mb-2" value ={tabValue} onChange={handleChange} centered>
+            <Tab value="0" label="Shared by Users" />
+            <Tab value="1" label="Events/Concerts" />
         </Tabs>
-        <div className="grid grid-cols-4 gap-2 max-w-6xl mx-auto mt-4">
-          {tabValue == "0" ? <>{datesList}</> : <>{getEventsList()}</>}
+        <div className="flex">
+            <div className="mx-auto my-3">
+                {tabValue == "0" ?<>{FilterBar()} </>: <></>}
+            </div>
+        </div>
+            <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
+                {tabValue == "0" ? <>{displayDates()}</>: <>{displayEvents()}</>}
+            </div>
+            <div className="flex">
+                {tabValue == "0" ?
+                    <><Pagination className="mx-auto my-4" page={currentPage} count={totalDatePageCount} color="primary" onChange={onPageChange} /></>:
+                    <><Pagination className="mx-auto my-4" page={currentPage} count={totalEventPageCount} color="primary" onChange={onPageChange} /></>
+                }  
+            </div>
         </div>
       </div>
 

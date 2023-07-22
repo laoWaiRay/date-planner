@@ -5,8 +5,12 @@ import DateForm from "./DateForm";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
 
-export default function CenteredImage() {
+export default function HomeScreen({ retrieveDates }) {
   const [modalShow, setModalShow] = useState(false);
+
+  const formSubmitted = () => {
+    retrieveDates();
+  };
 
   return (
     <>
@@ -19,15 +23,22 @@ export default function CenteredImage() {
             <div className="card-container">
               <div className="tagline-button-container">
                 <div className="button-container">
-                  <Button variant="primary button-container" onClick={() => setModalShow(true)}>
+                  <Button
+                    variant="primary button-container"
+                    onClick={() => setModalShow(true)}
+                  >
                     Add Date
                   </Button>
                 </div>
-                <DateForm show={modalShow} onHide={() => setModalShow(false)} />
+                <DateForm
+                  formSubmitted={formSubmitted}
+                  show={modalShow}
+                  onHide={() => setModalShow(false)}
+                />
               </div>
-                <div className="subheading">
-                  Where Memories Begin! Start Adding Dates Today!
-                </div>
+              <div className="subheading">
+                Where Memories Begin! Start Adding Dates Today!
+              </div>
             </div>
           </div>
         </div>
