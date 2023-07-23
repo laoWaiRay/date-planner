@@ -163,6 +163,13 @@ async function deleteReview(review_id) {
   await fetch(`http://localhost:8000/reviews/${review_id}`, fetchOptions.DELETE);
 }
 
+// Get average review score for a given event id
+async function getAverageReviewScore(event_id) {
+  const result = await fetch(`http://localhost:8000/reviews/${event_id}/average`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
 export {
   loginUser,
   signupUser,
@@ -179,5 +186,6 @@ export {
   addReview,
   editReview,
   deleteReview,
-  getReviews
+  getReviews,
+  getAverageReviewScore
 };

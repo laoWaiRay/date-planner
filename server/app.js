@@ -153,7 +153,6 @@ app.get("/locations/:id", async (req, res, next) => {
   const { id } = req.params;
   const result = await pool.query(`SELECT * FROM locations WHERE id = ${id}`);
   const data = result.rows[0];
-  console.log("DEBUG", data)
   res.json(data);
 })
 
@@ -229,6 +228,7 @@ app.post("/reviews/:id/edit", async (req, res, next) => {
   res.status(200).end();
 })
 
+// Delete a review by review ID
 app.delete("/reviews/:id", async (req, res, next) => {
   const { id } = req.params;
   const query = `
@@ -251,8 +251,19 @@ app.get("/reviews/:id", async (req, res, next) => {
     ORDER BY R.date;
   `;
   const result = await pool.query(query, [id]);
-  console.log(result)
   res.json(result.rows);
+})
+
+// Get the average rating for a given event ID
+app.get("/reviews/:id/average", async (req, res, next) => {
+  const { id } = req.params;
+  const query = `
+    SELECT AVG (score)
+    FROM reviews
+    WHERE event_id = $1
+  `;
+  const result = await pool.query(query, [id]);
+  res.json(result.rows[0]);
 })
 
 app.listen(PORT, () => {

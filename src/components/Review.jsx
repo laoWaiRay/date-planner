@@ -10,7 +10,7 @@ import { deleteReview, editReview } from '../api/internal/postgres';
 export default function Review({ review, triggerRerender }) {
   const { user } = useAuthContext();
   const [comment, setComment] = useState(review.comment);
-  const [score, setScore] = useState(review.score);
+  const [score, setScore] = useState(parseInt(review.score));
   const [isEditable, setIsEditable] = useState(false);
 
   const handleClickEdit = () => {
@@ -23,7 +23,7 @@ export default function Review({ review, triggerRerender }) {
   }
 
   const handleClickClose = () => {
-    setScore(review.score);
+    setScore(parseInt(review.score));
     setComment(review.comment);
     setIsEditable(false);
   }
@@ -88,7 +88,7 @@ export default function Review({ review, triggerRerender }) {
       </div>
       <Rating 
         readOnly
-        value={review.score}
+        value={parseInt(review.score)}
       />
       <p className='m-0'>{review.comment}</p>
     </div>
