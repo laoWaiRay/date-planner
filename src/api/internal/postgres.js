@@ -52,17 +52,27 @@ async function signupUser(userData) {
   return data;
 }
 
+//create an invite
 async function createInvitation(sender_id, receiver_id, event_id, status, date, start_time){
   const res = await fetch(`http://localhost:8000/createInvite?sender_id=${sender_id}&receiver_id=${receiver_id}&event_id=${event_id}&status=${status}&date=${date}&start_time=${start_time}`, {
     ...fetchOptions.POST
   });
 }
 
+//update an invites status to pending/accepted/rejected
 async function updateInviteStatus(invite_id, status){
   const res = await fetch(`http://localhost:8000/updateInviteStatus?invite_id=${invite_id}&status=${status}`,
     ...fetchOptions.POST
   );
 }
+
+//fetch all of a users pending dates (requested dates)
+async function getPendingUserInvites(user_id){
+  const res = await fetch(`http://localhost:8000/pendingUserInvites?user_id=${user_id}`, fetchOptions.GET);
+  const data = await res.json();
+  return data;
+}
+
 
 // Returns a list of all users
 async function getUsers() {
