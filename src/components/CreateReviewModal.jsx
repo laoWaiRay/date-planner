@@ -6,7 +6,7 @@ import { addReview } from "../api/internal/postgres";
 
 export default function CreateReviewModal({onClose, eventId}) {
   const [comment, setComment] = useState("");
-  const [score, setScore] = useState("");
+  const [score, setScore] = useState(0);
   const [error, setError] = useState("");
   const { user } = useAuthContext();
 
@@ -46,7 +46,7 @@ export default function CreateReviewModal({onClose, eventId}) {
 
           <Form.Group className="mb-3">
             <Typography component="legend">Score</Typography>
-            <Rating name="score" value={score} size="large" onClick={(e) => {setScore(e.target.value)}} />
+            <Rating name="score" value={score} size="large" onChange={(e, newVal)=>{setScore(newVal)}} />
           </Form.Group>
 
           <Button type="submit" variant="primary">Submit Review</Button>

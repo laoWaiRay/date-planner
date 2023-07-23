@@ -159,12 +159,15 @@ app.get("/ticketmaster", (req, res) => {
       return response.json();
     })
     .then((data) => {
-      res.json(data?._embedded?.events);
+      const events = data?._embedded?.events;
+      if (events && events.length > 0) 
+        res.json(events);
+      else 
+        res.json([]);
     })
     .catch((error) => {
       console.log("ERROR HERE")
       res.send([])
-      // res.end(error);
     });
 });
 
