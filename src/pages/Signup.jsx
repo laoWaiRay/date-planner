@@ -51,7 +51,6 @@ export default function Signup() {
       const resultEmail = await getUserByEmail(formState.email);
       const resultUsername = await getUserByUsername(formState.username);
       // Username/email are available
-      console.log(resultEmail, resultUsername)
       if (resultEmail.error && resultUsername.error) {
         setErrors({
           form: "",

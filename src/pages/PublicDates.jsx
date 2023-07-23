@@ -74,19 +74,13 @@ export default function PublicDates() {
     const displayEvents = (() => 
         events.slice(firstCardIndex, lastCardIndex).map(function(event) {
             var name = event.name
-            var description = event.info
             var category = event.classifications[0].genre.name
             var location = event._embedded.venues[0].name
             var event_id = event.id
-
-            if (event.images[1]) {
-                var image = event.images[1].url
-            } else {
-                var image = event.images[0].url
-            }
+            var image = event.images?.find((image) => image.width > 400 && image.ratio == "16_9")?.url
 
             return (
-                <DateCard key={event_id} name={name} category={category} location={location} image={image}></DateCard>
+                <DateCard key={event_id} id={event_id} name={name} category={category} location={location} image={image}></DateCard>
             )
             
         })
@@ -95,14 +89,14 @@ export default function PublicDates() {
     const displayDates = (() => 
         dates.slice(firstCardIndex, lastCardIndex).map(function(date) {
             let name = date.title
-            let description = date.description
             let category = date.category;
             let location = date.city
             let price = date.price
             let id = date.id
+            let image = date.image
 
             return (
-                <DateCard key={id} name={name} category={category} location={location} price={price}></DateCard>
+                <DateCard key={id} id={id} image={image} name={name} category={category} location={location} price={price}></DateCard>
             )
         })
     )
@@ -165,29 +159,25 @@ export default function PublicDates() {
 
     return (
         <>
-        
-        <div className="md:container mx-auto">
-        <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4">Find Date Ideas</h1>
-        <Tabs className="mb-2" value ={tabValue} onChange={handleChange} centered>
-            <Tab value="0" label="Shared by Users" />
-            <Tab value="1" label="Events/Concerts" />
-        </Tabs>
-        <div className="flex">
-            <div className="mx-auto my-3">
-                {tabValue == "0" ?<>{FilterBar()} </>: <></>}
-            </div>
-        </div>
-            <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
-                {tabValue == "0" ? <>{displayDates()}</>: <>{displayEvents()}</>}
-            </div>
-            <div className="flex">
-                {tabValue == "0" ?
-                    <><Pagination className="mx-auto my-4" page={currentPage} count={totalDatePageCount} color="primary" onChange={onPageChange} /></>:
-                    <><Pagination className="mx-auto my-4" page={currentPage} count={totalEventPageCount} color="primary" onChange={onPageChange} /></>
-                }  
-            </div>
-        </div>
-        
+          <h1 className="font-display text-blue-500 font-bold text-4xl text-center mb-0 -mt-2">Find Date Ideas</h1>
+          <Tabs className="mb-2" value ={tabValue} onChange={handleChange} centered>
+              <Tab value="0" label="Shared by Users" />
+              <Tab value="1" label="Events/Concerts" />
+          </Tabs>
+          <div className="flex">
+              <div className="mx-auto my-2">
+                  {tabValue == "0" ?<>{FilterBar()} </>: <></>}
+              </div>
+          </div>
+          <div className="grid grid-cols-4 gap-4 max-w-6xl mx-auto">
+              {tabValue == "0" ? <>{displayDates()}</>: <>{displayEvents()}</>}
+          </div>
+          <div className="flex">
+              {tabValue == "0" ?
+                  <><Pagination className="mx-auto my-4" page={currentPage} count={totalDatePageCount} color="primary" onChange={onPageChange} /></>:
+                  <><Pagination className="mx-auto my-4" page={currentPage} count={totalEventPageCount} color="primary" onChange={onPageChange} /></>
+              }  
+          </div>
         </>
     )
   }

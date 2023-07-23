@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 const key = "user_session";
 
 const drawerWidth = 240;
-const navItems = ['Home', 'Dates', 'Contact', 'Logout'];
+const navItems = ['Home', 'Dates', 'Favorites', 'Logout'];
 
 export default function DrawerAppBar(props) {
   const { window } = props;
@@ -34,11 +34,13 @@ export default function DrawerAppBar(props) {
   const handleNavButtonClick = (event, navItem) => {
     switch (navItem) {
       case 'Home':
+        navigate("/")
         break;
       case 'Dates':
-        navigate("/mydates");
+        navigate("/dates");
         break;
-      case 'Contact':
+      case 'Favorites':
+        navigate("/mydates")
         break;
       case 'Logout':
         logout();
@@ -69,7 +71,7 @@ export default function DrawerAppBar(props) {
   const container = window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex' }} className="z-10">
       <AppBar component="nav">
         <Toolbar>
           <IconButton

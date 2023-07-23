@@ -9,9 +9,7 @@ dotenv.config();
 
 const app = express();
 const PORT = 8000;
-const eventbrite_api = process.env.EVENTBRITE_API_KEY;
 const ticketmaster_api = process.env.TICKETMASTER_API_KEY;
-
 
 const pool = new pg.Pool({
   user: process.env.PG_USER,
@@ -26,7 +24,7 @@ app.use(
   })
 );
 app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.json({limit: "5000kb"}));
 app.use(
   session({
     secret: "secret",
@@ -47,21 +45,21 @@ app.get("/mydates", async (req, res) => {
   // var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments FROM events`;
 
   if ((category == "all" && price == "all") || (category === undefined && price === undefined)) {
-    var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments,
+    var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                       locations.city, locations.country, locations.detailed_address  
                       FROM events INNER JOIN locations ON events.location_id = locations.id;`
   } else if (category !== undefined && (price == "all" || price === undefined)) {
-    var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments,
+    var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
                         WHERE category='${category}';`
   } else if (price !== undefined && (category == "all" || category === undefined)) {
-    var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments,
+    var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
                         WHERE price='${price}';`
   } else if (category !== undefined && price !== undefined) {
-    var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments,
+    var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
                         WHERE category='${category}' AND price='${price}';`
@@ -75,25 +73,9 @@ app.get("/mydates", async (req, res) => {
   });
 });
 
-
-app.get("/eventbrite", (req, res) => {
-  let url = `https://www.eventbriteapi.com/v3/venues/1234/?token=XVEX5DQROS3XG6RL36W5`;
-  fetch(url)
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((error) => {
-      res.end(error);
-    });
-});
-
 app.post("/mydates", async (req, res) => {
   try {
     const { date } = req.body;
-    console.log(date);
     //Insert location table first
     const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
     const locationValues = [date.city, date.country, date.location];
@@ -104,7 +86,7 @@ app.post("/mydates", async (req, res) => {
     //for mock data im making user 1
 
     //Insert into events table
-    const eventQuery = `INSERT INTO events (title, description, author, price, category, preferred_time, location_id, private, comments) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
+    const eventQuery = `INSERT INTO events (title, description, author, price, category, preferred_time, location_id, private, comments, image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
     const eventValues = [
       date.title,
       date.date_idea,
@@ -115,6 +97,7 @@ app.post("/mydates", async (req, res) => {
       locationId,
       date.isPrivate,
       date.comments,
+      date.image
     ];
     const response = await pool.query(eventQuery, eventValues);
 
@@ -135,19 +118,43 @@ app.post("/mydates", async (req, res) => {
 app.get("/ticketmaster", (req, res) => {
   let startTime = "2023-07-09T01:00:00Z";
   let endTime = "2023-07-14T23:59:00Z";
-  let url = `https://app.ticketmaster.com/discovery/v2/events.json?countryCode=CA&city=Vancouver&startDateTime=${startTime}&endDateTime=${endTime}&apikey=${ticketmaster_api}`;
+  let url = `https://app.ticketmaster.com/discovery/v2/events.json?size=20&countryCode=CA&city=Vancouver&apikey=${ticketmaster_api}`;
+  // let url = `https://app.ticketmaster.com/discovery/v2/events.json?size=20&countryCode=CA&city=Vancouver&startDateTime=${startTime}&endDateTime=${endTime}&apikey=${ticketmaster_api}`;
   fetch(url)
     .then((response) => {
-      console.log(response);
       return response.json();
     })
     .then((data) => {
-      res.send(data._embedded.events);
+      res.json(data?._embedded?.events);
     })
     .catch((error) => {
-      res.end(error);
+      res.send(error);
     });
 });
+
+// Get ticketmaster event by id
+app.get("/ticketmaster/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const result = await fetch(`https://app.ticketmaster.com/discovery/v2/events.json?id=${id}&apikey=${ticketmaster_api}`);
+  const data = await result.json();
+  res.json(data?._embedded?.events?.[0]);
+})
+
+// Get user-created event by id
+app.get("/events/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const result = await pool.query(`SELECT * FROM events WHERE id = ${id}`);
+  const data = result.rows[0];
+  res.json(data);
+})
+
+// Get location by id
+app.get("/locations/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const result = await pool.query(`SELECT * FROM locations WHERE id = ${id}`);
+  const data = result.rows[0];
+  res.json(data);
+})
 
 app.post("/createInvite", async (req, res) =>{
   //URL parmaters
@@ -196,7 +203,67 @@ app.post("/updateInviteStatus", async (req, res) =>{
     console.error(error.message);
     res.status(500).json({ error: "Cannot update invitation" });
   }
+})
 
+// Add a new review for a given event ID
+app.post("/reviews/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const { author_id, comment, score } = req.body;
+  await pool.query(`
+    INSERT INTO reviews(event_id, author_id, comment, score)
+    VALUES ($1, $2, $3, $4);
+  `, [id, author_id, comment, score]);
+  res.status(200).end();
+})
+
+// Edit a review for a given review ID
+app.post("/reviews/:id/edit", async (req, res, next) => {
+  const { id } = req.params;
+  const { comment, score } = req.body;
+  await pool.query(`
+    UPDATE reviews
+    SET comment = $1, score = $2, date = CURRENT_DATE
+    WHERE id = $3;
+  `, [comment, score, id])
+  res.status(200).end();
+})
+
+// Delete a review by review ID
+app.delete("/reviews/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const query = `
+    DELETE FROM reviews
+    WHERE id = $1;
+  `;
+  await pool.query(query, [id]);
+  res.status(200).end();
+})
+
+// Get a list of all reviews for a given event ID
+app.get("/reviews/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const query = `
+    SELECT R.id, U.username, R.score, R.comment, R.date 
+    FROM reviews R
+      INNER JOIN events E ON R.event_id = E.id
+      INNER JOIN users U ON R.author_id = U.id
+    WHERE E.id = ($1)
+    ORDER BY R.date;
+  `;
+  const result = await pool.query(query, [id]);
+  res.json(result.rows);
+})
+
+// Get the average rating for a given event ID
+app.get("/reviews/:id/average", async (req, res, next) => {
+  const { id } = req.params;
+  const query = `
+    SELECT AVG (score)
+    FROM reviews
+    WHERE event_id = $1
+  `;
+  const result = await pool.query(query, [id]);
+  res.json(result.rows[0]);
 })
 
 app.listen(PORT, () => {

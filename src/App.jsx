@@ -17,6 +17,7 @@ import { getSession } from "./api/internal/postgres";
 import { initGoogleIdentity, handleCallbackResponse } from "./GoogleIdentity";
 import DrawerAppBar from "./components/Header";
 import HomeScreen from "./components/HomeScreen";
+import Details from "./pages/Details";
 
 export default function App() {
   const { user, dispatch } = useAuthContext();
@@ -44,14 +45,16 @@ export default function App() {
     },
     {
       path: "/dates",
-      element: user ? <Navigate to="/" /> : <div><DrawerAppBar /> <PublicDates /> </div>,
-      loader: loginLoader,
+      element: !user ? <Navigate to="/" /> : <> <DrawerAppBar /> <PublicDates /> </>,
     },
     {
       path: "/mydates",
-      element: user ? <div><DrawerAppBar /> <MyDates /> </div> : <Navigate to="/" />, 
-      loader: loginLoader,
+      element: user ? <> <DrawerAppBar /> <MyDates /> </> : <Navigate to="/" />, 
     },
+    {
+      path: "/dates/:id",
+      element: user ? <> <DrawerAppBar /> <Details /> </> : <Navigate to="/" />
+    }
   ]);
 
   // On page refresh, make a call to DB to restore client-side state about
