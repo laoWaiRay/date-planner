@@ -13,6 +13,10 @@ const fetchOptions = {
     method: "GET",
     credentials :"include"
   },
+  DELETE: {
+    method: "DELETE",
+    credentials: "include"
+  },
   BEARER_TOKEN: (token) => {
     return {
       credentials: "include",
@@ -83,6 +87,12 @@ async function getUserByUsername(username) {
   return data;
 }
 
+// Return user with matching ID
+async function getUserById(id) {
+  const res = await fetch(`http://localhost:8000/users/${id}`, fetchOptions.GET);
+  const data = await res.json();
+  return data;
+}
 
 // Returns
 async function getSession() {
@@ -99,14 +109,83 @@ async function loginWithGoogle(token) {
   await fetch("http://localhost:8000/users/login/google", fetchOptions.BEARER_TOKEN(token));
 }
 
+// EVENTS
+
+async function getEventById(id) {
+  const result = await fetch(`http://localhost:8000/events/${id}`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
+// LOCATION
+
+async function getLocationById(id) {
+  const result = await fetch(`http://localhost:8000/locations/${id}`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
+// REVIEWS
+
+// Add a review for a given event id
+async function addReview(event_id, author_id, comment, score) {
+  await fetch(`http://localhost:8000/reviews/${event_id}`, {
+    ...fetchOptions.POST,
+    body: JSON.stringify({
+      id: event_id,
+      author_id,
+      comment,
+      score
+    })
+  });
+}
+
+// Edit a review for a given review id
+async function editReview(review_id, comment, score) {
+  await fetch(`http://localhost:8000/reviews/${review_id}/edit`, {
+    ...fetchOptions.POST,
+    body: JSON.stringify({
+      comment,
+      score
+    })
+  })
+}
+
+// Get list of all reviews for a given event id
+async function getReviews(event_id) {
+  const result = await fetch(`http://localhost:8000/reviews/${event_id}`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
+// Delete a review by review id
+async function deleteReview(review_id) {
+  await fetch(`http://localhost:8000/reviews/${review_id}`, fetchOptions.DELETE);
+}
+
+// Get average review score for a given event id
+async function getAverageReviewScore(event_id) {
+  const result = await fetch(`http://localhost:8000/reviews/${event_id}/average`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
 export {
   loginUser,
   signupUser,
   getUsers,
   getUserByEmail,
   getUserByUsername,
+  getUserById,
   getSession,
   logoutUser,
   loginWithGoogle,
-  createInvitation
+  createInvitation,
+  getEventById,
+  getLocationById,
+  addReview,
+  editReview,
+  deleteReview,
+  getReviews,
+  getAverageReviewScore
 };
