@@ -5,7 +5,7 @@ import pool from '../postgres.js'
 const SALT_ROUNDS = 10;
 
 // Helper function: Remove fields from database response user object
-const createUserSession = (userData) => {
+const createUserObject = (userData) => {
   const { id, username, email, avatar_url } = userData;
   return { id, username, email, avatar_url };
 }
@@ -31,7 +31,7 @@ userController.loginUser = async (req, res, next) => {
         res.status(401).send({error: "Invalid login credentials"});
       } else {
         // Login success - create a session
-        const userSession = createUserSession(userData);
+        const userSession = createUserObject(userData);
         req.session.regenerate((err) => {
           if (err) next(err);
           req.session.user = {...userSession};
@@ -67,7 +67,7 @@ userController.signupUser = async (req, res, next) => {
       const result = await pool.query(insertUserQuery, [username, email, hash, salt]);
       const id = result.rows[0].id;
       const userData = (await pool.query("SELECT * FROM users WHERE id = $1", [id])).rows[0];
-      const userSession = createUserSession(userData);
+      const userSession = createUserObject(userData);
       req.session.user = userSession;
       res.json(userSession);
     });
@@ -85,7 +85,7 @@ userController.getUserByEmail = async(req, res, next) => {
   const userExistsQuery = "SELECT * FROM users WHERE email = $1";
   const result = await pool.query(userExistsQuery, [email]);
   if (result.rows.length)
-    res.json(result.rows[0]);
+    res.json(createUserObject(result.rows[0]));
   else
     res.json({error: "No user with matching email found"});
 }
@@ -95,9 +95,19 @@ userController.getUserByUsername = async(req, res, next) => {
   const userExistsQuery = "SELECT * FROM users WHERE username = $1";
   const result = await pool.query(userExistsQuery, [username]);
   if (result.rows.length)
-    res.json(result.rows[0]);
+    res.json(createUserObject(result.rows[0]));
   else
     res.json({error: "No user with matching username found"});
+}
+
+userController.getUserById = async(req, res, next) => {
+  const { id } = req.params;
+  const userQuery = "SELECT * FROM users WHERE id = $1";
+  const result = await pool.query(userQuery, [id]);
+  if (result.rows.length)
+    res.json(createUserObject(result.rows[0]));
+  else
+    res.json({error: "No user with matching id found"});
 }
 
 userController.getSession = (req, res, next) => {

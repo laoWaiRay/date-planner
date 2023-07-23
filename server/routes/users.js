@@ -27,4 +27,7 @@ router.get('/logout', userController.endSession)
 // Login with google
 router.post('/login/google', userController.loginWithGoogle)
 
+// Get user with matching id
+router.get('/:id', userController.getUserById);
+
 export default router

@@ -83,6 +83,12 @@ async function getUserByUsername(username) {
   return data;
 }
 
+// Return user with matching ID
+async function getUserById(id) {
+  const res = await fetch(`http://localhost:8000/users/${id}`, fetchOptions.GET);
+  const data = await res.json();
+  return data;
+}
 
 // Returns
 async function getSession() {
@@ -99,14 +105,33 @@ async function loginWithGoogle(token) {
   await fetch("http://localhost:8000/users/login/google", fetchOptions.BEARER_TOKEN(token));
 }
 
+// EVENTS
+
+async function getEventById(id) {
+  const result = await fetch(`http://localhost:8000/events/${id}`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
+// LOCATION
+
+async function getLocationById(id) {
+  const result = await fetch(`http://localhost:8000/locations/${id}`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
 export {
   loginUser,
   signupUser,
   getUsers,
   getUserByEmail,
   getUserByUsername,
+  getUserById,
   getSession,
   logoutUser,
   loginWithGoogle,
-  createInvitation
+  createInvitation,
+  getEventById,
+  getLocationById
 };

@@ -9,7 +9,7 @@ dotenv.config();
 
 const app = express();
 const PORT = 8000;
-const eventbrite_api = process.env.EVENTBRITE_API_KEY;
+// const eventbrite_api = process.env.EVENTBRITE_API_KEY;
 const ticketmaster_api = process.env.TICKETMASTER_API_KEY;
 
 const pool = new pg.Pool({
@@ -134,18 +134,44 @@ app.post("/mydates", async (req, res) => {
 app.get("/ticketmaster", (req, res) => {
   let startTime = "2023-07-09T01:00:00Z";
   let endTime = "2023-07-14T23:59:00Z";
-  let url = `https://app.ticketmaster.com/discovery/v2/events.json?size=20&countryCode=CA&city=Vancouver&startDateTime=${startTime}&endDateTime=${endTime}&apikey=${ticketmaster_api}`;
+  let url = `https://app.ticketmaster.com/discovery/v2/events.json?size=20&countryCode=CA&city=Vancouver&apikey=${ticketmaster_api}`;
+  // let url = `https://app.ticketmaster.com/discovery/v2/events.json?size=20&countryCode=CA&city=Vancouver&startDateTime=${startTime}&endDateTime=${endTime}&apikey=${ticketmaster_api}`;
   fetch(url)
     .then((response) => {
       return response.json();
     })
     .then((data) => {
-      res.send(data._embedded.events);
+      res.json(data?._embedded?.events);
     })
     .catch((error) => {
       res.send(error);
     });
 });
+
+// Get ticketmaster event by id
+app.get("/ticketmaster/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const result = await fetch(`https://app.ticketmaster.com/discovery/v2/events.json?id=${id}&apikey=${ticketmaster_api}`);
+  const data = await result.json();
+  res.json(data?._embedded?.events?.[0]);
+})
+
+// Get user-created event by id
+app.get("/events/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const result = await pool.query(`SELECT * FROM events WHERE id = ${id}`);
+  const data = result.rows[0];
+  res.json(data);
+})
+
+// Get location by id
+app.get("/locations/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const result = await pool.query(`SELECT * FROM locations WHERE id = ${id}`);
+  const data = result.rows[0];
+  console.log("DEBUG", data)
+  res.json(data);
+})
 
 app.post("/createInvite", async (req, res) =>{
   //URL parmaters
@@ -194,7 +220,6 @@ app.post("/updateInviteStatus", async (req, res) =>{
     console.error(error.message);
     res.status(500).json({ error: "Cannot update invitation" });
   }
-
 })
 
 app.listen(PORT, () => {
