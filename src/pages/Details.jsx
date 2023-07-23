@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { getTicketmasterEventById } from "../api/external/ticketmaster";
-import { getEventById, getLocationById, getUserById } from "../api/internal/postgres";
+import { getEventById, getLocationById, getReviews, getUserById } from "../api/internal/postgres";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import CreateReviewModal from "../components/CreateReviewModal";
+import Review from "../components/Review";
+import { Button } from "react-bootstrap";
 
 const isAPIevt = (id) => {
   return id.length > 10;
@@ -11,6 +15,10 @@ export default function Details() {
   const { id } = useParams();
   const [isAPIEvent] = useState(isAPIevt(id));
   const [data, setData] = useState({});
+  const [isCreateReviewModalOpen, setIsCreateReviewModalOpen] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [toggle, setToggle] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -31,6 +39,15 @@ export default function Details() {
       console.log(eventData)
     })()
   }, [])
+
+  useEffect(() => {
+    if (isAPIEvent) return;
+    (async () => {
+      const updatedReviews = await getReviews(id);
+      console.log(updatedReviews);
+      setReviews(updatedReviews);
+    })()
+  }, [isCreateReviewModalOpen, toggle])
 
   const extractDataFromUserEvent = (data, userData, location) => {
     return {
@@ -64,18 +81,26 @@ export default function Details() {
       }
   }
 
+  const triggerRerender = () => {
+    setToggle(!toggle);
+  }
+
+  const handleNavigate = () => {
+    navigate(-1);
+  }
+
   return (
     <div className="grid grid-cols-2 -my-12">
       {/* Details Section */}
-      <section className="overscroll-y-scroll p-8 flex flex-col">
+      <section className="overscroll-y-scroll m-8 mr-4 flex flex-col">
         <div className="flex flex-col">
           {/* Image */}
-          <img src={data.imageURL} alt={data.title} className="max-h-64 object-scale-down rounded-md mb-2"/>
+          <img src={data.imageURL} alt={data.title} className="max-w-full object-scale-down rounded-md mb-2"/>
 
           <h2 className="text-2xl m-0">{data.title}</h2>
 
           {/* General details */}
-          <div className="my-2">
+          <div className="my-2 p-2 border">
             <div>From: <b>{data.author}</b></div>
 
             {/* Location details */}
@@ -110,9 +135,42 @@ export default function Details() {
       </section>
 
       {/* Reviews Section */}
-      <section className="flex flex-col p-8">
-        <h2 className="text-2xl m-0">Reviews</h2>
-      </section>
+      {!isAPIEvent && 
+        <section className="flex flex-col m-8 ml-4">
+          <div className="flex space-x-4 items-center -mt-2 pb-1 border-b-2">
+            <h2 className="text-2xl m-0">Reviews</h2>
+            <button type="button" onClick={() => {setIsCreateReviewModalOpen(true); console.log(isCreateReviewModalOpen)}}>
+              <AddCircleOutlineIcon className="text-blue-400 opacity-80 hover:opacity-100" fontSize="large" />
+            </button>
+            <div className="!ml-auto">
+              <Button onClick={handleNavigate}>Go Back</Button>
+            </div>
+          </div>
+          <div>
+            {reviews.map((review) => (
+              <Review 
+                key={review.id}
+                review={review}
+                triggerRerender={triggerRerender}
+              />
+            ))}
+          </div>
+        </section>
+      }
+
+      {/* Popup Modal for Create Review */}
+      {isCreateReviewModalOpen && 
+        <CreateReviewModal 
+          onClose={() => setIsCreateReviewModalOpen(false)} 
+          eventId={id}
+        />
+      }
+      
+      {isAPIEvent && 
+        <div className="mt-8">
+          <Button onClick={handleNavigate}>Go Back</Button>
+        </div>
+      }
     </div>
   )
 }

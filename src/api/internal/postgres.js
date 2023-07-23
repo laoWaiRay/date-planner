@@ -13,6 +13,10 @@ const fetchOptions = {
     method: "GET",
     credentials :"include"
   },
+  DELETE: {
+    method: "DELETE",
+    credentials: "include"
+  },
   BEARER_TOKEN: (token) => {
     return {
       credentials: "include",
@@ -121,6 +125,44 @@ async function getLocationById(id) {
   return data;
 }
 
+// REVIEWS
+
+// Add a review for a given event id
+async function addReview(event_id, author_id, comment, score) {
+  await fetch(`http://localhost:8000/reviews/${event_id}`, {
+    ...fetchOptions.POST,
+    body: JSON.stringify({
+      id: event_id,
+      author_id,
+      comment,
+      score
+    })
+  });
+}
+
+// Edit a review for a given review id
+async function editReview(review_id, comment, score) {
+  await fetch(`http://localhost:8000/reviews/${review_id}/edit`, {
+    ...fetchOptions.POST,
+    body: JSON.stringify({
+      comment,
+      score
+    })
+  })
+}
+
+// Get list of all reviews for a given event id
+async function getReviews(event_id) {
+  const result = await fetch(`http://localhost:8000/reviews/${event_id}`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
+// Delete a review by review id
+async function deleteReview(review_id) {
+  await fetch(`http://localhost:8000/reviews/${review_id}`, fetchOptions.DELETE);
+}
+
 export {
   loginUser,
   signupUser,
@@ -133,5 +175,9 @@ export {
   loginWithGoogle,
   createInvitation,
   getEventById,
-  getLocationById
+  getLocationById,
+  addReview,
+  editReview,
+  deleteReview,
+  getReviews
 };

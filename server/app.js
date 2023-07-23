@@ -9,7 +9,6 @@ dotenv.config();
 
 const app = express();
 const PORT = 8000;
-// const eventbrite_api = process.env.EVENTBRITE_API_KEY;
 const ticketmaster_api = process.env.TICKETMASTER_API_KEY;
 
 const pool = new pg.Pool({
@@ -73,21 +72,6 @@ app.get("/mydates", async (req, res) => {
     res.send(result.rows)
   });
 });
-
-
-// app.get("/eventbrite", (req, res) => {
-//   let url = `https://www.eventbriteapi.com/v3/venues/1234/?token=XVEX5DQROS3XG6RL36W5`;
-//   fetch(url)
-//     .then((response) => {
-//       return response.json();
-//     })
-//     .then((data) => {
-//       res.send(data);
-//     })
-//     .catch((error) => {
-//       res.end(error);
-//     });
-// });
 
 app.post("/mydates", async (req, res) => {
   try {
@@ -220,6 +204,55 @@ app.post("/updateInviteStatus", async (req, res) =>{
     console.error(error.message);
     res.status(500).json({ error: "Cannot update invitation" });
   }
+})
+
+// Add a new review for a given event ID
+app.post("/reviews/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const { author_id, comment, score } = req.body;
+  await pool.query(`
+    INSERT INTO reviews(event_id, author_id, comment, score)
+    VALUES ($1, $2, $3, $4);
+  `, [id, author_id, comment, score]);
+  res.status(200).end();
+})
+
+// Edit a review for a given review ID
+app.post("/reviews/:id/edit", async (req, res, next) => {
+  const { id } = req.params;
+  const { comment, score } = req.body;
+  await pool.query(`
+    UPDATE reviews
+    SET comment = $1, score = $2, date = CURRENT_DATE
+    WHERE id = $3;
+  `, [comment, score, id])
+  res.status(200).end();
+})
+
+app.delete("/reviews/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const query = `
+    DELETE FROM reviews
+    WHERE id = $1;
+  `;
+  await pool.query(query, [id]);
+  res.status(200).end();
+})
+
+// Get a list of all reviews for a given event ID
+app.get("/reviews/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const query = `
+    SELECT R.id, U.username, R.score, R.comment, R.date 
+    FROM reviews R
+      INNER JOIN events E ON R.event_id = E.id
+      INNER JOIN users U ON R.author_id = U.id
+    WHERE E.id = ($1)
+    ORDER BY R.date;
+  `;
+  const result = await pool.query(query, [id]);
+  console.log(result)
+  res.json(result.rows);
 })
 
 app.listen(PORT, () => {

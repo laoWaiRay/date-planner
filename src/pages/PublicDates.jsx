@@ -74,16 +74,10 @@ export default function PublicDates() {
     const displayEvents = (() => 
         events.slice(firstCardIndex, lastCardIndex).map(function(event) {
             var name = event.name
-            var description = event.info
             var category = event.classifications[0].genre.name
             var location = event._embedded.venues[0].name
             var event_id = event.id
-
-            if (event.images[1]) {
-                var image = event.images[1].url
-            } else {
-                var image = event.images[0].url
-            }
+            var image = event.images?.find((image) => image.width > 400 && image.ratio == "16_9")?.url
 
             return (
                 <DateCard key={event_id} id={event_id} name={name} category={category} location={location} image={image}></DateCard>
@@ -95,7 +89,6 @@ export default function PublicDates() {
     const displayDates = (() => 
         dates.slice(firstCardIndex, lastCardIndex).map(function(date) {
             let name = date.title
-            let description = date.description
             let category = date.category;
             let location = date.city
             let price = date.price
