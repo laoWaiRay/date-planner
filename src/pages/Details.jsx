@@ -76,7 +76,7 @@ export default function Details() {
           {/* Title and Average Score */}
           <div>
             <h2 className="text-2xl m-0">{data.title}</h2>
-            <div className="flex items-center space-x-2">
+            <div className={`flex items-center space-x-2 ${isAPIEvent ? "hidden" : ""}`}>
               <Rating 
                 value={averageScore}
                 readOnly
