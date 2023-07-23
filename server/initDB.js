@@ -81,6 +81,16 @@ const createTables = async () => {
     );
   `);
 
+  await pool.query(`
+    CREATE TABLE saved (
+      id serial PRIMARY KEY,
+      user_id int,
+      event_id int,
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (event_id) REFERENCES events(id)
+    );
+`);
+
   await pool.end();
 };
 

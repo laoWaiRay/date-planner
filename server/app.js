@@ -133,19 +133,55 @@ app.post("/mydates", async (req, res) => {
 });
 
 app.get("/ticketmaster", (req, res) => {
-  let startTime = "2023-07-09T01:00:00Z";
-  let endTime = "2023-07-14T23:59:00Z";
-  let url = `https://app.ticketmaster.com/discovery/v2/events.json?countryCode=CA&city=Vancouver&startDateTime=${startTime}&endDateTime=${endTime}&apikey=${ticketmaster_api}`;
+  var start = req.query.start
+  var end = req.query.end
+  var countryCode = req.query.country
+  var city = req.query.city
+
+  const dateObj = new Date()
+  var currDay = dateObj.getDate()
+  if (currDay < 10) {
+    currDay = "0"+currDay
+  }
+
+  var currMonth = dateObj.getMonth()+1
+  if (currMonth < 10) {
+    currMonth = "0"+currMonth
+  }
+  var currYear = dateObj.getFullYear()
+  var currentDate = currYear+"-"+currMonth+"-"+currDay
+  if (startTime == "") {
+    var startTime = currentDate.toString()+"T00:00:00Z"
+  } else {
+    var startTime = start.toString()+"T00:00:00Z"
+  }
+
+  if (end == "") {
+    var endTime = currentDate.toString()+"T23:59:00Z"
+  } else {
+    var endTime = end.toString()+"T23:59:00Z"
+  }
+
+  if (city === undefined || city === "") {
+    var url = `https://app.ticketmaster.com/discovery/v2/events.json?countryCode=${countryCode}&startDateTime=${startTime}&endDateTime=${endTime}&apikey=${ticketmaster_api}`;
+  } else {
+    var url = `https://app.ticketmaster.com/discovery/v2/events.json?countryCode=${countryCode}&city=${city}&startDateTime=${startTime}&endDateTime=${endTime}&apikey=${ticketmaster_api}`;
+  }
+    
+
+  console.log("Ticketmaster Call:",url)
   fetch(url)
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       return response.json();
     })
     .then((data) => {
       res.send(data._embedded.events);
     })
     .catch((error) => {
-      res.end(error);
+      console.log("ERROR HERE")
+      res.send([])
+      // res.end(error);
     });
 });
 
