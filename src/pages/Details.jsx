@@ -37,11 +37,8 @@ export default function Details() {
         const userData = await getUserById(eventData.author);
         const locationData = await getLocationById(eventData.location_id);
         setData(extractDataFromUserEvent(eventData, userData, locationData));
-        const avgScore = parseFloat((await getAverageReviewScore(id)).avg).toFixed(1);
-        setAverageScore(avgScore);
-      }
-
-      console.log(eventData)
+        await fetchAverageScore();
+        }
     })()
   }, [])
 
@@ -49,10 +46,8 @@ export default function Details() {
     if (isAPIEvent) return;
     (async () => {
       const updatedReviews = await getReviews(id);
-      console.log(updatedReviews);
       setReviews(updatedReviews);
-      const avgScore = parseFloat((await getAverageReviewScore(id)).avg).toFixed(1);
-      setAverageScore(avgScore);
+      await fetchAverageScore();
     })()
   }, [isCreateReviewModalOpen, toggle])
 
@@ -63,6 +58,17 @@ export default function Details() {
 
   const handleNavigate = () => {
     navigate(-1);
+  }
+
+  const fetchAverageScore = async () => {
+    let avg = (await getAverageReviewScore(id)).avg;
+    if (!avg) {
+      setAverageScore(0.0);
+    }
+    else {
+      avg = Math.round(parseFloat(avg) * 10) / 10;
+    }
+    setAverageScore(avg);
   }
 
   return (
@@ -76,14 +82,18 @@ export default function Details() {
           {/* Title and Average Score */}
           <div>
             <h2 className="text-2xl m-0">{data.title}</h2>
-            <div className={`flex items-center space-x-2 ${isAPIEvent ? "hidden" : ""}`}>
-              <Rating 
-                value={averageScore}
-                readOnly
-                precision={0.1}
-              />
-              <span className="text-lg font-semibold">{averageScore}</span>
-            </div>
+            {
+              (averageScore > 0.0) && (
+                <div className="flex items-center space-x-2">
+                  <Rating 
+                    value={averageScore}
+                    readOnly
+                    precision={0.1}
+                  />
+                  <span className="text-lg font-semibold">{averageScore}</span>
+                </div>
+              )
+            }
           </div>
 
           {/* General details */}
@@ -126,7 +136,7 @@ export default function Details() {
         <section className="flex flex-col m-8 ml-4">
           <div className="flex space-x-4 items-center -mt-2 pb-2 border-b-2">
             <h2 className="text-2xl m-0">Reviews</h2>
-            <button type="button" onClick={() => {setIsCreateReviewModalOpen(true); console.log(isCreateReviewModalOpen)}}>
+            <button type="button" onClick={() => {setIsCreateReviewModalOpen(true)}}>
               <AddCircleOutlineIcon className="text-blue-400 opacity-80 hover:opacity-100" fontSize="large" />
             </button>
             <div className="!ml-auto">

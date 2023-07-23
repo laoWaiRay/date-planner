@@ -68,7 +68,6 @@ export default function PublicDates() {
     };
 
     const retrieveEvents = () => {
-        // let url = `http://localhost:8000/ticketmaster`
         let url = `http://localhost:8000/ticketmaster?start=${eventStart}&end=${eventEnd}&country=${countryCode}&city=${citySearch}`
         fetch(url)
         .then((response) => {

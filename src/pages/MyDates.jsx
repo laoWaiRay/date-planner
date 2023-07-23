@@ -15,7 +15,7 @@ export default function MyDates() {
 
 
   useEffect(() => {
-    retrieveDates();
+    // retrieveDates();
   }, []);
 
   const retrieveDates = async () => {
