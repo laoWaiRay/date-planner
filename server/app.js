@@ -25,7 +25,7 @@ app.use(
   })
 );
 app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.json({limit: "5000kb"}));
 app.use(
   session({
     secret: "secret",
@@ -92,7 +92,6 @@ app.get("/mydates", async (req, res) => {
 app.post("/mydates", async (req, res) => {
   try {
     const { date } = req.body;
-    console.log(date);
     //Insert location table first
     const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
     const locationValues = [date.city, date.country, date.location];
@@ -103,7 +102,7 @@ app.post("/mydates", async (req, res) => {
     //for mock data im making user 1
 
     //Insert into events table
-    const eventQuery = `INSERT INTO events (title, description, author, price, category, preferred_time, location_id, private, comments) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
+    const eventQuery = `INSERT INTO events (title, description, author, price, category, preferred_time, location_id, private, comments, image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
     const eventValues = [
       date.title,
       date.date_idea,
@@ -114,6 +113,7 @@ app.post("/mydates", async (req, res) => {
       locationId,
       date.isPrivate,
       date.comments,
+      date.image
     ];
     const response = await pool.query(eventQuery, eventValues);
 

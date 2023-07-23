@@ -43,7 +43,8 @@ export default function Details() {
       country:              location.country,
       venue:                location.detailed_address,
       date_posted:          data.date_posted,
-      description:          data.description
+      description:          data.description,
+      imageURL:             data.image
     }
   }
 
@@ -69,13 +70,13 @@ export default function Details() {
       <section className="overscroll-y-scroll p-8 flex flex-col">
         <div className="flex flex-col">
           {/* Image */}
-          <img src={data.imageURL} alt={data.title} className="max-w-xl rounded-md mb-2"/>
+          <img src={data.imageURL} alt={data.title} className="max-h-64 object-scale-down rounded-md mb-2"/>
 
           <h2 className="text-2xl m-0">{data.title}</h2>
 
           {/* General details */}
           <div className="my-2">
-            <div>From {data.author}</div>
+            <div>From: <b>{data.author}</b></div>
 
             {/* Location details */}
             <div>{data.venue}</div>

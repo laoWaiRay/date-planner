@@ -53,6 +53,7 @@ const createTables = async () => {
       date_posted DATE DEFAULT CURRENT_DATE,
       private boolean DEFAULT FALSE,
       comments text,
+      image text,
       FOREIGN KEY (author) REFERENCES users(id),
       FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
     );
