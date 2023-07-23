@@ -100,9 +100,10 @@ export default function PublicDates() {
             let location = date.city
             let price = date.price
             let id = date.id
+            let image = date.image
 
             return (
-                <DateCard key={id} id={id} name={name} category={category} location={location} price={price}></DateCard>
+                <DateCard key={id} id={id} image={image} name={name} category={category} location={location} price={price}></DateCard>
             )
         })
     )
