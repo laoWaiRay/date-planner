@@ -8,10 +8,11 @@ import Review from "../components/Review";
 import { Button } from "react-bootstrap";
 import { getDefaultImage } from "../helpers/getDefaultImage";
 import { Rating } from "@mui/material";
-import { Delete, Close, Edit } from "@mui/icons-material";
+import { Delete, Edit, Favorite, Send } from "@mui/icons-material";
 import { useAuthContext } from "../hooks/useAuthContext";
 import DateForm from "../components/DateForm";
 import CreateDateInvite from "../components/DateInviteModal"
+import DeleteWarningModal from "../components/DeleteWarningModal";
 
 const isAPIevt = (id) => {
   return id.length > 10;
@@ -28,6 +29,7 @@ export default function Details() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
   const [modalShow, setModalShow] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
 
   const postData = async (body) => {
@@ -110,7 +112,7 @@ export default function Details() {
 
           {/* Title and Average Score */}
           <div>
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1 px-2">
               <h2 className="text-2xl m-0">{data.title}</h2>
 
               { (!isAPIEvent && user.username == data.author) && (
@@ -118,16 +120,26 @@ export default function Details() {
                 <button onClick={() => setModalShow(true)}>
                   <Edit />
                 </button>
-                <button>
+                <button onClick={() => setShowDeleteModal(true)}>
                   <Delete />
                 </button>
                 </>
               )}
               
+              {/* Buttons to like and share */}
+              <div className="!ml-auto space-x-4">
+                <button type="button">
+                  <Favorite />
+                </button>
+                <button type="button" onClick={() => setShowInviteModal(true)}>
+                  <Send className="-rotate-45 -translate-y-[3px]"/>
+                </button>
+              </div>
+              
             </div>
             {
               (averageScore > 0.0) && (
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 px-1">
                   <Rating 
                     value={averageScore}
                     readOnly
@@ -175,8 +187,8 @@ export default function Details() {
           </div>
 
           {/* Description and extra notes*/}
-          <p>{data.description}</p>
-          <p>{data.comments}</p>
+          <p className="px-2">{data.description}</p>
+          <p className="px-2">{data.comments}</p>
 
         </div>
       </section>
@@ -215,8 +227,6 @@ export default function Details() {
       
       {isAPIEvent && 
         <div className="mt-8 w-full space-x-4">
-          <Button onClick={() => setShowInviteModal(true)}>Invite</Button>
-          <Button>Save To Favorites</Button>
           <Button className="ml-auto mr-8" onClick={handleNavigate}>Go Back</Button>
         </div>
       }
@@ -231,6 +241,15 @@ export default function Details() {
 
       {/* Popup for date invite */}
       {showInviteModal && (<CreateDateInvite onClose={() => setShowInviteModal(false)} eventID={id}/>)}
+
+      {/* Popup warning for delete post */}
+      {showDeleteModal && 
+        <DeleteWarningModal 
+          onClose={() => setShowDeleteModal(false)} 
+          eventId={id} 
+          event_username={data.author}
+        />
+      }
     </div>
   )
 }

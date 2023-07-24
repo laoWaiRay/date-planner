@@ -258,6 +258,13 @@ app.get("/events/:id", async (req, res, next) => {
   res.json(data);
 })
 
+// Delete an event by event id
+app.delete("/events/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const result = await pool.query(`DELETE FROM events WHERE id = $1`, [id]);
+  res.end();
+})
+
 // Get location by id
 app.get("/locations/:id", async (req, res, next) => {
   const { id } = req.params;

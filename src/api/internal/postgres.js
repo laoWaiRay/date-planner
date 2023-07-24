@@ -127,6 +127,10 @@ async function getEventById(id) {
   return data;
 }
 
+async function deleteEvent(id ) {
+  await fetch(`http://localhost:8000/events/${id}`, fetchOptions.DELETE);
+}
+
 // LOCATION
 
 async function getLocationById(id) {
@@ -192,6 +196,7 @@ export {
   loginWithGoogle,
   createInvitation,
   getEventById,
+  deleteEvent,
   getLocationById,
   addReview,
   editReview,
