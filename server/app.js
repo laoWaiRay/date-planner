@@ -151,13 +151,15 @@ app.patch("/mydates", async (req, res, next) => {
       locationId = locationResult.rows[0]?.id;
     }
 
+    // This is a hacky way to only update the image if the user uploaded a new image
+
     const query = `
       UPDATE events 
       SET title = $1, description = $2, price = $3, category = $4, preferred_time = $5, 
-          location_id = $6, date_posted = CURRENT_DATE, private = $7, comments = $8, image = $9
-      WHERE id = $10;
+          location_id = $6, date_posted = CURRENT_DATE, private = $7, comments = $8 ${image ? " ,image = $10 " : " "}
+      WHERE id = $9;
     `;
-
+    
     const queryValues = [
       title, 
       date_idea, 
@@ -167,13 +169,14 @@ app.patch("/mydates", async (req, res, next) => {
       locationId, 
       isPrivate, 
       comments, 
-      image, 
       event_id
     ];
 
+    if (image)
+      queryValues.push(image);
+
     await pool.query(query, queryValues);
 
-    console.log("PATCH success")
     res.end();
   } catch (error) {
     console.error(error);
