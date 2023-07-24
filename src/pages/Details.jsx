@@ -11,6 +11,7 @@ import { Rating } from "@mui/material";
 import { Delete, Close, Edit } from "@mui/icons-material";
 import { useAuthContext } from "../hooks/useAuthContext";
 import DateForm from "../components/DateForm";
+import CreateDateInvite from "../components/DateInviteModal"
 
 const isAPIevt = (id) => {
   return id.length > 10;
@@ -27,6 +28,7 @@ export default function Details() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
   const [modalShow, setModalShow] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
   const postData = async (body) => {
     await fetch("http://localhost:8000/mydates", {
@@ -213,7 +215,7 @@ export default function Details() {
       
       {isAPIEvent && 
         <div className="mt-8 w-full space-x-4">
-          <Button>Invite</Button>
+          <Button onClick={() => setShowInviteModal(true)}>Invite</Button>
           <Button>Save To Favorites</Button>
           <Button className="ml-auto mr-8" onClick={handleNavigate}>Go Back</Button>
         </div>
@@ -226,6 +228,9 @@ export default function Details() {
         postData={postData}
         initValues={initFormValues}
       />
+
+      {/* Popup for date invite */}
+      {showInviteModal && (<CreateDateInvite onClose={() => setShowInviteModal(false)} eventID={id}/>)}
     </div>
   )
 }
