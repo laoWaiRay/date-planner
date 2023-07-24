@@ -69,7 +69,11 @@ export default function Details() {
         const locationData = await getLocationById(eventData.location_id);
         setData(extractDataFromUserEvent(eventData, userData, locationData));
         await fetchAverageScore();
+<<<<<<< HEAD
       }
+=======
+        }
+>>>>>>> origin
     })()
   }, [modalShow])
 
@@ -112,6 +116,7 @@ export default function Details() {
 
           {/* Title and Average Score */}
           <div>
+<<<<<<< HEAD
             <div className="flex items-center space-x-1 px-2">
               <h2 className="text-2xl m-0">{data.title}</h2>
 
@@ -140,6 +145,12 @@ export default function Details() {
             {
               (averageScore > 0.0) && (
                 <div className="flex items-center space-x-2 px-1">
+=======
+            <h2 className="text-2xl m-0">{data.title}</h2>
+            {
+              (averageScore > 0.0) && (
+                <div className="flex items-center space-x-2">
+>>>>>>> origin
                   <Rating 
                     value={averageScore}
                     readOnly
