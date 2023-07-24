@@ -12,11 +12,14 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 
 export default function PublicDates() {
+    const { user } = useAuthContext();
     const [dates, setDates] = useState([]);
     const [events, setEvents] = useState([]);
+    const [favorites, setFavorites] = useState([]);
 
     // For date idea filtering
     const [categorySelect, setCategorySelect] = useState("all");
@@ -51,6 +54,7 @@ export default function PublicDates() {
     const totalEventPageCount = Math.ceil(events.length/cardsPerPage)
 
     useEffect(() => {
+        retrieveFavorites();
         retrieveEvents();
         retrieveDates();
     }, []);
@@ -59,12 +63,9 @@ export default function PublicDates() {
         retrieveDates();
       }, [categorySelect, priceSelect]);
 
-    // useEffect(() => {
-    //     retrieveEvents();
-    // }, [eventStart, eventEnd]);
-
     const handleChange = (event, newValue) => {
         setTabValue(newValue);
+        retrieveFavorites();
     };
 
     const retrieveEvents = () => {
@@ -84,16 +85,17 @@ export default function PublicDates() {
 
     const retrieveDates = () => {
         if (categorySelect == "all" && priceSelect == "all") {
-            var url = `http://localhost:8000/mydates`
+            var url = `http://localhost:8000/publicdates`
         } else {
-            var url = `http://localhost:8000/mydates?category=${categorySelect}&price=${priceSelect}`
+            var url = `http://localhost:8000/publicdates?category=${categorySelect}&price=${priceSelect}`
         }
-        
+
         fetch(url)
         .then((response) => {
             return response.json()
           }) 
           .then((data) => {
+            
             setDates(data)
           })
         .catch (error => {
@@ -101,11 +103,33 @@ export default function PublicDates() {
         })
     }
 
+    const retrieveFavorites = () => {
+        console.log("OUTSIDE GETTING FAVS", user)
+        if (user) {
+            console.log("GETTING FAVS")
+            let url = `http://localhost:8000/favorites?user=${user.id}`;
+            fetch(url)
+            .then((response) => {
+                return response.json()
+              }) 
+              .then((data) => {
+                setFavorites(data)
+              })
+            .catch (error => {
+                console.log(error)
+            })
+        }
+  
+    }
+
+
     const displayEvents = (() => 
         events.slice(firstCardIndex, lastCardIndex).map(function(event) {
             // console.log(event)
             var name = event.name
             var description = event.info
+            var event_id = event.id
+            var image = event.images?.find((image) => image.width > 400 && image.ratio == "16_9")?.url
 
             try {
                 var category = event.classifications[0].genre.name
@@ -118,12 +142,9 @@ export default function PublicDates() {
             } catch {
                 var location = "N/A"
             }
-            
-            var event_id = event.id
-            var image = event.images?.find((image) => image.width > 400 && image.ratio == "16_9")?.url
-
+        
             return (
-                <DateCard key={event_id} id={event_id} name={name} category={category} location={location} image={image}></DateCard>
+                <DateCard key={event_id} id={event_id} name={name} category={category} location={location} image={image} inFavorite={false}></DateCard>
             )
             
         })
@@ -137,9 +158,18 @@ export default function PublicDates() {
             let price = date.price
             let id = date.id
             let image = date.image
+            
+            var check = fav => fav.id === id;
+            if (favorites.some(check)) {
+                console.log("match",id)
+                var isFav = true
+            } else {
+                console.log("no match",id)
+                var isFav = false
+            }
 
             return (
-                <DateCard key={id} id={id} image={image} name={name} category={category} location={location} price={price}></DateCard>
+                <DateCard key={id} id={id} image={image} name={name} category={category} location={location} price={price} favorites={favorites} inFavorite={isFav}></DateCard>
             )
         })
     )
@@ -147,6 +177,8 @@ export default function PublicDates() {
     const onPageChange = ((evt, page) => {
         setCurrentPage(page)
     })
+
+    // For Public Date Ideas Filter & Search
 
     const onCategorySelect = (event, value)  =>{
         let category = value.props.value
@@ -197,6 +229,8 @@ export default function PublicDates() {
             </>
         )
     }
+
+    // For Ticketmaster Events Filter & Search
 
     const onStartDateChange = (date)  =>{
         // console.log(date, date.$d.getMonth())

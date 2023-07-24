@@ -12,8 +12,8 @@ const PORT = 8000;
 const ticketmaster_api = process.env.TICKETMASTER_API_KEY;
 
 const pool = new pg.Pool({
-  user: process.env.PG_USER,
-  password: process.env.PG_PASSWORD,
+  user: "postgres",
+  password: "root",
   database: "dateplanner",
 });
 
@@ -40,29 +40,32 @@ app.use(
 app.use("/users", userRouter);
 
 app.get("/mydates", async (req, res) => {
+  var userid = req.query.user
   var category = req.query.category
   var price = req.query.price
+
   // var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments FROM events`;
 
   if ((category == "all" && price == "all") || (category === undefined && price === undefined)) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                       locations.city, locations.country, locations.detailed_address  
-                      FROM events INNER JOIN locations ON events.location_id = locations.id;`
+                      FROM events INNER JOIN locations ON events.location_id = locations.id
+                      WHERE author='${userid}';`
   } else if (category !== undefined && (price == "all" || price === undefined)) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE category='${category}';`
+                        WHERE category='${category}' AND author='${userid}';`
   } else if (price !== undefined && (category == "all" || category === undefined)) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE price='${price}';`
+                        WHERE price='${price}' AND author='${userid}';`
   } else if (category !== undefined && price !== undefined) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE category='${category}' AND price='${price}';`
+                        WHERE category='${category}' AND price='${price}' AND author='${userid}';`
   }
 
   await pool.query(myDatesQuery, (err, result) => {
@@ -70,6 +73,87 @@ app.get("/mydates", async (req, res) => {
       res.end(err);
     }
     res.send(result.rows)
+  });
+});
+
+app.get("/publicdates", async (req, res) => {
+  var category = req.query.category
+  var price = req.query.price
+  // var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments FROM events`;
+
+  if ((category == "all" && price == "all") || (category === undefined && price === undefined)) {
+    var publicDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
+                      locations.city, locations.country, locations.detailed_address  
+                      FROM events INNER JOIN locations ON events.location_id = locations.id WHERE private='f';`
+  } else if (category !== undefined && (price == "all" || price === undefined)) {
+    var publicDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
+                        locations.city, locations.country, locations.detailed_address  
+                        FROM events INNER JOIN locations ON events.location_id = locations.id
+                        WHERE category='${category}' AND private='f';`
+  } else if (price !== undefined && (category == "all" || category === undefined)) {
+    var publicDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
+                        locations.city, locations.country, locations.detailed_address  
+                        FROM events INNER JOIN locations ON events.location_id = locations.id
+                        WHERE price='${price}' AND private='f';`
+  } else if (category !== undefined && price !== undefined) {
+    var publicDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
+                        locations.city, locations.country, locations.detailed_address  
+                        FROM events INNER JOIN locations ON events.location_id = locations.id
+                        WHERE category='${category}' AND price='${price}' AND private='f';`
+  }
+
+  await pool.query(publicDatesQuery, (err, result) => {
+    if (err) {
+      res.end(err);
+    }
+    res.send(result.rows)
+  });
+});
+
+
+app.get("/favorites", async (req, res) => {
+  var userid = req.query.user
+
+  var favoritesQuery = 
+    `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
+    locations.city, locations.country, locations.detailed_address  
+    FROM events INNER JOIN locations ON events.location_id = locations.id
+    WHERE events.id IN (SELECT event_id FROM saved WHERE user_id = ${userid});`
+
+  await pool.query(favoritesQuery, (err, result) => {
+    if (err) {
+      res.end(err);
+    }
+    res.send(result.rows)
+  });
+});
+
+app.post("/favorites", async (req, res) => {
+  var userid = req.query.user
+  var eventid = req.query.event
+  console.log("ADDING FAV",userid,eventid)
+
+  var addFavoriteQuery = `INSERT INTO saved(user_id,event_id) VALUES(${userid},${eventid})`
+
+  await pool.query(addFavoriteQuery, (err, result) => {
+    if (err) {
+      res.end(err);
+    }
+  });
+});
+
+app.delete("/favorites", async (req, res) => {
+  var del_userid = req.query.user
+  var del_eventid = req.query.event
+  console.log("DELETING FAV",del_userid,del_eventid)
+
+  var delFavoriteQuery = `DELETE FROM saved WHERE user_id='${del_userid}' AND event_id='${del_eventid}'`
+
+  await pool.query(delFavoriteQuery, (err, result) => {
+    if (err) {
+      console.log(err)
+      res.end(err);
+    }
   });
 });
 
@@ -133,13 +217,13 @@ app.get("/ticketmaster", (req, res) => {
   }
   var currYear = dateObj.getFullYear()
   var currentDate = currYear+"-"+currMonth+"-"+currDay
-  if (startTime == "") {
+  if (start === undefined || start == "") {
     var startTime = currentDate.toString()+"T00:00:00Z"
   } else {
     var startTime = start.toString()+"T00:00:00Z"
   }
 
-  if (end == "") {
+  if (end === undefined || end == "") {
     var endTime = currentDate.toString()+"T23:59:00Z"
   } else {
     var endTime = end.toString()+"T23:59:00Z"

@@ -26,10 +26,11 @@ export default function App() {
   // React Router
   // TODO: Uncomment/add protected routes
   const router = createBrowserRouter([
+    
     {
       path: "/",
       // element: user ? <Home /> : <Login />,
-      element: user ? <div><DrawerAppBar /> <HomeScreen /></div> : <Login />,
+      element: user ? <div><DrawerAppBar /> <MyDates /></div> : <Login />,
       loader: loginLoader,
       errorElement: <ErrorPage />,
     },
@@ -45,10 +46,12 @@ export default function App() {
     },
     {
       path: "/dates",
-      element: !user ? <Navigate to="/" /> : <> <DrawerAppBar /> <PublicDates /> </>,
+      element:<> <DrawerAppBar /> <PublicDates /> </> 
+      // element: user ? <> <DrawerAppBar /> <PublicDates /> </> : <Navigate to="/" />, 
     },
     {
       path: "/mydates",
+      // element:<> <DrawerAppBar /> <MyDates /> </> 
       element: user ? <> <DrawerAppBar /> <MyDates /> </> : <Navigate to="/" />, 
     },
     {
