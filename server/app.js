@@ -365,11 +365,10 @@ app.get("/upcomingUserInvites", async (req, res) =>{
       FROM invitations 
       WHERE (receiver_id = $1 OR sender_id = $2) 
         AND status = $3
-        AND date > $4;
+        AND (date > $4 OR (date = $4 AND start_time < $5));
     `;
-    //AND start_time > $5;
 
-    const values = [user_id, user_id, "accepted", currentDate.toISOString().slice(0, 10)]; //, currentDate.toISOString().slice(11, 19)];
+    const values = [user_id, user_id, "accepted", currentDate.toISOString().slice(0, 10), currentDate.toISOString().slice(11, 19)];
 
   try {
     const result = await pool.query(selectQuery, values);
