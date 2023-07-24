@@ -6,7 +6,6 @@ import userRouter from "./routes/users.js";
 import reviewRouter from "./routes/reviews.js"
 import dotenv from "dotenv";
 import fetch from "node-fetch";
-import { Policy } from "@mui/icons-material";
 dotenv.config();
 
 const app = express();
@@ -344,8 +343,6 @@ app.get("/pendingUserInvites", async (req, res) =>{
     SELECT * FROM invitations 
     WHERE receiver_id = $1 AND status = $2;
     `;
-<<<<<<< HEAD
-=======
 
 // Defining parameter values for the INSERT query
   const values = [user_id, "pending"];
@@ -367,18 +364,6 @@ app.post("/reviews/:id", async (req, res, next) => {
     VALUES ($1, $2, $3, $4);
   `, [id, author_id, comment, score]);
   res.status(200).end();
-})
->>>>>>> origin
-
-// Defining parameter values for the INSERT query
-  const values = [user_id, "pending"];
-
-  try {
-    const result = await pool.query(selectQuery, values);
-    res.json(result.rows);
-  } catch (error) {
-    res.status(500).json({ error: "Cannot select users pending invitations" });
-  }
 })
 
 app.listen(PORT, () => {
