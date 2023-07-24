@@ -5,12 +5,17 @@ import DateForm from "./DateForm";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
 
-export default function HomeScreen({ retrieveDates }) {
+export default function HomeScreen() {
   const [modalShow, setModalShow] = useState(false);
 
-  const formSubmitted = () => {
-    retrieveDates();
-  };
+  const postData = async (body) => {
+    await fetch("http://localhost:8000/mydates", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+    });
+  }
 
   return (
     <>
@@ -31,9 +36,9 @@ export default function HomeScreen({ retrieveDates }) {
                   </Button>
                 </div>
                 <DateForm
-                  formSubmitted={formSubmitted}
                   show={modalShow}
                   onHide={() => setModalShow(false)}
+                  postData={postData}
                 />
               </div>
               <div className="subheading">

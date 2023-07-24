@@ -20,6 +20,9 @@ const createTables = async () => {
     database: "dateplanner",
   });
 
+  // Sequence for event id custom generator type
+  await pool.query(`CREATE SEQUENCE event_id_sequence AS INTEGER INCREMENT BY 1 START WITH 1;`);
+
   await pool.query(`
     CREATE TABLE users(
       id serial PRIMARY KEY,
@@ -42,7 +45,7 @@ const createTables = async () => {
 
   await pool.query(`
     CREATE TABLE events(
-      id serial PRIMARY KEY,
+      id text NOT NULL DEFAULT nextval('event_id_sequence')::text PRIMARY KEY,
       title varchar(255) NOT NULL,
       description text,
       author INT,
@@ -64,7 +67,7 @@ const createTables = async () => {
       id serial PRIMARY KEY,
       sender_id int REFERENCES users(id) ON DELETE CASCADE,
       receiver_id int REFERENCES users(id) ON DELETE CASCADE,
-      event_id int REFERENCES events(id) ON DELETE CASCADE,
+      event_id text REFERENCES events(id) ON DELETE CASCADE,
       status text,
       date DATE,
       start_time TIME
@@ -74,7 +77,7 @@ const createTables = async () => {
   await pool.query(`
     CREATE TABLE reviews(
       id serial PRIMARY KEY,
-      event_id INT REFERENCES events(id) ON DELETE CASCADE,
+      event_id TEXT REFERENCES events(id) ON DELETE CASCADE,
       author_id INT REFERENCES users(id) ON DELETE CASCADE,
       comment TEXT,
       date DATE DEFAULT CURRENT_DATE,
@@ -86,7 +89,7 @@ const createTables = async () => {
     CREATE TABLE saved (
       id serial PRIMARY KEY,
       user_id int,
-      event_id int,
+      event_id text,
       FOREIGN KEY (user_id) REFERENCES users(id),
       FOREIGN KEY (event_id) REFERENCES events(id)
     );

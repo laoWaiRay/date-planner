@@ -1,6 +1,6 @@
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 
 function DateForm(props) {
@@ -52,15 +52,10 @@ function DateForm(props) {
       const body = {
         date: { ...formValues, isPrivate: isPrivate, author: user.id },
       };
-      const response = await fetch("http://localhost:8000/mydates", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      await props.postData(body);
       setFormValues({ ...newEvent });
       setIsPrivate(false);
-      props.formSubmitted();
+      props.onHide();
     } catch (error) {
       console.error(error.message);
     }
@@ -69,6 +64,13 @@ function DateForm(props) {
   const [formValues, setFormValues] = useState(newEvent);
   const [isPrivate, setIsPrivate] = useState(false);
 
+  useEffect(() => {
+    if (props.initValues) {
+      console.log("DEBUG", props.initValues)
+      setFormValues({ ...newEvent, ...props.initValues })
+    }
+  }, [props.show])
+
   return (
     <Modal
       show={props.show}
@@ -76,6 +78,7 @@ function DateForm(props) {
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
+      style={{overlay: {zIndex: 1000}}}
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">

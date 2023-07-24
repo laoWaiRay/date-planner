@@ -13,7 +13,6 @@ export default function MyDates() {
   const firstCardIndex = lastCardIndex - cardsPerPage
   const totalPageCount = Math.ceil(dates.length/cardsPerPage)
 
-
   useEffect(() => {
     // retrieveDates();
   }, []);

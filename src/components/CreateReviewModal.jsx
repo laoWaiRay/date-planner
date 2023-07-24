@@ -18,8 +18,8 @@ export default function CreateReviewModal({onClose, eventId}) {
     }
 
     setError("");
-    onClose();
     await addReview(eventId, user.id, comment, score);
+    onClose();
   }
 
   return (

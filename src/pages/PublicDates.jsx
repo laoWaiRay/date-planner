@@ -12,11 +12,13 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import { Outlet, useOutlet } from "react-router-dom";
 
 
 export default function PublicDates() {
     const [dates, setDates] = useState([]);
     const [events, setEvents] = useState([]);
+    const outlet = useOutlet();
 
     // For date idea filtering
     const [categorySelect, setCategorySelect] = useState("all");
@@ -57,7 +59,11 @@ export default function PublicDates() {
 
     useEffect(() => {
         retrieveDates();
-      }, [categorySelect, priceSelect]);
+      }, [categorySelect, priceSelect, outlet]);
+
+    // useEffect(() => {
+    //     retrieveEvents();
+    // }, [eventStart, eventEnd]);
 
     // useEffect(() => {
     //     retrieveEvents();
@@ -316,44 +322,45 @@ export default function PublicDates() {
 
     return (
         <>
-        
-        <div className="md:container mx-auto">
-        <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4">Find Date Ideas</h1>
-        <Tabs className="mb-2" value ={tabValue} onChange={handleChange} centered>
-            <Tab value="0" label="Shared by Users" />
-            <Tab value="1" label="Events/Concerts" />
-        </Tabs>
-        <div className="flex">
-            <div className="mx-auto my-3">
-                {tabValue == "0" ?<>{DatesFilterBar()} </>: <>{EventsFilterBar()}</>}
-            </div>
-            
-            
-        </div>
-        {tabValue != "0" ?
-            <><div className="grid">
-                <div className="mx-auto my-3">
-                    {eventInfo.city == "" ?
-                        <><h3>Events happening between {eventInfo.start} to {eventInfo.end} in {eventInfo.country}:</h3></>:
-                        <><h3>Events happening between {eventInfo.start} to {eventInfo.end} in <span style={{textTransform:'capitalize'}}>{eventInfo.city}</span>, {eventInfo.country}:</h3></>
-                    }
-                </div>
-            </div></>:
-            <></>
-        }
-        
-            <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
-                
-                {tabValue == "0" ? <>{displayDates()}</>: <>{displayEvents()}</>}
-            </div>
+          <Outlet />
+          <div className={`${outlet ? "hidden" : ""}`}>
+            <div className="md:container mx-auto">
+            <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4">Find Date Ideas</h1>
+            <Tabs className="mb-2" value ={tabValue} onChange={handleChange} centered>
+                <Tab value="0" label="Shared by Users" />
+                <Tab value="1" label="Events/Concerts" />
+            </Tabs>
             <div className="flex">
-                {tabValue == "0" ?
-                    <><Pagination className="mx-auto my-4" page={currentPage} count={totalDatePageCount} color="primary" onChange={onPageChange} /></>:
-                    <><Pagination className="mx-auto my-4" page={currentPage} count={totalEventPageCount} color="primary" onChange={onPageChange} /></>
-                }  
+                <div className="mx-auto my-3">
+                    {tabValue == "0" ?<>{DatesFilterBar()} </>: <>{EventsFilterBar()}</>}
+                </div>
+                
+                
             </div>
-        </div>
-        
+            {tabValue != "0" ?
+                <><div className="grid">
+                    <div className="mx-auto my-3">
+                        {eventInfo.city == "" ?
+                            <><h3>Events happening between {eventInfo.start} to {eventInfo.end} in {eventInfo.country}:</h3></>:
+                            <><h3>Events happening between {eventInfo.start} to {eventInfo.end} in <span style={{textTransform:'capitalize'}}>{eventInfo.city}</span>, {eventInfo.country}:</h3></>
+                        }
+                    </div>
+                </div></>:
+                <></>
+            }
+            
+                <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
+                    
+                    {tabValue == "0" ? <>{displayDates()}</>: <>{displayEvents()}</>}
+                </div>
+                <div className="flex">
+                    {tabValue == "0" ?
+                        <><Pagination className="mx-auto my-4" page={currentPage} count={totalDatePageCount} color="primary" onChange={onPageChange} /></>:
+                        <><Pagination className="mx-auto my-4" page={currentPage} count={totalEventPageCount} color="primary" onChange={onPageChange} /></>
+                    }  
+                </div>
+            </div>
+          </div>
         </>
     )
   }

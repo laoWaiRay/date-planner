@@ -8,6 +8,11 @@ import Review from "../components/Review";
 import { Button } from "react-bootstrap";
 import { getDefaultImage } from "../helpers/getDefaultImage";
 import { Rating } from "@mui/material";
+import { Delete, Edit, Favorite, Send } from "@mui/icons-material";
+import { useAuthContext } from "../hooks/useAuthContext";
+import DateForm from "../components/DateForm";
+import CreateDateInvite from "../components/DateInviteModal"
+import DeleteWarningModal from "../components/DeleteWarningModal";
 
 const isAPIevt = (id) => {
   return id.length > 10;
@@ -22,6 +27,32 @@ export default function Details() {
   const [toggle, setToggle] = useState(false);
   const [averageScore, setAverageScore] = useState(0);
   const navigate = useNavigate();
+  const { user } = useAuthContext();
+  const [modalShow, setModalShow] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+
+  const postData = async (body) => {
+    await fetch("http://localhost:8000/mydates", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+    });
+  }
+
+  const initFormValues = {
+    event_id: id,
+    title: data.title,
+    date_idea: data.description,
+    location: data.venue,
+    city: data.city,
+    country: data.country,
+    price_range: data.price,
+    category: data.category,
+    preferred_time: data.preferred_time,
+    comments: data.comments
+  }
 
   useEffect(() => {
     (async () => {
@@ -38,9 +69,9 @@ export default function Details() {
         const locationData = await getLocationById(eventData.location_id);
         setData(extractDataFromUserEvent(eventData, userData, locationData));
         await fetchAverageScore();
-        }
+      }
     })()
-  }, [])
+  }, [modalShow])
 
   useEffect(() => {
     if (isAPIEvent) return;
@@ -81,10 +112,34 @@ export default function Details() {
 
           {/* Title and Average Score */}
           <div>
-            <h2 className="text-2xl m-0">{data.title}</h2>
+            <div className="flex items-center space-x-1 px-2">
+              <h2 className="text-2xl m-0">{data.title}</h2>
+
+              { (!isAPIEvent && user.username == data.author) && (
+                <>
+                <button onClick={() => setModalShow(true)}>
+                  <Edit />
+                </button>
+                <button onClick={() => setShowDeleteModal(true)}>
+                  <Delete />
+                </button>
+                </>
+              )}
+              
+              {/* Buttons to like and share */}
+              <div className="!ml-auto space-x-4">
+                <button type="button">
+                  <Favorite />
+                </button>
+                <button type="button" onClick={() => setShowInviteModal(true)}>
+                  <Send className="-rotate-45 -translate-y-[3px]"/>
+                </button>
+              </div>
+              
+            </div>
             {
               (averageScore > 0.0) && (
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 px-1">
                   <Rating 
                     value={averageScore}
                     readOnly
@@ -98,6 +153,11 @@ export default function Details() {
 
           {/* General details */}
           <div className="my-2 p-2 border">
+            {/* Date */}
+            {data.date && 
+              <div>{data.date}</div>
+            }
+
             <div>From: <b>{data.author}</b></div>
 
             {/* Location details */}
@@ -120,14 +180,16 @@ export default function Details() {
                 <>Price: {data.price}</>
               }
             </div>
+
+            {data.link &&
+              <a href={data.link}>More Info</a>
+            }
           </div>
 
-          {/* Description */}
-          <p>
-            {data.description}
-            {/* Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias tempore minima sunt accusamus quibusdam similique, nisi voluptatem possimus provident eveniet, quasi quis. Aliquid, voluptate sit distinctio fugiat ea perspiciatis error.
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias tempore minima sunt accusamus quibusdam similique, nisi voluptatem possimus provident eveniet, quasi quis. Aliquid, voluptate sit distinctio fugiat ea perspiciatis error. */}
-          </p>
+          {/* Description and extra notes*/}
+          <p className="px-2">{data.description}</p>
+          <p className="px-2">{data.comments}</p>
+
         </div>
       </section>
 
@@ -164,9 +226,29 @@ export default function Details() {
       }
       
       {isAPIEvent && 
-        <div className="mt-8">
-          <Button onClick={handleNavigate}>Go Back</Button>
+        <div className="mt-8 w-full space-x-4">
+          <Button className="ml-auto mr-8" onClick={handleNavigate}>Go Back</Button>
         </div>
+      }
+
+      {/* Popup form for editing event */}
+      <DateForm
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        postData={postData}
+        initValues={initFormValues}
+      />
+
+      {/* Popup for date invite */}
+      {showInviteModal && (<CreateDateInvite onClose={() => setShowInviteModal(false)} eventID={id}/>)}
+
+      {/* Popup warning for delete post */}
+      {showDeleteModal && 
+        <DeleteWarningModal 
+          onClose={() => setShowDeleteModal(false)} 
+          eventId={id} 
+          event_username={data.author}
+        />
       }
     </div>
   )
@@ -184,7 +266,8 @@ const extractDataFromUserEvent = (data, userData, location) => {
     venue:                location.detailed_address,
     date_posted:          data.date_posted,
     description:          data.description,
-    imageURL:             data.image || getDefaultImage(data.category)
+    imageURL:             data.image || getDefaultImage(data.category),
+    comments:             data.comments
   }
 }
 
@@ -200,6 +283,9 @@ const extractDataFromTicketmaster = (data) => {
       currency:           data?.priceRanges?.[0]?.currency,
       category:           data?.classifications?.[0]?.genre?.name,
       description:        data?.info,
-      imageURL:           data?.images?.find((image) => image.width > 1000 && image.ratio == "16_9")?.url
+      imageURL:           data?.images?.find((image) => image.width > 1000 && image.ratio == "16_9")?.url,
+      date:               data?.dates?.start?.localDate,
+      link:               data?.url,
+      comments:           data?.pleaseNote
     }
 }
