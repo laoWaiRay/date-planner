@@ -89,11 +89,7 @@ const createTables = async () => {
     CREATE TABLE saved (
       id serial PRIMARY KEY,
       user_id int,
-<<<<<<< HEAD
       event_id text,
-=======
-      event_id int,
->>>>>>> origin
       FOREIGN KEY (user_id) REFERENCES users(id),
       FOREIGN KEY (event_id) REFERENCES events(id)
     );
