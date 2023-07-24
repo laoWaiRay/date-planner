@@ -3,7 +3,6 @@ import Pagination from "@mui/material/Pagination";
 import { useState, useEffect } from "react";
 import HomeScreen from "../components/HomeScreen";
 import { getTicketmasterEvents } from "../api/external/ticketmaster";
-import { Outlet, useOutlet } from "react-router-dom";
 
 export default function MyDates() {
   const [dates, setDates] = useState([]);
@@ -13,9 +12,6 @@ export default function MyDates() {
   const lastCardIndex =  currentPage * cardsPerPage
   const firstCardIndex = lastCardIndex - cardsPerPage
   const totalPageCount = Math.ceil(dates.length/cardsPerPage)
-
-  const outlet = useOutlet();
-
 
   useEffect(() => {
     // retrieveDates();
@@ -65,7 +61,6 @@ export default function MyDates() {
 
   return (
     <>
-      <Outlet />
       {dates.length === 0 ? (
         <HomeScreen retrieveDates={retrieveDates} />
       ) : (

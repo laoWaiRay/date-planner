@@ -49,22 +49,23 @@ app.get("/mydates", async (req, res) => {
   if ((category == "all" && price == "all") || (category === undefined && price === undefined)) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                       locations.city, locations.country, locations.detailed_address  
-                      FROM events INNER JOIN locations ON events.location_id = locations.id;`
+                      FROM events INNER JOIN locations ON events.location_id = locations.id
+                      WHERE isticketmasterevent = false;`
   } else if (category !== undefined && (price == "all" || price === undefined)) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE category='${category}';`
+                        WHERE category='${category} AND isticketmasterevent = false;';`
   } else if (price !== undefined && (category == "all" || category === undefined)) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE price='${price}';`
+                        WHERE price='${price}' AND isticketmasterevent = false;;`
   } else if (category !== undefined && price !== undefined) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE category='${category}' AND price='${price}';`
+                        WHERE category='${category}' AND price='${price} AND isticketmasterevent = false;';`
   }
 
   await pool.query(myDatesQuery, (err, result) => {
@@ -272,7 +273,20 @@ app.post("/createInvite", async (req, res) =>{
   const event_id = req.query.event_id;
   const status = req.query.status;
   const date = req.query.date;
-  const start_time = req.query.start_time;  
+  const start_time = req.query.start_time;
+
+  const isTicketmasterEvent = isAPIevt(event_id);
+
+  // If the event is from Ticketmaster, add it to the events table before sending an invitation
+  if (isTicketmasterEvent) {
+    // Check if it already exists and insert if it doesn't
+    const result = await pool.query(`SELECT * FROM events WHERE id = $1 AND isticketmasterevent = true`, [event_id]);
+    if (result.rows.length == 0) {
+      await pool.query(`INSERT INTO events(id, title, isticketmasterevent) VALUES ($1, $2, $3)`, [
+        event_id, event_id, true
+      ]);
+    }
+  }
 
   // Define INSERT query
   const insertQuery = `
@@ -280,7 +294,7 @@ app.post("/createInvite", async (req, res) =>{
     VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *;`;
 
-// Defining parameter values for the INSERT query
+  // Defining parameter values for the INSERT query
   const values = [sender_id, receiver_id, event_id, status, date, start_time];
   try {
     const result = await pool.query(insertQuery, values);
@@ -337,3 +351,7 @@ app.get("/pendingUserInvites", async (req, res) =>{
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
+
+const isAPIevt = (id) => {
+  return id.length > 10;
+}
