@@ -265,6 +265,30 @@ app.get("/pendingUserInvites", async (req, res) =>{
   }
 })
 
+//fetch upcoming users invites
+app.get("/upcomingUserInvites", async (req, res) =>{
+  const user_id = req.query.user_id;
+    // Define INSERT query
+    const currentDate = new Date();
+    const selectQuery = `
+      SELECT * 
+      FROM invitations 
+      WHERE (receiver_id = $1 OR sender_id = $2) 
+        AND status = $3
+        AND date > $4;
+    `;
+    //AND start_time > $5;
+
+    const values = [user_id, user_id, "accepted", currentDate.toISOString().slice(0, 10)]; //, currentDate.toISOString().slice(11, 19)];
+
+  try {
+    const result = await pool.query(selectQuery, values);
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: "Cannot select users upcoming invitations" });
+  }
+})
+
 // Add a new review for a given event ID
 app.post("/reviews/:id", async (req, res, next) => {
   const { id } = req.params;
