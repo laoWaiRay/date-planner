@@ -73,6 +73,12 @@ async function getPendingUserInvites(user_id){
   return data;
 }
 
+//fetch all of a users pending dates (requested dates)
+async function getUpcomingUserInvites(user_id){
+  const res = await fetch(`http://localhost:8000/upcomingUserInvites?user_id=${user_id}`, fetchOptions.GET);
+  const data = await res.json();
+  return data;
+}
 
 // Returns a list of all users
 async function getUsers() {
