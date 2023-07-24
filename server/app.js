@@ -76,11 +76,22 @@ app.get("/mydates", async (req, res) => {
 app.post("/mydates", async (req, res) => {
   try {
     const { date } = req.body;
-    //Insert location table first
-    const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
-    const locationValues = [date.city, date.country, date.location];
-    const locationResult = await pool.query(locationQuery, locationValues);
-    const locationId = locationResult.rows[0]?.id;
+
+    // Check if location is already in DB before insert
+    let locationId = null;
+    const existsQuery = `SELECT * FROM locations WHERE city = $1 AND country = $2 AND detailed_address = $3`;
+    let result = await pool.query(existsQuery, [date.city, date.country, date.location]);
+    if (result.rows.length > 0) {
+      locationId = result.rows[0].id;
+    }
+
+    if (!locationId) {
+      //Insert location table first
+      const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
+      const locationValues = [date.city, date.country, date.location];
+      const locationResult = await pool.query(locationQuery, locationValues);
+      locationId = locationResult.rows[0]?.id;
+    }
 
     //to be done insert into user, and get id ? or you have user id just insert it
     //for mock data im making user 1
@@ -114,6 +125,60 @@ app.post("/mydates", async (req, res) => {
     console.error(error.message);
   }
 });
+
+// PATCH: edit a date
+app.patch("/mydates", async (req, res, next) => {
+  try {
+    const { date } = req.body;
+
+    const { event_id, title, date_idea, location, city, country, price_range, category, 
+      preferred_time, comments, image, isPrivate, author } = date;
+
+    // Check if location is already in DB before insert
+    let locationId = null;
+    const existsQuery = `SELECT * FROM locations WHERE city = $1 AND country = $2 AND detailed_address = $3`;
+    let result = await pool.query(existsQuery, [city, country, location]);
+    if (result.rows.length > 0) {
+      locationId = result.rows[0].id;
+    }
+
+    if (!locationId) {
+      //Insert location table first
+      const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
+      const locationValues = [date.city, date.country, date.location];
+      const locationResult = await pool.query(locationQuery, locationValues);
+      locationId = locationResult.rows[0]?.id;
+    }
+
+    const query = `
+      UPDATE events 
+      SET title = $1, description = $2, price = $3, category = $4, preferred_time = $5, 
+          location_id = $6, date_posted = CURRENT_DATE, private = $7, comments = $8, image = $9
+      WHERE id = $10;
+    `;
+
+    const queryValues = [
+      title, 
+      date_idea, 
+      price_range, 
+      category, 
+      preferred_time, 
+      locationId, 
+      isPrivate, 
+      comments, 
+      image, 
+      event_id
+    ];
+
+    await pool.query(query, queryValues);
+
+    console.log("PATCH success")
+    res.end();
+  } catch (error) {
+    console.error(error);
+    res.end();
+  }
+})
 
 app.get("/ticketmaster", (req, res) => {
   var start = req.query.start

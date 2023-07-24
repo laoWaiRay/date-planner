@@ -46,6 +46,12 @@ export default function App() {
     {
       path: "/dates",
       element: !user ? <Navigate to="/" /> : <> <DrawerAppBar /> <PublicDates /> </>,
+      children: [
+        {
+          path: "/dates/:id",
+          element: user ? <> <DrawerAppBar /> <Details /> </> : <Navigate to="/" />
+        }
+      ]
     },
     {
       path: "/mydates",
