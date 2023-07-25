@@ -13,14 +13,20 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { Outlet, useOutlet } from "react-router-dom";
+<<<<<<< HEAD
 import { useAuthContext } from '../hooks/useAuthContext';
+=======
+>>>>>>> origin/master
 
 
 export default function PublicDates() {
     const { user } = useAuthContext();
     const [dates, setDates] = useState([]);
     const [events, setEvents] = useState([]);
+<<<<<<< HEAD
     const [favorites, setFavorites] = useState([]);
+=======
+>>>>>>> origin/master
     const outlet = useOutlet();
 
     // For date idea filtering
@@ -64,6 +70,13 @@ export default function PublicDates() {
     useEffect(() => {
         retrieveDates();
       }, [categorySelect, priceSelect, outlet]);
+<<<<<<< HEAD
+=======
+
+    // useEffect(() => {
+    //     retrieveEvents();
+    // }, [eventStart, eventEnd]);
+>>>>>>> origin/master
 
     // useEffect(() => {
     //     retrieveEvents();
