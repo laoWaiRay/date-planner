@@ -239,17 +239,16 @@ export default function PublicDates() {
     // FOR TICKETMASTER EVENT FILTER & SEARCH
     const onStartDateChange = (date)  =>{
         // Check start date format & set start date
-        if (date.$D < 10) {
-            var day = date.$D.toString().padStart(2,'0')
-        } else {
-            var day = date.$D.toString()
-        }
 
+        var day = date.$D.toString()
+        if (date.$D < 10) {
+            var day = day.padStart(2,'0')
+        } 
+
+        var month = date.$M+1
         if (date.$M+1 < 10) {
-            var month = date.$M+1
             month = month.toString().padStart(2,'0')
         } else {
-            var month = date.$M+1
             month = month.toString()
         }
 
