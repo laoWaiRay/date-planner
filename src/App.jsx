@@ -3,7 +3,7 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 
 import Home from "./pages/Home";
 import Login, { loader as loginLoader } from "./pages/Login";
@@ -29,7 +29,13 @@ export default function App() {
     {
       path: "/",
       // element: user ? <Home /> : <Login />,
-      element: user ? <div><DrawerAppBar /> <HomeScreen /></div> : <Login />,
+      element: user ? (
+        <div>
+          <DrawerAppBar /> <Home />
+        </div>
+      ) : (
+        <Login />
+      ),
       loader: loginLoader,
       errorElement: <ErrorPage />,
     },
@@ -45,22 +51,50 @@ export default function App() {
     },
     {
       path: "/dates",
-      element: !user ? <Navigate to="/" /> : <> <DrawerAppBar /> <PublicDates /> </>,
+      element: !user ? (
+        <Navigate to="/" />
+      ) : (
+        <>
+          {" "}
+          <DrawerAppBar /> <PublicDates />{" "}
+        </>
+      ),
       children: [
         {
           path: "/dates/:id",
-          element: user ? <> <DrawerAppBar /> <Details /> </> : <Navigate to="/" />
-        }
-      ]
+          element: user ? (
+            <>
+              {" "}
+              <DrawerAppBar /> <Details />{" "}
+            </>
+          ) : (
+            <Navigate to="/" />
+          ),
+        },
+      ],
     },
     {
       path: "/mydates",
-      element: user ? <> <DrawerAppBar /> <MyDates /> </> : <Navigate to="/" />, 
+      element: user ? (
+        <>
+          {" "}
+          <DrawerAppBar /> <MyDates />{" "}
+        </>
+      ) : (
+        <Navigate to="/" />
+      ),
     },
     {
       path: "/dates/:id",
-      element: user ? <> <DrawerAppBar /> <Details /> </> : <Navigate to="/" />
-    }
+      element: user ? (
+        <>
+          {" "}
+          <DrawerAppBar /> <Details />{" "}
+        </>
+      ) : (
+        <Navigate to="/" />
+      ),
+    },
   ]);
 
   // On page refresh, make a call to DB to restore client-side state about

@@ -1,0 +1,26 @@
+.polaroid-photo {
+  width: 450px;
+  height: 450px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.polaroid-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.polaroid-caption {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 10px;
+}
