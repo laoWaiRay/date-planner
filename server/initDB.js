@@ -338,7 +338,7 @@ const createSchema = async () => {
     await createDatabase();
     await createTables();
     console.log("Schema creation successful!");
-    await insertMockData();
+   // await insertMockData();
   } catch (error) {
     console.error("Error creating schema:", error);
   }
