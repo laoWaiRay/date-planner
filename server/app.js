@@ -3,6 +3,7 @@ import pg from "pg";
 import cors from "cors";
 import session from "express-session";
 import userRouter from "./routes/users.js";
+import reviewRouter from "./routes/reviews.js"
 import dotenv from "dotenv";
 import fetch from "node-fetch";
 dotenv.config();
@@ -38,6 +39,7 @@ app.use(
 );
 
 app.use("/users", userRouter);
+app.use("/reviews", reviewRouter);
 
 app.get("/mydates", async (req, res) => {
   var userid = req.query.user
@@ -50,22 +52,22 @@ app.get("/mydates", async (req, res) => {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                       locations.city, locations.country, locations.detailed_address  
                       FROM events INNER JOIN locations ON events.location_id = locations.id
-                      WHERE author='${userid}';`
+                      WHERE author='${userid}' AND isticketmasterevent = 'false';`
   } else if (category !== undefined && (price == "all" || price === undefined)) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE category='${category}' AND author='${userid}';`
+                        WHERE category='${category}' AND author='${userid}' AND isticketmasterevent = 'false';`
   } else if (price !== undefined && (category == "all" || category === undefined)) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE price='${price}' AND author='${userid}';`
+                        WHERE price='${price}' AND author='${userid}' AND isticketmasterevent = 'false';`
   } else if (category !== undefined && price !== undefined) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE category='${category}' AND price='${price}' AND author='${userid}';`
+                        WHERE category='${category}' AND price='${price}' AND author='${userid}' AND isticketmasterevent = 'false';`
   }
 
   await pool.query(myDatesQuery, (err, result) => {
@@ -160,11 +162,22 @@ app.delete("/favorites", async (req, res) => {
 app.post("/mydates", async (req, res) => {
   try {
     const { date } = req.body;
-    //Insert location table first
-    const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
-    const locationValues = [date.city, date.country, date.location];
-    const locationResult = await pool.query(locationQuery, locationValues);
-    const locationId = locationResult.rows[0]?.id;
+
+    // Check if location is already in DB before insert
+    let locationId = null;
+    const existsQuery = `SELECT * FROM locations WHERE city = $1 AND country = $2 AND detailed_address = $3`;
+    let result = await pool.query(existsQuery, [date.city, date.country, date.location]);
+    if (result.rows.length > 0) {
+      locationId = result.rows[0].id;
+    }
+
+    if (!locationId) {
+      //Insert location table first
+      const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
+      const locationValues = [date.city, date.country, date.location];
+      const locationResult = await pool.query(locationQuery, locationValues);
+      locationId = locationResult.rows[0]?.id;
+    }
 
     //to be done insert into user, and get id ? or you have user id just insert it
     //for mock data im making user 1
@@ -198,6 +211,63 @@ app.post("/mydates", async (req, res) => {
     console.error(error.message);
   }
 });
+
+// PATCH: edit a date
+app.patch("/mydates", async (req, res, next) => {
+  try {
+    const { date } = req.body;
+
+    const { event_id, title, date_idea, location, city, country, price_range, category, 
+      preferred_time, comments, image, isPrivate, author } = date;
+
+    // Check if location is already in DB before insert
+    let locationId = null;
+    const existsQuery = `SELECT * FROM locations WHERE city = $1 AND country = $2 AND detailed_address = $3`;
+    let result = await pool.query(existsQuery, [city, country, location]);
+    if (result.rows.length > 0) {
+      locationId = result.rows[0].id;
+    }
+
+    if (!locationId) {
+      //Insert location table first
+      const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
+      const locationValues = [date.city, date.country, date.location];
+      const locationResult = await pool.query(locationQuery, locationValues);
+      locationId = locationResult.rows[0]?.id;
+    }
+
+    // This is a hacky way to only update the image if the user uploaded a new image
+
+    const query = `
+      UPDATE events 
+      SET title = $1, description = $2, price = $3, category = $4, preferred_time = $5, 
+          location_id = $6, date_posted = CURRENT_DATE, private = $7, comments = $8 ${image ? " ,image = $10 " : " "}
+      WHERE id = $9;
+    `;
+    
+    const queryValues = [
+      title, 
+      date_idea, 
+      price_range, 
+      category, 
+      preferred_time, 
+      locationId, 
+      isPrivate, 
+      comments, 
+      event_id
+    ];
+
+    if (image)
+      queryValues.push(image);
+
+    await pool.query(query, queryValues);
+
+    res.end();
+  } catch (error) {
+    console.error(error);
+    res.end();
+  }
+})
 
 app.get("/ticketmaster", (req, res) => {
   var start = req.query.start
@@ -243,12 +313,15 @@ app.get("/ticketmaster", (req, res) => {
       return response.json();
     })
     .then((data) => {
-      res.json(data?._embedded?.events);
+      const events = data?._embedded?.events;
+      if (events && events.length > 0) 
+        res.json(events);
+      else 
+        res.json([]);
     })
     .catch((error) => {
       console.log("ERROR HERE")
       res.send([])
-      // res.end(error);
     });
 });
 
@@ -263,15 +336,22 @@ app.get("/ticketmaster/:id", async (req, res, next) => {
 // Get user-created event by id
 app.get("/events/:id", async (req, res, next) => {
   const { id } = req.params;
-  const result = await pool.query(`SELECT * FROM events WHERE id = ${id}`);
+  const result = await pool.query(`SELECT * FROM events WHERE id = $1`, [id]);
   const data = result.rows[0];
   res.json(data);
+})
+
+// Delete an event by event id
+app.delete("/events/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const result = await pool.query(`DELETE FROM events WHERE id = $1`, [id]);
+  res.end();
 })
 
 // Get location by id
 app.get("/locations/:id", async (req, res, next) => {
   const { id } = req.params;
-  const result = await pool.query(`SELECT * FROM locations WHERE id = ${id}`);
+  const result = await pool.query(`SELECT * FROM locations WHERE id = $1`, [id]);
   const data = result.rows[0];
   res.json(data);
 })
@@ -283,7 +363,20 @@ app.post("/createInvite", async (req, res) =>{
   const event_id = req.query.event_id;
   const status = req.query.status;
   const date = req.query.date;
-  const start_time = req.query.start_time;  
+  const start_time = req.query.start_time;
+
+  const isTicketmasterEvent = isAPIevt(event_id);
+
+  // If the event is from Ticketmaster, add it to the events table before sending an invitation
+  if (isTicketmasterEvent) {
+    // Check if it already exists and insert if it doesn't
+    const result = await pool.query(`SELECT * FROM events WHERE id = $1 AND isticketmasterevent = true`, [event_id]);
+    if (result.rows.length == 0) {
+      await pool.query(`INSERT INTO events(id, title, isticketmasterevent) VALUES ($1, $2, $3)`, [
+        event_id, event_id, true
+      ]);
+    }
+  }
 
   // Define INSERT query
   const insertQuery = `
@@ -291,7 +384,7 @@ app.post("/createInvite", async (req, res) =>{
     VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *;`;
 
-// Defining parameter values for the INSERT query
+  // Defining parameter values for the INSERT query
   const values = [sender_id, receiver_id, event_id, status, date, start_time];
   try {
     const result = await pool.query(insertQuery, values);
@@ -325,6 +418,49 @@ app.post("/updateInviteStatus", async (req, res) =>{
   }
 })
 
+//fetch a users pending invites
+app.get("/pendingUserInvites", async (req, res) =>{
+  const user_id = req.query.user_id;
+    // Define INSERT query
+    const selectQuery = `
+    SELECT * FROM invitations 
+    WHERE receiver_id = $1 AND status = $2;
+    `;
+
+// Defining parameter values for the INSERT query
+  const values = [user_id, "pending"];
+
+  try {
+    const result = await pool.query(selectQuery, values);
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: "Cannot select users pending invitations" });
+  }
+})
+
+//fetch upcoming users invites
+app.get("/upcomingUserInvites", async (req, res) =>{
+  const user_id = req.query.user_id;
+    // Define INSERT query
+    const currentDate = new Date();
+    const selectQuery = `
+      SELECT * 
+      FROM invitations 
+      WHERE (receiver_id = $1 OR sender_id = $2) 
+        AND status = $3
+        AND (date > $4 OR (date = $4 AND start_time < $5));
+    `;
+
+    const values = [user_id, user_id, "accepted", currentDate.toISOString().slice(0, 10), currentDate.toISOString().slice(11, 19)];
+
+  try {
+    const result = await pool.query(selectQuery, values);
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: "Cannot select users upcoming invitations" });
+  }
+})
+
 // Add a new review for a given event ID
 app.post("/reviews/:id", async (req, res, next) => {
   const { id } = req.params;
@@ -336,56 +472,10 @@ app.post("/reviews/:id", async (req, res, next) => {
   res.status(200).end();
 })
 
-// Edit a review for a given review ID
-app.post("/reviews/:id/edit", async (req, res, next) => {
-  const { id } = req.params;
-  const { comment, score } = req.body;
-  await pool.query(`
-    UPDATE reviews
-    SET comment = $1, score = $2, date = CURRENT_DATE
-    WHERE id = $3;
-  `, [comment, score, id])
-  res.status(200).end();
-})
-
-// Delete a review by review ID
-app.delete("/reviews/:id", async (req, res, next) => {
-  const { id } = req.params;
-  const query = `
-    DELETE FROM reviews
-    WHERE id = $1;
-  `;
-  await pool.query(query, [id]);
-  res.status(200).end();
-})
-
-// Get a list of all reviews for a given event ID
-app.get("/reviews/:id", async (req, res, next) => {
-  const { id } = req.params;
-  const query = `
-    SELECT R.id, U.username, R.score, R.comment, R.date 
-    FROM reviews R
-      INNER JOIN events E ON R.event_id = E.id
-      INNER JOIN users U ON R.author_id = U.id
-    WHERE E.id = ($1)
-    ORDER BY R.date;
-  `;
-  const result = await pool.query(query, [id]);
-  res.json(result.rows);
-})
-
-// Get the average rating for a given event ID
-app.get("/reviews/:id/average", async (req, res, next) => {
-  const { id } = req.params;
-  const query = `
-    SELECT AVG (score)
-    FROM reviews
-    WHERE event_id = $1
-  `;
-  const result = await pool.query(query, [id]);
-  res.json(result.rows[0]);
-})
-
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
+
+const isAPIevt = (id) => {
+  return id.length > 10;
+}

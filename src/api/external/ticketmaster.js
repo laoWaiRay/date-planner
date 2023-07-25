@@ -13,8 +13,27 @@ async function getTicketmasterEventById(id) {
   return data;
 }
 
+
+async function getTicketmasterEventByCountry(countryCode) {
+  const result = await fetch(`http://localhost:8000/ticketmaster/country=${countryCode}`);
+  const data = await result.json();
+  return data;
+}
+
+async function getTicketmasterEventByLocation(city, countryCode) {
+  const result = await fetch(`http://localhost:8000/ticketmaster/country=${countryCode}&city=${city}`);
+  const data = await result.json();
+  return data;
+}
+
+
+
 export {
   getTicketmasterEvents,
-  getTicketmasterEventById
+  getTicketmasterEventById,
+  getTicketmasterEventByDateRange,
+  getTicketmasterEventByCountry,
+  getTicketmasterEventByLocation,
+  getTicketmasterEventByLocationDateRange
 }
 

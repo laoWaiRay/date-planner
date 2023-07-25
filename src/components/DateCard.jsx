@@ -53,7 +53,6 @@ export default function DateCard({ id, name, description, category, location, im
     };
 
     const handleClickDetails = () => {
-      console.log("NAVIGATE TO ID: ", id)
       navigate(`/dates/${id}`);
     }
 
