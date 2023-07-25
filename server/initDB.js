@@ -20,6 +20,9 @@ const createTables = async () => {
     database: "dateplanner",
   });
 
+  // Sequence for event id custom generator type
+  await pool.query(`CREATE SEQUENCE event_id_sequence AS INTEGER INCREMENT BY 1 START WITH 1;`);
+
   await pool.query(`
     CREATE TABLE users(
       id serial PRIMARY KEY,
@@ -42,7 +45,7 @@ const createTables = async () => {
 
   await pool.query(`
     CREATE TABLE events(
-      id serial PRIMARY KEY,
+      id text NOT NULL DEFAULT nextval('event_id_sequence')::text PRIMARY KEY,
       title varchar(255) NOT NULL,
       description text,
       author INT,
@@ -53,6 +56,7 @@ const createTables = async () => {
       date_posted DATE DEFAULT CURRENT_DATE,
       private boolean DEFAULT FALSE,
       comments text,
+      image text,
       FOREIGN KEY (author) REFERENCES users(id),
       FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
     );
@@ -63,7 +67,7 @@ const createTables = async () => {
       id serial PRIMARY KEY,
       sender_id int REFERENCES users(id) ON DELETE CASCADE,
       receiver_id int REFERENCES users(id) ON DELETE CASCADE,
-      event_id int REFERENCES events(id) ON DELETE CASCADE,
+      event_id text REFERENCES events(id) ON DELETE CASCADE,
       status text,
       date DATE,
       start_time TIME
@@ -73,13 +77,23 @@ const createTables = async () => {
   await pool.query(`
     CREATE TABLE reviews(
       id serial PRIMARY KEY,
-      event_id INT REFERENCES events(id) ON DELETE CASCADE,
+      event_id TEXT REFERENCES events(id) ON DELETE CASCADE,
       author_id INT REFERENCES users(id) ON DELETE CASCADE,
       comment TEXT,
       date DATE DEFAULT CURRENT_DATE,
       score NUMERIC
     );
   `);
+
+  await pool.query(`
+    CREATE TABLE saved (
+      id serial PRIMARY KEY,
+      user_id int,
+      event_id text,
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (event_id) REFERENCES events(id)
+    );
+`);
 
   await pool.end();
 };
@@ -118,6 +132,26 @@ const insertMockData = async () => {
         city: 'London',
         country: 'United Kingdom',
         detailed_address: '456 High Street'
+      },
+      {
+        city: 'Vancouver',
+        country: 'Canada',
+        detailed_address: '123 Test Street'
+      },
+      {
+        city: 'Burnaby',
+        country: 'Canada',
+        detailed_address: '1242 Lo Avenue'
+      },
+      {
+        city: 'Seattle',
+        country: 'United States',
+        detailed_address: '111 Gap Street'
+      },
+      {
+        city: 'San Francisco',
+        country: 'United States',
+        detailed_address: '456 Test Avenue'
       }
     ];
 
@@ -144,7 +178,7 @@ const insertMockData = async () => {
         description: 'Description of Event 1',
         author: 1,
         price: 'Free',
-        category: 'Concert',
+        category: 'romantic',
         preferred_time: 'Evening',
         location_city: 'New York City', // Use new location data
         location_country: 'United States' // Use new location data
@@ -153,12 +187,123 @@ const insertMockData = async () => {
         title: 'Event 2',
         description: 'Description of Event 2',
         author: 2,
-        price: '$10',
-        category: 'Conference',
+        price: '$',
+        category: 'indoor',
         preferred_time: 'Morning',
         location_city: 'London', // Use new location data
         location_country: 'United Kingdom' // Use new location data
-      }
+      },
+      {
+        title: 'Event 3',
+        description: 'Description of Event 3',
+        author: 1,
+        price: '$$',
+        category: 'adventurous',
+        preferred_time: 'Morning',
+        location_city: 'London', // Use new location data
+        location_country: 'United Kingdom' // Use new location data
+      },
+      {
+        title: 'Event 4',
+        description: 'Description of Event 4',
+        author: 3,
+        price: '$$$',
+        category: 'relaxing',
+        preferred_time: 'Morning',
+        location_city: 'New York City', // Use new location data
+        location_country: 'United States' // Use new location data
+      },
+      {
+        title: 'Event 5',
+        description: 'Description of Event 5',
+        author: 2,
+        price: '$$$$',
+        category: 'indoor',
+        preferred_time: 'Morning',
+        location_city: 'San Francisco', // Use new location data
+        location_country: 'United States' // Use new location data
+      },
+      {
+        title: 'Event 6',
+        description: 'Description of Event 6',
+        author: 3,
+        price: '$$',
+        category: 'relaxing',
+        preferred_time: 'Morning',
+        location_city: 'Vancouver', // Use new location data
+        location_country: 'Canada' // Use new location data
+      },
+      {
+        title: 'Event 7',
+        description: 'Description of Event 7',
+        author: 2,
+        price: '$',
+        category: 'relaxing',
+        preferred_time: 'Morning',
+        location_city: 'Seattle', // Use new location data
+        location_country: 'United States' // Use new location data
+      },
+      {
+        title: 'Event 8',
+        description: 'Description of Event 8',
+        author: 1,
+        price: 'Free',
+        category: 'romantic',
+        preferred_time: 'Morning',
+        location_city: 'Burnaby', // Use new location data
+        location_country: 'Canada' // Use new location data
+      },
+      {
+        title: 'Event 9',
+        description: 'Description of Event 9',
+        author: 3,
+        price: '$$',
+        category: 'romantic',
+        preferred_time: 'Morning',
+        location_city: 'Vancouver', // Use new location data
+        location_country: 'Canada' // Use new location data
+      },
+      {
+        title: 'Event 10',
+        description: 'Description of Event 10',
+        author: 1,
+        price: '$$$',
+        category: 'adventurous',
+        preferred_time: 'Morning',
+        location_city: 'Seattle', // Use new location data
+        location_country: 'United States' // Use new location data
+      },
+      {
+        title: 'Event 11',
+        description: 'Description of Event 11',
+        author: 3,
+        price: '$$',
+        category: 'romantic',
+        preferred_time: 'Morning',
+        location_city: 'San Francisco', // Use new location data
+        location_country: 'United States' // Use new location data
+      },
+      {
+        title: 'Event 12',
+        description: 'Description of Event 12',
+        author: 2,
+        price: '$$$$',
+        category: 'romantic',
+        preferred_time: 'Morning',
+        location_city: 'Burnaby', // Use new location data
+        location_country: 'Canada' // Use new location data
+      },
+      {
+        title: 'Event 13',
+        description: 'Description of Event 13',
+        author: 1,
+        price: 'Free',
+        category: 'indoor',
+        preferred_time: 'Morning',
+        location_city: 'Vancouver', // Use new location data
+        location_country: 'Canada' // Use new location data
+      },
+
     ];
 
     for (const event of eventData) {

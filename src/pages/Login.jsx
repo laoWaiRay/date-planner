@@ -14,7 +14,7 @@ export default function Login() {
     form: "",
   })
   const [errorMessagesEnabled, setErrorMessagesEnabled] = useState(false);
-  const [rememberMeChecked, setRememberMeChecked] = useState(false);
+  const [rememberMeChecked, setRememberMeChecked] = useState(true);
   const login = useLogin();
 
   const [formState, handleInputChange] = useForm({
@@ -80,11 +80,11 @@ export default function Login() {
 
             <div className="w-full">
               <div className="w-full flex items-center">
-                <Switch 
+                {/* <Switch 
                   checked={rememberMeChecked} 
                   onClick={() => setRememberMeChecked(!rememberMeChecked)}
-                /> 
-                <span className="text-sm">Remember me</span>
+                />
+                <span className="text-sm">Remember me</span> */}
                 <a className="text-sm ml-auto mr-4">Forgot password?</a>
               </div>
             </div>

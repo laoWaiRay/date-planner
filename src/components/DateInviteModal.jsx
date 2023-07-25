@@ -68,7 +68,7 @@ function CreateDateInviteModal({ onClose, eventID }) {
               required
             />
           </Form.Group>
-          <Button type="submit" variant="primary">Send Invite</Button>
+          <Button className="mt-4" type="submit" variant="primary">Send Invite</Button>
         </Form>
       </Modal.Body>
     </Modal>

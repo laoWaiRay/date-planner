@@ -1,6 +1,6 @@
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 
 function DateForm(props) {
@@ -15,6 +15,7 @@ function DateForm(props) {
     category: "",
     preferred_time: "",
     comments: "",
+    image: ""
   };
 
   const handleFormChange = (event) => {
@@ -26,21 +27,35 @@ function DateForm(props) {
     setIsPrivate(!isPrivate);
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file.type == "image/jpeg" || file.type == "image/png") {
+      console.log("OK")
+      console.log(file)
+
+      const reader = new FileReader();
+
+      const handleLoadEvent = async () => {
+        const resizedImg = await resizeImage(reader.result, 1600);
+        setFormValues({...formValues, image: resizedImg});
+        reader.removeEventListener("loadend", handleLoadEvent);
+      }
+      
+      reader.addEventListener("loadend", handleLoadEvent);
+      reader.readAsDataURL(file);
+    }
+  }
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
       const body = {
-        date: { ...formValues, isPrivate: isPrivate, author: 1 },
+        date: { ...formValues, isPrivate: isPrivate, author: user.id },
       };
-      const response = await fetch("http://localhost:8000/mydates", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      await props.postData(body);
       setFormValues({ ...newEvent });
       setIsPrivate(false);
-      props.formSubmitted();
+      props.onHide();
     } catch (error) {
       console.error(error.message);
     }
@@ -49,6 +64,13 @@ function DateForm(props) {
   const [formValues, setFormValues] = useState(newEvent);
   const [isPrivate, setIsPrivate] = useState(false);
 
+  useEffect(() => {
+    if (props.initValues) {
+      console.log("DEBUG", props.initValues)
+      setFormValues({ ...newEvent, ...props.initValues })
+    }
+  }, [props.show])
+
   return (
     <Modal
       show={props.show}
@@ -56,6 +78,7 @@ function DateForm(props) {
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
+      style={{overlay: {zIndex: 1000}}}
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
@@ -233,6 +256,24 @@ function DateForm(props) {
               </div>
             </div>
           </div>
+          
+          <div className="row" style={{ marginTop: "2%" }}>
+            <div className="col-md-12">
+              <div className="form-group">
+                <div className="mb-3">
+                  <label htmlFor="formImage" className="form-label">Image Upload</label>
+                  <input 
+                    className="form-control" 
+                    type="file" 
+                    id="formImage" 
+                    name="formImage"
+                    onChange={(e) => handleImageUpload(e)}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="row" style={{ marginTop: "2%" }}>
             <div className="col-md-12 text-center">
               <Button variant="primary" type="reset" className="w-50">
@@ -249,6 +290,39 @@ function DateForm(props) {
       </Modal.Body>
     </Modal>
   );
+}
+
+// Credit to "https://gist.github.com/ORESoftware/ba5d03f3e1826dc15d5ad2bcec37f7bf" for code snippet
+const resizeImage = (base64Str, maxWidth = 400, maxHeight = 350) => {
+  return new Promise((resolve) => {
+    let img = new Image()
+    img.src = base64Str
+    img.onload = () => {
+      let canvas = document.createElement('canvas')
+      const MAX_WIDTH = maxWidth
+      const MAX_HEIGHT = maxHeight
+      let width = img.width
+      let height = img.height
+
+      if (width > height) {
+        if (width > MAX_WIDTH) {
+          height *= MAX_WIDTH / width
+          width = MAX_WIDTH
+        }
+      } else {
+        if (height > MAX_HEIGHT) {
+          width *= MAX_HEIGHT / height
+          height = MAX_HEIGHT
+        }
+      }
+
+      canvas.width = width
+      canvas.height = height
+      let ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0, width, height)
+      resolve(canvas.toDataURL())
+    }
+  })
 }
 
 export default DateForm;

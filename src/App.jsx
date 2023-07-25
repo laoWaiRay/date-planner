@@ -16,6 +16,8 @@ import { useEffect, useState } from "react";
 import { getSession } from "./api/internal/postgres";
 import { initGoogleIdentity, handleCallbackResponse } from "./GoogleIdentity";
 import DrawerAppBar from "./components/Header";
+import HomeScreen from "./components/HomeScreen";
+import Details from "./pages/Details";
 
 export default function App() {
   const { user, dispatch } = useAuthContext();
@@ -26,11 +28,13 @@ export default function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      //element: user ? <Home /> : <Login />,
-      element: (
+      // element: user ? <Home /> : <Login />,
+      element: user ? (
         <div>
           <DrawerAppBar /> <Home />
         </div>
+      ) : (
+        <Login />
       ),
       loader: loginLoader,
       errorElement: <ErrorPage />,
@@ -47,25 +51,49 @@ export default function App() {
     },
     {
       path: "/dates",
-      element: user ? (
+      element: !user ? (
         <Navigate to="/" />
       ) : (
-        <div>
+        <>
+          {" "}
           <DrawerAppBar /> <PublicDates />{" "}
-        </div>
+        </>
       ),
-      loader: loginLoader,
+      children: [
+        {
+          path: "/dates/:id",
+          element: user ? (
+            <>
+              {" "}
+              <DrawerAppBar /> <Details />{" "}
+            </>
+          ) : (
+            <Navigate to="/" />
+          ),
+        },
+      ],
     },
     {
       path: "/mydates",
       element: user ? (
-        <div>
+        <>
+          {" "}
           <DrawerAppBar /> <MyDates />{" "}
-        </div>
+        </>
       ) : (
         <Navigate to="/" />
       ),
-      loader: loginLoader,
+    },
+    {
+      path: "/dates/:id",
+      element: user ? (
+        <>
+          {" "}
+          <DrawerAppBar /> <Details />{" "}
+        </>
+      ) : (
+        <Navigate to="/" />
+      ),
     },
   ]);
 

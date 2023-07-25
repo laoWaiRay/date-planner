@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import userController from '../controllers/userController.js';
+import requireAuth from '../helpers/requireAuth.js';
 
 const router = Router();
 
@@ -10,13 +11,13 @@ router.post('/login', userController.loginUser);
 router.post('/new', userController.signupUser);
 
 // Get list of all users
-router.get('/', userController.getUsers);
+router.get('/', requireAuth, userController.getUsers);
 
 // Get user with matching email
-router.get('/email', userController.getUserByEmail);
+router.get('/email', requireAuth, userController.getUserByEmail);
 
 // Get user with matching username
-router.get('/username', userController.getUserByUsername);
+router.get('/username', requireAuth, userController.getUserByUsername);
 
 // Get session data if exists
 router.get('/session', userController.getSession)
@@ -26,5 +27,8 @@ router.get('/logout', userController.endSession)
 
 // Login with google
 router.post('/login/google', userController.loginWithGoogle)
+
+// Get user with matching id
+router.get('/:id', requireAuth, userController.getUserById);
 
 export default router

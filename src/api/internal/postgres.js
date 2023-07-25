@@ -13,6 +13,10 @@ const fetchOptions = {
     method: "GET",
     credentials :"include"
   },
+  DELETE: {
+    method: "DELETE",
+    credentials: "include"
+  },
   BEARER_TOKEN: (token) => {
     return {
       credentials: "include",
@@ -48,10 +52,32 @@ async function signupUser(userData) {
   return data;
 }
 
+//create an invite
 async function createInvitation(sender_id, receiver_id, event_id, status, date, start_time){
   const res = await fetch(`http://localhost:8000/createInvite?sender_id=${sender_id}&receiver_id=${receiver_id}&event_id=${event_id}&status=${status}&date=${date}&start_time=${start_time}`, {
     ...fetchOptions.POST
   });
+}
+
+//update an invites status to pending/accepted/rejected
+async function updateInviteStatus(invite_id, status){
+  const res = await fetch(`http://localhost:8000/updateInviteStatus?invite_id=${invite_id}&status=${status}`,
+    ...fetchOptions.POST
+  );
+}
+
+//fetch all of a users pending dates (requested dates)
+async function getPendingUserInvites(user_id){
+  const res = await fetch(`http://localhost:8000/pendingUserInvites?user_id=${user_id}`, fetchOptions.GET);
+  const data = await res.json();
+  return data;
+}
+
+//fetch all of a users pending dates (requested dates)
+async function getUpcomingUserInvites(user_id){
+  const res = await fetch(`http://localhost:8000/upcomingUserInvites?user_id=${user_id}`, fetchOptions.GET);
+  const data = await res.json();
+  return data;
 }
 
 // Returns a list of all users
@@ -77,6 +103,12 @@ async function getUserByUsername(username) {
   return data;
 }
 
+// Return user with matching ID
+async function getUserById(id) {
+  const res = await fetch(`http://localhost:8000/users/${id}`, fetchOptions.GET);
+  const data = await res.json();
+  return data;
+}
 
 // Returns
 async function getSession() {
@@ -93,14 +125,88 @@ async function loginWithGoogle(token) {
   await fetch("http://localhost:8000/users/login/google", fetchOptions.BEARER_TOKEN(token));
 }
 
+// EVENTS
+
+async function getEventById(id) {
+  const result = await fetch(`http://localhost:8000/events/${id}`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
+async function deleteEvent(id ) {
+  await fetch(`http://localhost:8000/events/${id}`, fetchOptions.DELETE);
+}
+
+// LOCATION
+
+async function getLocationById(id) {
+  const result = await fetch(`http://localhost:8000/locations/${id}`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
+// REVIEWS
+
+// Add a review for a given event id
+async function addReview(event_id, author_id, comment, score) {
+  await fetch(`http://localhost:8000/reviews/${event_id}`, {
+    ...fetchOptions.POST,
+    body: JSON.stringify({
+      id: event_id,
+      author_id,
+      comment,
+      score
+    })
+  });
+}
+
+// Edit a review for a given review id
+async function editReview(review_id, comment, score) {
+  await fetch(`http://localhost:8000/reviews/${review_id}/edit`, {
+    ...fetchOptions.POST,
+    body: JSON.stringify({
+      comment,
+      score
+    })
+  })
+}
+
+// Get list of all reviews for a given event id
+async function getReviews(event_id) {
+  const result = await fetch(`http://localhost:8000/reviews/${event_id}`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
+// Delete a review by review id
+async function deleteReview(review_id) {
+  await fetch(`http://localhost:8000/reviews/${review_id}`, fetchOptions.DELETE);
+}
+
+// Get average review score for a given event id
+async function getAverageReviewScore(event_id) {
+  const result = await fetch(`http://localhost:8000/reviews/${event_id}/average`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
 export {
   loginUser,
   signupUser,
   getUsers,
   getUserByEmail,
   getUserByUsername,
+  getUserById,
   getSession,
   logoutUser,
   loginWithGoogle,
-  createInvitation
+  createInvitation,
+  getEventById,
+  deleteEvent,
+  getLocationById,
+  addReview,
+  editReview,
+  deleteReview,
+  getReviews,
+  getAverageReviewScore
 };
