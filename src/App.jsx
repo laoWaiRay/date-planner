@@ -3,7 +3,7 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 
 import Home from "./pages/Home";
 import Login, { loader as loginLoader } from "./pages/Login";
@@ -27,7 +27,11 @@ export default function App() {
     {
       path: "/",
       //element: user ? <Home /> : <Login />,
-      element: <Home />,
+      element: (
+        <div>
+          <DrawerAppBar /> <Home />
+        </div>
+      ),
       loader: loginLoader,
       errorElement: <ErrorPage />,
     },
@@ -43,12 +47,24 @@ export default function App() {
     },
     {
       path: "/dates",
-      element: user ? <Navigate to="/" /> : <div><DrawerAppBar /> <PublicDates /> </div>,
+      element: user ? (
+        <Navigate to="/" />
+      ) : (
+        <div>
+          <DrawerAppBar /> <PublicDates />{" "}
+        </div>
+      ),
       loader: loginLoader,
     },
     {
       path: "/mydates",
-      element: user ? <div><DrawerAppBar /> <MyDates /> </div> : <Navigate to="/" />, 
+      element: user ? (
+        <div>
+          <DrawerAppBar /> <MyDates />{" "}
+        </div>
+      ) : (
+        <Navigate to="/" />
+      ),
       loader: loginLoader,
     },
   ]);

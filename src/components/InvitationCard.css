@@ -1,5 +1,5 @@
 .card-container {
-  border-radius: 20px; /* Slightly reduced border-radius for less rounded edges */
+  border-radius: 20px;
   margin-top: 0 !important;
   margin-bottom: 3%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
