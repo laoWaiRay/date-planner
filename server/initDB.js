@@ -57,6 +57,7 @@ const createTables = async () => {
       private boolean DEFAULT FALSE,
       comments text,
       image text,
+      isticketmasterevent boolean DEFAULT FALSE,
       FOREIGN KEY (author) REFERENCES users(id),
       FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
     );
