@@ -6,8 +6,8 @@ const SALT_ROUNDS = 10;
 
 // Helper function: Remove fields from database response user object
 const createUserObject = (userData) => {
-  const { id, username, email, avatar_url } = userData;
-  return { id, username, email, avatar_url };
+  const { id, username, email, avatar, cover_photo } = userData;
+  return { id, username, email, avatar, cover_photo };
 }
 
 const userController = {};
@@ -120,6 +120,18 @@ userController.getSession = (req, res, next) => {
   }
 }
 
+userController.refreshSession = async (req, res, next) => {
+  if (req.session.user) {
+    const result = await pool.query(`SELECT * FROM users WHERE id = $1`, [req.session.user.id]);
+    const userData = result.rows[0];
+    const userSession = createUserObject(userData);
+    req.session.user = {...userSession};
+    res.json(req.session.user);
+  } else {
+    res.json({error: "User session does not exist; Could not refresh"});
+  }
+}
+
 userController.endSession = (req, res, next) => {
   // regenerate wasn't working for some reason
   req.session.destroy();
@@ -135,6 +147,30 @@ userController.loginWithGoogle = async (req, res, next) => {
   const {username, avatar_url} = result.rows[0];
   req.session.user = {username, email, avatar_url};
   res.status(200).end()
+}
+
+userController.setAvatar = async (req, res, next) => {
+  const { id, avatar } = req.body;
+  try {
+    // Should probably check if the image is base64 encoded before inserting
+    await pool.query(`UPDATE users SET avatar = $1 WHERE id = $2`, [avatar, id]);
+  } catch (error) {
+    console.log(error);
+  }
+  
+  res.end()
+}
+
+userController.setCoverPhoto = async (req, res, next) => {
+  const { id, cover_photo } = req.body;
+  try {
+    // Should probably check if the image is base64 encoded before inserting
+    await pool.query(`UPDATE users SET cover_photo = $1 WHERE id = $2`, [cover_photo, id]);
+  } catch (error) {
+    console.log(error)
+  }
+  
+  res.end()
 }
 
 export default userController;
