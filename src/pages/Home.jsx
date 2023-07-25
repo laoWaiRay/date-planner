@@ -26,7 +26,6 @@ export default function Home() {
 
   const backgroundImage = "src/assets/Hero.jpg";
   const avatarImage = "src/assets/avatar.png";
-  const username = "Gurpreet Sethi";
 
   const settings = {
     dots: false,
@@ -50,7 +49,7 @@ export default function Home() {
           <div className="avatar-overlay">
             <div className="avatar-container">
               <img src={avatarImage} alt="Avatar" className="avatar" />
-              <div className="welcome-message">Welcome {username}</div>
+              <div className="welcome-message">Welcome {user.username}</div>
             </div>
           </div>
         </div>
