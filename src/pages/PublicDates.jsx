@@ -13,20 +13,14 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { Outlet, useOutlet } from "react-router-dom";
-<<<<<<< HEAD
 import { useAuthContext } from '../hooks/useAuthContext';
-=======
->>>>>>> origin/master
 
 
 export default function PublicDates() {
     const { user } = useAuthContext();
     const [dates, setDates] = useState([]);
     const [events, setEvents] = useState([]);
-<<<<<<< HEAD
     const [favorites, setFavorites] = useState([]);
-=======
->>>>>>> origin/master
     const outlet = useOutlet();
 
     // For date idea filtering
@@ -70,17 +64,10 @@ export default function PublicDates() {
     useEffect(() => {
         retrieveDates();
       }, [categorySelect, priceSelect, outlet]);
-<<<<<<< HEAD
-=======
 
-    // useEffect(() => {
-    //     retrieveEvents();
-    // }, [eventStart, eventEnd]);
->>>>>>> origin/master
-
-    // useEffect(() => {
-    //     retrieveEvents();
-    // }, [eventStart, eventEnd]);
+    useEffect(() => {
+        // retrieveFavorites();
+    })
 
     const handleChange = (event, newValue) => {
         setTabValue(newValue);
@@ -122,9 +109,7 @@ export default function PublicDates() {
     }
 
     const retrieveFavorites = () => {
-        console.log("OUTSIDE GETTING FAVS", user)
         if (user) {
-            console.log("GETTING FAVS")
             let url = `http://localhost:8000/favorites?user=${user.id}`;
             fetch(url)
             .then((response) => {
@@ -139,7 +124,6 @@ export default function PublicDates() {
         }
   
     }
-
 
     const displayEvents = (() => 
         events.slice(firstCardIndex, lastCardIndex).map(function(event) {
@@ -160,9 +144,9 @@ export default function PublicDates() {
             } catch {
                 var location = "N/A"
             }
-        
+
             return (
-                <DateCard key={event_id} id={event_id} name={name} category={category} location={location} image={image} inFavorite={false}></DateCard>
+                <DateCard key={event_id} id={event_id} name={name} category={category} location={location} image={image} inFavorite={false} isticketmaster={true}></DateCard>
             )
             
         })
@@ -179,10 +163,8 @@ export default function PublicDates() {
             
             var check = fav => fav.id === id;
             if (favorites.some(check)) {
-                console.log("match",id)
                 var isFav = true
             } else {
-                console.log("no match",id)
                 var isFav = false
             }
 
@@ -196,9 +178,7 @@ export default function PublicDates() {
         setCurrentPage(page)
     })
 
-    
     // FOR PUBLIC DATE IDEA FILTER & SEARCH
-
     const onCategorySelect = (event, value)  =>{
         let category = value.props.value
         setCategorySelect(category)
@@ -252,19 +232,16 @@ export default function PublicDates() {
     // FOR TICKETMASTER EVENT FILTER & SEARCH
     const onStartDateChange = (date)  =>{
         // Check start date format & set start date
-
         var day = date.$D.toString()
         if (date.$D < 10) {
             var day = day.padStart(2,'0')
         } 
-
         var month = date.$M+1
         if (date.$M+1 < 10) {
             month = month.toString().padStart(2,'0')
         } else {
             month = month.toString()
         }
-
         let year = date.$y.toString()
         var startDate = year+"-"+month+"-"+day
         setEventStart(startDate)
@@ -276,17 +253,14 @@ export default function PublicDates() {
         if (date.$D < 10) {
             var day = day.padStart(2,'0')
         } 
-
         var month = date.$M+1
         if (month < 10) {
             month = month.toString().padStart(2,'0')
         } else {
             month = month.toString()
         }
-
         let year = date.$y.toString()
         var endDate = year+"-"+month+"-"+day
-
         setEventEnd(endDate)
     }
 
@@ -304,18 +278,14 @@ export default function PublicDates() {
             setEventStart(currentDate)
             setEventInfo({start:currentDate,end:eventEnd,city:citySearch,country:countryCode})
         }
-
         if (eventEnd < eventStart) {
             alert("Event end date must be after start date!")
             setEventEnd(eventStart)
             setEventInfo({start:eventStart,end:eventStart,city:citySearch,country:countryCode})
         }
-
         if (eventStart >= currentDate && eventEnd >= eventStart) {
             setEventInfo({start:eventStart,end:eventEnd,city:citySearch,country:countryCode})
         }
-        
-
         retrieveEvents()
     }
 

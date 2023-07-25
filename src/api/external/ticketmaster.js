@@ -27,13 +27,10 @@ async function getTicketmasterEventByLocation(city, countryCode) {
 }
 
 
-
 export {
   getTicketmasterEvents,
   getTicketmasterEventById,
-  getTicketmasterEventByDateRange,
   getTicketmasterEventByCountry,
   getTicketmasterEventByLocation,
-  getTicketmasterEventByLocationDateRange
 }
 

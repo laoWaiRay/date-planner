@@ -47,7 +47,6 @@ export default function MyDates() {
   }
 
   const retrieveFavorites = () => {
-    console.log("RETRIEVE FAV")
     let url = `http://localhost:8000/favorites?user=${user.id}`
     fetch(url)
     .then((response) => {
@@ -68,18 +67,17 @@ export default function MyDates() {
           let category = date.category
           let location = date.city
           let id = date.id
-          // let price = date.price     // TO ADD IN PRICE
+
           var check = fav => fav.id === id;
           if (favorites.some(check)) {
-              console.log("match",id)
               var isFav = true
           } else {
-              console.log("no match",id)
               var isFav = false
           }
 
           return (
               <DateCard key={id} id={id} name={name} category={category} location={location} inFavorite={isFav}></DateCard>
+
           )
       })
   )
@@ -90,18 +88,16 @@ export default function MyDates() {
       let description = fav.description
       let category = fav.category
       let location = fav.city
+      let locationCountry = fav.country
+      let locationAddress = fav.detailed_address
       let id = fav.id
-      // let price = date.price     // TO ADD IN PRICE
 
       var check = fav => fav.id === id;
       if (favorites.some(check)) {
-          console.log("match",id)
           var nextFav = true
       } else {
-          console.log("no match",id)
           var nextFav = false
       }
-      console.log(id,"sending",nextFav)
       return (
           <DateCard key={id} id={id} name={name} category={category} location={location} inFavorite={nextFav}></DateCard>
         )
@@ -114,14 +110,14 @@ export default function MyDates() {
 
   return (
     <>
-      {/* {dates.length === 0 ? (
+      {dates.length === 0 ? (
         <HomeScreen retrieveDates={retrieveDates} />
-      ) : ( */}
+      ) : (
         <div className="md:container mx-auto">
         <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4">Your Personal Date Ideas</h1>
         <Tabs className="mb-2" value={tabValue} onChange={handleChange} centered>
             <Tab value="0" label="Your Date Ideas" />
-            <Tab value="1" label="Favorites" />
+            <Tab value="1" label="Favorite Date Ideas" />
         </Tabs>
             <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
                 {tabValue == "0" ? <>{displayCards()}</>: <>{displayFavorites()}</>}
@@ -133,7 +129,7 @@ export default function MyDates() {
               }
             </div>
         </div>
-       {/* )} */}
+       )}
     </>
   );
 }

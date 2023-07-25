@@ -30,7 +30,8 @@ const createTables = async () => {
       email varchar(255) NOT NULL UNIQUE,
       password varchar(255) NOT NULL,
       password_salt varchar(255) NOT NULL,
-      avatar_URL text
+      avatar text,
+      cover_photo text
     );
   `);
 
@@ -108,12 +109,12 @@ const insertMockData = async () => {
 
   try {
     await pool.query(`
-      INSERT INTO users (username, email, password, password_salt, avatar_url) VALUES 
-      ('shaquille.oatmeal', 'shaquille.oatmeal@gmail.com', '123', '123', 'https://i.pravatar.cc/150?img=14'),
-      ('hoosier-daddy', 'hoosier-daddy@gmail.com', '123', '123', 'https://i.pravatar.cc/150?img=67'),
-      ('applebottomjeans', 'applebottomjeans@gmail.com', '123', '123', 'https://i.pravatar.cc/150?img=61'),
-      ('oprahwindfury', 'oprahwindfury@gmail.com', '123', '123', 'https://i.pravatar.cc/150?img=47'),
-      ('anonymouse', 'anonymouse@gmail.com', '123', '123', 'https://i.pravatar.cc/150?img=26')
+      INSERT INTO users (username, email, password, password_salt) VALUES 
+      ('shaquille.oatmeal', 'shaquille.oatmeal@gmail.com', '123', '123'),
+      ('hoosier-daddy', 'hoosier-daddy@gmail.com', '123', '123'),
+      ('applebottomjeans', 'applebottomjeans@gmail.com', '123', '123'),
+      ('oprahwindfury', 'oprahwindfury@gmail.com', '123', '123'),
+      ('anonymouse', 'anonymouse@gmail.com', '123', '123')
     `);
 
     console.log("Successfully inserted users table mock data");

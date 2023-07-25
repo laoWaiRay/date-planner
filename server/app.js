@@ -131,18 +131,26 @@ app.get("/favorites", async (req, res) => {
 });
 
 app.post("/favorites", async (req, res) => {
-  var userid = req.query.user
-  var eventid = req.query.event
-  console.log("ADDING FAV",userid,eventid)
+  const userid = req.query.user
+  const eventid = req.query.event
 
-  var addFavoriteQuery = `INSERT INTO saved(user_id,event_id) VALUES(${userid},${eventid})`
+  // Add event to favorites table
+  var checkFavQuery = `SELECT * FROM saved WHERE user_id=$1 AND event_id=$2`
+  console.log(checkFavQuery)
+  const favResult = await pool.query(checkFavQuery, [userid, eventid]);
 
-  await pool.query(addFavoriteQuery, (err, result) => {
-    if (err) {
-      res.end(err);
-    }
-  });
+  if (favResult.rows.length == 0) {
+    console.log("INSERTING FAV")
+    var addFavoriteQuery = `INSERT INTO saved(user_id,event_id) VALUES(${userid},'${eventid}')`
+    await pool.query(addFavoriteQuery, (err, result) => {
+      if (err) {
+        console.log(err)
+        res.end(err);
+      }
+    }) 
+  }
 });
+
 
 app.delete("/favorites", async (req, res) => {
   var del_userid = req.query.user
@@ -158,6 +166,7 @@ app.delete("/favorites", async (req, res) => {
     }
   });
 });
+
 
 app.post("/mydates", async (req, res) => {
   try {
@@ -304,9 +313,7 @@ app.get("/ticketmaster", (req, res) => {
   } else {
     var url = `https://app.ticketmaster.com/discovery/v2/events.json?countryCode=${countryCode}&city=${city}&startDateTime=${startTime}&endDateTime=${endTime}&apikey=${ticketmaster_api}`;
   }
-    
 
-  console.log("Ticketmaster Call:",url)
   fetch(url)
     .then((response) => {
       // console.log(response);

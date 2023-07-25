@@ -19,21 +19,16 @@ const isAPIevt = (id) => {
   return id.length > 10;
 }
 
-export default function DateCard({ id, name, description, category, location, image, price, favorites, inFavorite }) {
+export default function DateCard({ id, name, description, category, location, image, price, inFavorite, isticketmaster=false }) {
     const { user } = useAuthContext();
     const [showInviteModal, setShowInviteModal] = useState(false);
     const [isAPIEvent] = useState(isAPIevt(id));
     const [averageScore, setAverageScore] = useState(0.0);
-    // const [isFav, setIsFav] = useState(inFavorite);
+    const [isFav, setIsFav] = useState(inFavorite);
     const navigate = useNavigate();
     const eventid = id
-    var isFav = inFavorite
-
-    console.log(eventid,isFav, inFavorite)
 
     useEffect(() => {
-      // setIsFav(initFav)
-      // checkFavorites()
       if (isAPIEvent) return;
       (async () => {
         let avgScore = parseFloat((await getAverageReviewScore(id)).avg).toFixed(1);
@@ -42,8 +37,15 @@ export default function DateCard({ id, name, description, category, location, im
         setAverageScore(parseFloat(avgScore));
       })()
     }, [])
-    
 
+    const toggleIsFav = () => {
+      if(isFav == false) {
+        setIsFav(true)
+      } else {
+        setIsFav(false)
+      }
+    }
+    
     const handleInviteClick = () => {
         setShowInviteModal(true);
       };
@@ -56,31 +58,21 @@ export default function DateCard({ id, name, description, category, location, im
       navigate(`/dates/${id}`);
     }
 
-    const setIsFav = () => {
-      if(isFav == false) {
-        isFav = true
-        // setIsFav(true)
-      } else {
-        isFav = false
-        // setIsFav(false)
-      }
-    }
-
-    const handleFavoriteClick = () => {
-      if (isFav ==  false) {
+    const handleFavoriteClick = async () => {
+      if (isFav == false) {
         let url = `http://localhost:8000/favorites?user=${user.id}&event=${eventid}`
         fetch(url, {
           method: "POST"
         })
         .then((response) => {
-          console.log("SET FAV")
-
             return response.json()
         })
         .catch (error => {
             console.log(error)
         })
-       setIsFav() 
+        console.log("SETTING FAV")
+       toggleIsFav()
+       console.log(isFav)
       }
     }
 
@@ -96,7 +88,9 @@ export default function DateCard({ id, name, description, category, location, im
         .catch (error => {
             console.log(error)
         })
-        setIsFav() 
+        console.log("REMOVE FAV")
+        toggleIsFav()
+        console.log(isFav)
       }
     }
 
@@ -136,10 +130,17 @@ export default function DateCard({ id, name, description, category, location, im
             <CardActions className='mt-auto'>
                 <Button onClick={handleClickDetails}>Details</Button>
                 <Button onClick={handleInviteClick} size="small">Invite</Button>
-                {isFav == false ? 
-                  <IconButton color="default" onClick={handleFavoriteClick}><FavoriteBorderIcon></FavoriteBorderIcon></IconButton>:
-                  <IconButton onClick={handleUnfavoriteClick}><FavoriteIcon sx={{ color: red[700] }}></FavoriteIcon></IconButton>
+                <div>
+                {isticketmaster === true 
+                  ? null :
+                  <div>
+                  {isFav === false ? 
+                    <><IconButton color="default" onClick={handleFavoriteClick}><FavoriteBorderIcon></FavoriteBorderIcon></IconButton></>:
+                    <><IconButton onClick={handleUnfavoriteClick}><FavoriteIcon sx={{ color: red[700] }}></FavoriteIcon></IconButton></>
+                  }
+                  </div>
                 }
+                </div>
             </CardActions>
 
             {showInviteModal && (<CreateDateInvite onClose={handleCloseModal} eventID={id}/>)}
