@@ -427,15 +427,31 @@ app.post("/updateInviteStatus", async (req, res) =>{
 
 //fetch a users pending invites
 app.get("/pendingUserInvites", async (req, res) =>{
+  
   const user_id = req.query.user_id;
+  
+  console.log(user_id)
     // Define INSERT query
-    const selectQuery = `
-    SELECT * FROM invitations 
-    WHERE receiver_id = $1 AND status = $2;
-    `;
+   const selectQuery = `
+  SELECT 
+    users.username AS sender_username,
+    users.avatar AS sender_avatar_url,
+    invitations.start_time AS invitation_start_time,
+    invitations.date AS invitation_date,
+    events.title AS event_title,
+    locations.detailed_address AS event_detailed_address,
+    locations.city AS event_city,
+    locations.country AS event_country
+  FROM invitations
+  JOIN users ON invitations.sender_id = users.id
+  JOIN events ON invitations.event_id = events.id
+  JOIN locations ON events.location_id = locations.id
+  WHERE invitations.receiver_id = $1 AND invitations.status = 'pending';
+`;
+
 
 // Defining parameter values for the INSERT query
-  const values = [user_id, "pending"];
+  const values = [user_id];
 
   try {
     const result = await pool.query(selectQuery, values);

@@ -9,7 +9,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Polaroid from "../components/Polaroid";
 import Slider from "react-slick";
 import { AddAPhoto } from "@mui/icons-material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AvatarUploadModal from "../components/AvatarUploadModal";
 const polaroids = [
   {
@@ -25,6 +25,7 @@ const polaroids = [
 export default function Home() {
   const { user } = useAuthContext();
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [invitations, setInvitations] = useState([]);
 
   const logout = useLogout();
   console.log(user);
@@ -45,6 +46,28 @@ export default function Home() {
   const handleUploadBtnClick = () => {
     setUploadModalOpen(true);
   };
+
+  useEffect(() => {
+    console.log("here");
+    console.log(user);
+
+    if (user && user.id) {
+      const fetchInvitations = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:8000/pendingUserInvites?user_id=${user.id}`
+          );
+          const data = await response.json();
+          console.log(data);
+          setInvitations(data);
+        } catch (error) {
+          console.error("Error fetching invitations:", error.message);
+        }
+      };
+
+      fetchInvitations();
+    }
+  }, [user]);
 
   return (
     <>
@@ -86,10 +109,23 @@ export default function Home() {
         <div className="cards-container-all">
           <div className="floating-card-invitations">
             <h2 className="text-center">INVITATIONS</h2>
-            <InvitationCard />
-            <InvitationCard />
-            <InvitationCard />
-            <InvitationCard />
+            {invitations.length === 0 ? (
+              <p>No pending invitations.</p>
+            ) : (
+              invitations.map((invitation, index) => (
+                <InvitationCard
+                  key={index}
+                  senderUsername={invitation.sender_username}
+                  senderAvatarUrl={invitation.sender_avatar_url}
+                  invitationStartTime={invitation.invitation_start_time}
+                  invitationDate={invitation.invitation_date}
+                  eventTitle={invitation.event_title}
+                  eventDetailedAddress={invitation.event_detailed_address}
+                  eventCity={invitation.event_city}
+                  eventCountry={invitation.event_country}
+                />
+              ))
+            )}
           </div>
           <div className="floating-card-upcoming">
             <h2 className="text-center">UPCOMING DATES</h2>
