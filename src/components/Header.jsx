@@ -1,25 +1,24 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import MenuIcon from '@mui/icons-material/Menu';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import useLogout from '../hooks/useLogout';
-import { useNavigate } from 'react-router-dom';
-
+import * as React from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
+import MenuIcon from "@mui/icons-material/Menu";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import useLogout from "../hooks/useLogout";
+import { useNavigate } from "react-router-dom";
 
 const key = "user_session";
 
 const drawerWidth = 240;
-const navItems = ['Home', 'Dates', 'Favorites', 'Logout'];
+const navItems = ["Home", "Dates", "Add Date", "Logout"];
 
 export default function DrawerAppBar(props) {
   const { window } = props;
@@ -33,33 +32,37 @@ export default function DrawerAppBar(props) {
 
   const handleNavButtonClick = (event, navItem) => {
     switch (navItem) {
-      case 'Home':
-        navigate("/")
+      case "Home":
+        navigate("/");
         break;
-      case 'Dates':
+      case "Dates":
         navigate("/dates");
         break;
-      case 'Favorites':
-        navigate("/mydates")
+      case "Add Date":
+        navigate("/mydates");
         break;
-      case 'Logout':
+      case "Logout":
         logout();
         break;
       default:
         return () => {};
     }
-  }
+  };
 
   const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
         Date Planner
       </Typography>
       <Divider />
       <List>
         {navItems.map((item) => (
-          <ListItem key={item} disablePadding onClick={(e) => handleNavButtonClick(e, item)}>
-            <ListItemButton sx={{ textAlign: 'center' }} >
+          <ListItem
+            key={item}
+            disablePadding
+            onClick={(e) => handleNavButtonClick(e, item)}
+          >
+            <ListItemButton sx={{ textAlign: "center" }}>
               <ListItemText primary={item} />
             </ListItemButton>
           </ListItem>
@@ -68,10 +71,11 @@ export default function DrawerAppBar(props) {
     </Box>
   );
 
-  const container = window !== undefined ? () => window().document.body : undefined;
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <Box sx={{ display: 'flex' }} className="h-[64px]">
+    <Box sx={{ display: "flex" }} className="h-[64px]">
       <AppBar component="nav">
         <Toolbar>
           <IconButton
@@ -79,20 +83,24 @@ export default function DrawerAppBar(props) {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ mr: 2, display: { sm: "none" } }}
           >
             <MenuIcon />
           </IconButton>
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
           >
             Date Planner
           </Typography>
-          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+          <Box sx={{ display: { xs: "none", sm: "block" } }}>
             {navItems.map((item) => (
-              <Button key={item} sx={{ color: '#fff' }} onClick={(e) => handleNavButtonClick(e, item)}>
+              <Button
+                key={item}
+                sx={{ color: "#fff" }}
+                onClick={(e) => handleNavButtonClick(e, item)}
+              >
                 {item}
               </Button>
             ))}
@@ -109,8 +117,11 @@ export default function DrawerAppBar(props) {
             keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
           }}
         >
           {drawer}

@@ -16,7 +16,6 @@ import { useEffect, useState } from "react";
 import { getSession } from "./api/internal/postgres";
 import { initGoogleIdentity, handleCallbackResponse } from "./GoogleIdentity";
 import DrawerAppBar from "./components/Header";
-import HomeScreen from "./components/HomeScreen";
 import Details from "./pages/Details";
 
 export default function App() {
@@ -31,9 +30,9 @@ export default function App() {
       path: "/",
       // element: user ? <Home /> : <Login />,
       element: user ? (
-        <div>
+        <>
           <DrawerAppBar /> <Home />
-        </div>
+        </>
       ) : (
         <Login />
       ),

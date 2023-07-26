@@ -8,26 +8,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 92vh;
   overflow: hidden;
-  margin-top: -3%;
   margin-left: -1%;
 }
 
 .image {
   width: 100%;
   height: auto;
+  object-fit: cover;
   margin-top: -70%;
 }
 
-/* body {
-  overflow: hidden;
-  background-color: #f8f8f8;
-} */
-
-.card-container {
+.card-container-date {
   border-radius: 8px;
-  /* box-shadow: 0 0 8px rgba(0, 0, 0, 0.5); */
   transition: transform 0.3s ease;
   height: 50%;
   margin-top: 30%;
@@ -37,7 +31,7 @@
   justify-content: center;
 }
 
-.card-container:hover {
+.card-container-date:hover {
   transform: translateY(-10px);
 }
 
@@ -70,4 +64,8 @@
 .button-container:hover {
   background-color: white;
   color: #0d6efd;
+}
+
+.styleScoped {
+  background-color: #f8f8f8;
 }

@@ -1,59 +1,125 @@
+import React from "react";
 import Card from "react-bootstrap/Card";
 import CheckIcon from "@mui/icons-material/Check";
 import Fab from "@mui/material/Fab";
 import CloseIcon from "@mui/icons-material/Close";
 import Avatar from "@mui/material/Avatar";
+import Chip from "@mui/material/Chip";
+import "./InvitationCard.css";
+import { useNavigate } from "react-router-dom";
 
-import './InvitationCard.css'
-function InvitationCard() {
-    return ( 
-        <Card className="card-container">
-            <Card.Body>
-              <Card.Title className="text-center">Beach Date</Card.Title>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <Avatar
-                  alt="Remy Sharp"
-                  src="src/assets/avatar.png"
-                  sx={{ width: 56, height: 56 }}
+const formatTime = (timeString) => {
+  const [hours, minutes] = timeString.split(":");
+  let formattedHours = parseInt(hours) % 12;
+  formattedHours = formattedHours === 0 ? 12 : formattedHours;
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+  const ampm = parseInt(hours) >= 12 ? "pm" : "am";
+
+  return `${formattedHours}:${formattedMinutes} ${ampm}`;
+};
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const month = monthNames[date.getMonth()];
+  const year = date.getFullYear().toString().substr(-2);
+
+  return `${day} ${month}, ${year}`;
+};
+
+function InvitationCard({
+  invitationId,
+  eventId,
+  senderUsername,
+  senderAvatarUrl,
+  invitationStartTime,
+  invitationDate,
+  eventTitle,
+  eventDetailedAddress,
+  eventCity,
+  eventCountry,
+  updateInvitationStatus,
+}) {
+  const navigate = useNavigate();
+  const handleClick = (id) => {
+    navigate(`/dates/${id}`);
+  };
+
+  return (
+    <Card className="card-container">
+      <Card.Body>
+        <Card.Title className="text-center"> {eventTitle}</Card.Title>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Avatar
+            src={senderAvatarUrl}
+            alt={senderUsername}
+            sx={{ width: 56, height: 56, marginTop: "-30px" }}
+          />
+          <div className="ml-2">
+            <span>
+              <b>
+                <i>{senderUsername} invited you!</i>
+              </b>
+            </span>
+            <div>
+              <b>When:</b> {formatTime(invitationStartTime)},{" "}
+              {formatDate(invitationDate)}.
+            </div>
+            <div>
+              <b>Where:</b> {eventDetailedAddress}, {eventCity}, {eventCountry}
+            </div>
+            <div className="parent-container">
+              <div className="left-corner">
+                <Chip
+                  color="secondary"
+                  label="View Event"
+                  onClick={() => handleClick(eventId)}
                 />
-                <div className="ml-2">
-                  <span>
-                    <b>
-                      <i>Gurpreet invited you!</i>
-                    </b>
-                  </span>
-                  <div>
-                    <b>When:</b> 7:00 PM, July 30, 2023.
-                  </div>
-                  <div>
-                    <b>Where:</b> Sunny Beach, Vancouver, Canada
-                  </div>
-                  <div className="parent-container">
-                    <div className="left-corner">
-                      <a>View Date</a>
-                    </div>
-                    <div className="right-corner">
-                      <Fab
-                        size="small"
-                        color="success"
-                        aria-label="confirm"
-                        style={{
-                          marginLeft: "-10%",
-                          marginRight: "10%",
-                        }}
-                      >
-                        <CheckIcon />
-                      </Fab>
-                      <Fab size="small" color="error" aria-label="decline">
-                        <CloseIcon />
-                      </Fab>
-                    </div>
-                  </div>
-                </div>
               </div>
-            </Card.Body>
-          </Card>
-     );
+              <div className="right-corner">
+                <Fab
+                  size="small"
+                  color="success"
+                  aria-label="confirm"
+                  style={{
+                    marginLeft: "-10%",
+                    marginRight: "10%",
+                  }}
+                >
+                  <CheckIcon
+                    onClick={() =>
+                      updateInvitationStatus(invitationId, "accepted")
+                    }
+                  />
+                </Fab>
+                <Fab size="small" color="error" aria-label="decline">
+                  <CloseIcon
+                    onClick={() =>
+                      updateInvitationStatus(invitationId, "rejected")
+                    }
+                  />
+                </Fab>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card.Body>
+    </Card>
+  );
 }
 
 export default InvitationCard;

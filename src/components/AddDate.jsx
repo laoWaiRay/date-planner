@@ -1,5 +1,5 @@
 import React from "react";
-import "./HomeScreen.css";
+import "./AddDate.css";
 import CoupleImage from "../assets/home_screen.jpg";
 import DateForm from "./DateForm";
 import Button from "react-bootstrap/Button";
@@ -10,22 +10,22 @@ export default function HomeScreen() {
 
   const postData = async (body) => {
     await fetch("http://localhost:8000/mydates", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
     });
-  }
+  };
 
   return (
     <>
-      <div className="container-fluid">
+      <div className="container-fluid styleScoped">
         <div className="row">
-          <div className="col-md-9 image-container">
+          <div className="col-md-8 image-container">
             <img src={CoupleImage} className="image" alt="Couple" />
           </div>
-          <div className="col-md-3">
-            <div className="card-container">
+          <div className="col-md-4">
+            <div className="card-container-date">
               <div className="tagline-button-container">
                 <div className="button-container">
                   <Button

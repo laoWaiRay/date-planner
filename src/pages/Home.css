@@ -1,5 +1,4 @@
 .homepage-container {
-  margin-top: 0px;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -60,11 +59,12 @@
   position: absolute;
   top: 21%;
   left: 250px;
+  margin-left: 2%;
   transform: translateX(-50%);
   background-color: rgba(255, 255, 255, 0.8);
   padding: 16px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   max-height: 85vh;
   overflow-y: auto;
 }
@@ -73,19 +73,21 @@
   position: absolute;
   top: 21%;
   right: 250px;
+  margin-right: 2%;
   transform: translateX(50%);
   background-color: rgba(255, 255, 255, 0.8);
   padding: 16px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   max-height: 85vh;
   overflow-y: auto;
 }
 
 .floating-card-polariod {
   position: absolute;
-  top: 180px;
-  left: calc(50% - 225px);
+  top: 20%;
+  left: calc(50% - 300px);
+  margin-left: 2%;
   border-radius: 8px;
   max-height: 85vh;
   overflow: hidden;
