@@ -432,12 +432,13 @@ app.get("/pendingUserInvites", async (req, res) =>{
   
   console.log(user_id)
     // Define INSERT query
-   const selectQuery = `
+ const selectQuery = `
   SELECT 
     users.username AS sender_username,
     users.avatar AS sender_avatar_url,
     invitations.start_time AS invitation_start_time,
     invitations.date AS invitation_date,
+    events.id AS event_id,
     events.title AS event_title,
     locations.detailed_address AS event_detailed_address,
     locations.city AS event_city,
@@ -448,7 +449,6 @@ app.get("/pendingUserInvites", async (req, res) =>{
   JOIN locations ON events.location_id = locations.id
   WHERE invitations.receiver_id = $1 AND invitations.status = 'pending';
 `;
-
 
 // Defining parameter values for the INSERT query
   const values = [user_id];

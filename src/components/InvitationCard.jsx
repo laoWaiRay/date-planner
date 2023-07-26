@@ -1,12 +1,47 @@
+import React from "react";
 import Card from "react-bootstrap/Card";
 import CheckIcon from "@mui/icons-material/Check";
 import Fab from "@mui/material/Fab";
 import CloseIcon from "@mui/icons-material/Close";
 import Avatar from "@mui/material/Avatar";
 import Chip from "@mui/material/Chip";
-
 import "./InvitationCard.css";
+import { useNavigate } from "react-router-dom";
+const formatTime = (timeString) => {
+  const [hours, minutes] = timeString.split(":");
+  let formattedHours = parseInt(hours) % 12;
+  formattedHours = formattedHours === 0 ? 12 : formattedHours;
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+  const ampm = parseInt(hours) >= 12 ? "pm" : "am";
+
+  return `${formattedHours}:${formattedMinutes} ${ampm}`;
+};
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const month = monthNames[date.getMonth()];
+  const year = date.getFullYear().toString().substr(-2);
+
+  return `${day} ${month}, ${year}`;
+};
+
 function InvitationCard({
+  eventId,
   senderUsername,
   senderAvatarUrl,
   invitationStartTime,
@@ -16,6 +51,11 @@ function InvitationCard({
   eventCity,
   eventCountry,
 }) {
+  const navigate = useNavigate();
+  const handleClick = (id) => {
+    navigate(`/dates/${id}`);
+  };
+
   return (
     <Card className="card-container">
       <Card.Body>
@@ -33,14 +73,19 @@ function InvitationCard({
               </b>
             </span>
             <div>
-              <b>When:</b> {invitationStartTime}, {invitationDate}.
+              <b>When:</b> {formatTime(invitationStartTime)},{" "}
+              {formatDate(invitationDate)}.
             </div>
             <div>
               <b>Where:</b> {eventDetailedAddress}, {eventCity}, {eventCountry}
             </div>
             <div className="parent-container">
               <div className="left-corner">
-                <Chip label="View Event" color="secondary" />
+                <Chip
+                  color="secondary"
+                  label="View Event"
+                  onClick={() => handleClick(eventId)}
+                />
               </div>
               <div className="right-corner">
                 <Fab

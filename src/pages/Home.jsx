@@ -115,6 +115,7 @@ export default function Home() {
               invitations.map((invitation, index) => (
                 <InvitationCard
                   key={index}
+                  eventId={invitation.event_id}
                   senderUsername={invitation.sender_username}
                   senderAvatarUrl={invitation.sender_avatar_url}
                   invitationStartTime={invitation.invitation_start_time}
