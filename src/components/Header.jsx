@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 const key = "user_session";
 
 const drawerWidth = 240;
-const navItems = ["Home", "Dates", "Add Date", "Logout"];
+const navItems = ["Home", "Dates", "Favorites", "Add Date", "Logout"];
 
 export default function DrawerAppBar(props) {
   const { window } = props;
@@ -37,6 +37,9 @@ export default function DrawerAppBar(props) {
         break;
       case "Dates":
         navigate("/dates");
+        break;
+      case "Favorites":
+        navigate("/mydates");
         break;
       case "Add Date":
         navigate("/mydates");

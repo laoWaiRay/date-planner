@@ -122,7 +122,10 @@ export default function MyDates() {
   return (
     <>
       {dates.length === 0 ? (
-        <AddDate retrieveDates={retrieveDates} />
+        <AddDate
+          retrieveDates={retrieveDates}
+          retrieveFavorites={retrieveFavorites}
+        />
       ) : (
         <div className="md:container mx-auto">
           <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4">
