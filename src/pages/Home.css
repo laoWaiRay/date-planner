@@ -83,7 +83,7 @@
 
 .floating-card-polariod {
   position: absolute;
-  top: 180px;
+  top: 20%;
   left: calc(50% - 225px);
   border-radius: 8px;
   max-height: 85vh;
