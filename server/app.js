@@ -6,6 +6,8 @@ import userRouter from "./routes/users.js";
 import reviewRouter from "./routes/reviews.js"
 import dotenv from "dotenv";
 import fetch from "node-fetch";
+import { Policy } from "@mui/icons-material";
+import { sendRejectionMail } from "./emails/rejectionEmail.js";
 dotenv.config();
 
 const app = express();
@@ -477,6 +479,56 @@ app.post("/reviews/:id", async (req, res, next) => {
     VALUES ($1, $2, $3, $4);
   `, [id, author_id, comment, score]);
   res.status(200).end();
+})
+
+// Edit a review for a given review ID
+app.post("/reviews/:id/edit", async (req, res, next) => {
+  const { id } = req.params;
+  const { comment, score } = req.body;
+  await pool.query(`
+    UPDATE reviews
+    SET comment = $1, score = $2, date = CURRENT_DATE
+    WHERE id = $3;
+  `, [comment, score, id])
+  res.status(200).end();
+})
+
+// Delete a review by review ID
+app.delete("/reviews/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const query = `
+    DELETE FROM reviews
+    WHERE id = $1;
+  `;
+  await pool.query(query, [id]);
+  res.status(200).end();
+})
+
+// Get a list of all reviews for a given event ID
+app.get("/reviews/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const query = `
+    SELECT R.id, U.username, R.score, R.comment, R.date 
+    FROM reviews R
+      INNER JOIN events E ON R.event_id = E.id
+      INNER JOIN users U ON R.author_id = U.id
+    WHERE E.id = ($1)
+    ORDER BY R.date;
+  `;
+  const result = await pool.query(query, [id]);
+  res.json(result.rows);
+})
+
+// Get the average rating for a given event ID
+app.get("/reviews/:id/average", async (req, res, next) => {
+  const { id } = req.params;
+  const query = `
+    SELECT AVG (score)
+    FROM reviews
+    WHERE event_id = $1
+  `;
+  const result = await pool.query(query, [id]);
+  res.json(result.rows[0]);
 })
 
 app.listen(PORT, () => {
