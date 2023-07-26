@@ -221,7 +221,7 @@ async function sendEventRejectionEmail(invitation_id){
   return data;
 }
 
-async function sendEventRejectionEmail(invitation_id){
+async function sendEventAcceptance(invitation_id){
   const result = await fetch(`http://localhost:8000/acceptanceEmail?invitation_id=${invitation_id}`, fetchOptions.GET);
   const data = await result.json();
   return data;
