@@ -3,7 +3,6 @@ import pg from "pg";
 import cors from "cors";
 import session from "express-session";
 import userRouter from "./routes/users.js";
-import reviewRouter from "./routes/reviews.js"
 import dotenv from "dotenv";
 import fetch from "node-fetch";
 import { Policy } from "@mui/icons-material";
@@ -15,8 +14,8 @@ const PORT = 8000;
 const ticketmaster_api = process.env.TICKETMASTER_API_KEY;
 
 const pool = new pg.Pool({
-  user: "postgres",
-  password: "root",
+  user: process.env.PG_USER,
+  password: process.env.PG_PASSWORD,
   database: "dateplanner",
 });
 
@@ -41,30 +40,26 @@ app.use(
 );
 
 app.use("/users", userRouter);
-app.use("/reviews", reviewRouter);
 
 app.get("/mydates", async (req, res) => {
-  var userid = req.query.user
   var category = req.query.category
   var price = req.query.price
-
   // var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments FROM events`;
 
   if ((category == "all" && price == "all") || (category === undefined && price === undefined)) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                       locations.city, locations.country, locations.detailed_address  
-                      FROM events INNER JOIN locations ON events.location_id = locations.id
-                      WHERE author='${userid}' AND isticketmasterevent = 'f';`
+                      FROM events INNER JOIN locations ON events.location_id = locations.id;`
   } else if (category !== undefined && (price == "all" || price === undefined)) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE category='${category}' AND author='${userid}' AND isticketmasterevent = 'f';`
+                        WHERE category='${category}';`
   } else if (price !== undefined && (category == "all" || category === undefined)) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE price='${price}' AND author='${userid}' AND isticketmasterevent = 'f';`
+                        WHERE price='${price}';`
   } else if (category !== undefined && price !== undefined) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
@@ -80,115 +75,14 @@ app.get("/mydates", async (req, res) => {
   });
 });
 
-app.get("/publicdates", async (req, res) => {
-  var category = req.query.category
-  var price = req.query.price
-  // var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments FROM events`;
-
-  if ((category == "all" && price == "all") || (category === undefined && price === undefined)) {
-    var publicDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
-                      locations.city, locations.country, locations.detailed_address  
-                      FROM events INNER JOIN locations ON events.location_id = locations.id WHERE private='f';`
-  } else if (category !== undefined && (price == "all" || price === undefined)) {
-    var publicDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
-                        locations.city, locations.country, locations.detailed_address  
-                        FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE category='${category}' AND private='f';`
-  } else if (price !== undefined && (category == "all" || category === undefined)) {
-    var publicDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
-                        locations.city, locations.country, locations.detailed_address  
-                        FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE price='${price}' AND private='f';`
-  } else if (category !== undefined && price !== undefined) {
-    var publicDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
-                        locations.city, locations.country, locations.detailed_address  
-                        FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE category='${category}' AND price='${price}' AND private='f';`
-  }
-
-  await pool.query(publicDatesQuery, (err, result) => {
-    if (err) {
-      res.end(err);
-    }
-    res.send(result.rows)
-  });
-});
-
-
-app.get("/favorites", async (req, res) => {
-  var userid = req.query.user
-
-  var favoritesQuery = 
-    `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
-    locations.city, locations.country, locations.detailed_address  
-    FROM events INNER JOIN locations ON events.location_id = locations.id
-    WHERE events.id IN (SELECT event_id FROM saved WHERE user_id = ${userid});`
-
-  await pool.query(favoritesQuery, (err, result) => {
-    if (err) {
-      res.end(err);
-    }
-    res.send(result.rows)
-  });
-});
-
-app.post("/favorites", async (req, res) => {
-  const userid = req.query.user
-  const eventid = req.query.event
-
-  // Add event to favorites table
-  var checkFavQuery = `SELECT * FROM saved WHERE user_id=$1 AND event_id=$2`
-  console.log(checkFavQuery)
-  const favResult = await pool.query(checkFavQuery, [userid, eventid]);
-
-  if (favResult.rows.length == 0) {
-    console.log("INSERTING FAV")
-    var addFavoriteQuery = `INSERT INTO saved(user_id,event_id) VALUES(${userid},'${eventid}')`
-    await pool.query(addFavoriteQuery, (err, result) => {
-      if (err) {
-        console.log(err)
-        res.end(err);
-      }
-    }) 
-  }
-});
-
-
-app.delete("/favorites", async (req, res) => {
-  var del_userid = req.query.user
-  var del_eventid = req.query.event
-  console.log("DELETING FAV",del_userid,del_eventid)
-
-  var delFavoriteQuery = `DELETE FROM saved WHERE user_id='${del_userid}' AND event_id='${del_eventid}'`
-
-  await pool.query(delFavoriteQuery, (err, result) => {
-    if (err) {
-      console.log(err)
-      res.end(err);
-    }
-  });
-});
-
-
 app.post("/mydates", async (req, res) => {
   try {
     const { date } = req.body;
-
-    // Check if location is already in DB before insert
-    let locationId = null;
-    const existsQuery = `SELECT * FROM locations WHERE city = $1 AND country = $2 AND detailed_address = $3`;
-    let result = await pool.query(existsQuery, [date.city, date.country, date.location]);
-    if (result.rows.length > 0) {
-      locationId = result.rows[0].id;
-    }
-
-    if (!locationId) {
-      //Insert location table first
-      const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
-      const locationValues = [date.city, date.country, date.location];
-      const locationResult = await pool.query(locationQuery, locationValues);
-      locationId = locationResult.rows[0]?.id;
-    }
+    //Insert location table first
+    const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
+    const locationValues = [date.city, date.country, date.location];
+    const locationResult = await pool.query(locationQuery, locationValues);
+    const locationId = locationResult.rows[0]?.id;
 
     //to be done insert into user, and get id ? or you have user id just insert it
     //for mock data im making user 1
@@ -223,63 +117,6 @@ app.post("/mydates", async (req, res) => {
   }
 });
 
-// PATCH: edit a date
-app.patch("/mydates", async (req, res, next) => {
-  try {
-    const { date } = req.body;
-
-    const { event_id, title, date_idea, location, city, country, price_range, category, 
-      preferred_time, comments, image, isPrivate, author } = date;
-
-    // Check if location is already in DB before insert
-    let locationId = null;
-    const existsQuery = `SELECT * FROM locations WHERE city = $1 AND country = $2 AND detailed_address = $3`;
-    let result = await pool.query(existsQuery, [city, country, location]);
-    if (result.rows.length > 0) {
-      locationId = result.rows[0].id;
-    }
-
-    if (!locationId) {
-      //Insert location table first
-      const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
-      const locationValues = [date.city, date.country, date.location];
-      const locationResult = await pool.query(locationQuery, locationValues);
-      locationId = locationResult.rows[0]?.id;
-    }
-
-    // This is a hacky way to only update the image if the user uploaded a new image
-
-    const query = `
-      UPDATE events 
-      SET title = $1, description = $2, price = $3, category = $4, preferred_time = $5, 
-          location_id = $6, date_posted = CURRENT_DATE, private = $7, comments = $8 ${image ? " ,image = $10 " : " "}
-      WHERE id = $9;
-    `;
-    
-    const queryValues = [
-      title, 
-      date_idea, 
-      price_range, 
-      category, 
-      preferred_time, 
-      locationId, 
-      isPrivate, 
-      comments, 
-      event_id
-    ];
-
-    if (image)
-      queryValues.push(image);
-
-    await pool.query(query, queryValues);
-
-    res.end();
-  } catch (error) {
-    console.error(error);
-    res.end();
-  }
-})
-
 app.get("/ticketmaster", (req, res) => {
   var start = req.query.start
   var end = req.query.end
@@ -298,13 +135,13 @@ app.get("/ticketmaster", (req, res) => {
   }
   var currYear = dateObj.getFullYear()
   var currentDate = currYear+"-"+currMonth+"-"+currDay
-  if (start === undefined || start == "") {
+  if (startTime == "") {
     var startTime = currentDate.toString()+"T00:00:00Z"
   } else {
     var startTime = start.toString()+"T00:00:00Z"
   }
 
-  if (end === undefined || end == "") {
+  if (end == "") {
     var endTime = currentDate.toString()+"T23:59:00Z"
   } else {
     var endTime = end.toString()+"T23:59:00Z"
@@ -315,7 +152,9 @@ app.get("/ticketmaster", (req, res) => {
   } else {
     var url = `https://app.ticketmaster.com/discovery/v2/events.json?countryCode=${countryCode}&city=${city}&startDateTime=${startTime}&endDateTime=${endTime}&apikey=${ticketmaster_api}`;
   }
+    
 
+  console.log("Ticketmaster Call:",url)
   fetch(url)
     .then((response) => {
       // console.log(response);
@@ -345,22 +184,15 @@ app.get("/ticketmaster/:id", async (req, res, next) => {
 // Get user-created event by id
 app.get("/events/:id", async (req, res, next) => {
   const { id } = req.params;
-  const result = await pool.query(`SELECT * FROM events WHERE id = $1`, [id]);
+  const result = await pool.query(`SELECT * FROM events WHERE id = ${id}`);
   const data = result.rows[0];
   res.json(data);
-})
-
-// Delete an event by event id
-app.delete("/events/:id", async (req, res, next) => {
-  const { id } = req.params;
-  const result = await pool.query(`DELETE FROM events WHERE id = $1`, [id]);
-  res.end();
 })
 
 // Get location by id
 app.get("/locations/:id", async (req, res, next) => {
   const { id } = req.params;
-  const result = await pool.query(`SELECT * FROM locations WHERE id = $1`, [id]);
+  const result = await pool.query(`SELECT * FROM locations WHERE id = ${id}`);
   const data = result.rows[0];
   res.json(data);
 })
@@ -372,20 +204,7 @@ app.post("/createInvite", async (req, res) =>{
   const event_id = req.query.event_id;
   const status = req.query.status;
   const date = req.query.date;
-  const start_time = req.query.start_time;
-
-  const isTicketmasterEvent = isAPIevt(event_id);
-
-  // If the event is from Ticketmaster, add it to the events table before sending an invitation
-  if (isTicketmasterEvent) {
-    // Check if it already exists and insert if it doesn't
-    const result = await pool.query(`SELECT * FROM events WHERE id = $1 AND isticketmasterevent = true`, [event_id]);
-    if (result.rows.length == 0) {
-      await pool.query(`INSERT INTO events(id, title, isticketmasterevent) VALUES ($1, $2, $3)`, [
-        event_id, event_id, true
-      ]);
-    }
-  }
+  const start_time = req.query.start_time;  
 
   // Define INSERT query
   const insertQuery = `
@@ -393,7 +212,7 @@ app.post("/createInvite", async (req, res) =>{
     VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *;`;
 
-  // Defining parameter values for the INSERT query
+// Defining parameter values for the INSERT query
   const values = [sender_id, receiver_id, event_id, status, date, start_time];
   try {
     const result = await pool.query(insertQuery, values);
@@ -531,10 +350,38 @@ app.get("/reviews/:id/average", async (req, res, next) => {
   res.json(result.rows[0]);
 })
 
+app.get("/rejectionEmail", async (req, res) => {
+  const invitation_id = req.query.invitation_id;
+
+  const query = `
+    SELECT 
+    users_receiver.username AS receiver_username,
+    users_sender.email AS sender_email,
+    invitations.date
+    FROM invitations
+    JOIN users AS users_sender ON invitations.sender_id = users_sender.id
+    JOIN users AS users_receiver ON invitations.receiver_id = users_receiver.id
+    WHERE invitations.id = $1;
+  `;
+
+  const values = [invitation_id];
+
+  try{
+    const result = await pool.query(query, values);
+    const senderInfo = {
+      receiver_username: result.rows[0].receiver_username,
+      sender_email: result.rows[0].sender_email,
+      date: result.rows[0].date,
+    };
+    sendRejectionMail(senderInfo.sender_email, senderInfo.receiver_username, senderInfo.date);
+    res.status(200);
+    res.json("Email sent!")
+  } catch(error){
+    res.status(500).json({ error: "Cannot send rejection email" });
+  }
+
+})
+
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
-
-const isAPIevt = (id) => {
-  return id.length > 10;
-}
