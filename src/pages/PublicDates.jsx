@@ -13,11 +13,14 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { Outlet, useOutlet } from "react-router-dom";
+import { useAuthContext } from '../hooks/useAuthContext';
 
 
 export default function PublicDates() {
+    const { user } = useAuthContext();
     const [dates, setDates] = useState([]);
     const [events, setEvents] = useState([]);
+    const [favorites, setFavorites] = useState([]);
     const outlet = useOutlet();
 
     // For date idea filtering
@@ -53,6 +56,7 @@ export default function PublicDates() {
     const totalEventPageCount = Math.ceil(events.length/cardsPerPage)
 
     useEffect(() => {
+        retrieveFavorites();
         retrieveEvents();
         retrieveDates();
     }, []);
@@ -61,16 +65,13 @@ export default function PublicDates() {
         retrieveDates();
       }, [categorySelect, priceSelect, outlet]);
 
-    // useEffect(() => {
-    //     retrieveEvents();
-    // }, [eventStart, eventEnd]);
-
-    // useEffect(() => {
-    //     retrieveEvents();
-    // }, [eventStart, eventEnd]);
+    useEffect(() => {
+        // retrieveFavorites();
+    })
 
     const handleChange = (event, newValue) => {
         setTabValue(newValue);
+        retrieveFavorites();
     };
 
     const retrieveEvents = () => {
@@ -89,16 +90,17 @@ export default function PublicDates() {
 
     const retrieveDates = () => {
         if (categorySelect == "all" && priceSelect == "all") {
-            var url = `http://localhost:8000/mydates`
+            var url = `http://localhost:8000/publicdates`
         } else {
-            var url = `http://localhost:8000/mydates?category=${categorySelect}&price=${priceSelect}`
+            var url = `http://localhost:8000/publicdates?category=${categorySelect}&price=${priceSelect}`
         }
-        
+
         fetch(url)
         .then((response) => {
             return response.json()
           }) 
           .then((data) => {
+            
             setDates(data)
           })
         .catch (error => {
@@ -106,11 +108,30 @@ export default function PublicDates() {
         })
     }
 
+    const retrieveFavorites = () => {
+        if (user) {
+            let url = `http://localhost:8000/favorites?user=${user.id}`;
+            fetch(url)
+            .then((response) => {
+                return response.json()
+              }) 
+              .then((data) => {
+                setFavorites(data)
+              })
+            .catch (error => {
+                console.log(error)
+            })
+        }
+  
+    }
+
     const displayEvents = (() => 
         events.slice(firstCardIndex, lastCardIndex).map(function(event) {
             // console.log(event)
             var name = event.name
             var description = event.info
+            var event_id = event.id
+            var image = event.images?.find((image) => image.width > 400 && image.ratio == "16_9")?.url
 
             try {
                 var category = event.classifications[0].genre.name
@@ -123,12 +144,9 @@ export default function PublicDates() {
             } catch {
                 var location = "N/A"
             }
-            
-            var event_id = event.id
-            var image = event.images?.find((image) => image.width > 400 && image.ratio == "16_9")?.url
 
             return (
-                <DateCard key={event_id} id={event_id} name={name} category={category} location={location} image={image}></DateCard>
+                <DateCard key={event_id} id={event_id} name={name} category={category} location={location} image={image} inFavorite={false} isticketmaster={true}></DateCard>
             )
             
         })
@@ -142,9 +160,16 @@ export default function PublicDates() {
             let price = date.price
             let id = date.id
             let image = date.image
+            
+            var check = fav => fav.id === id;
+            if (favorites.some(check)) {
+                var isFav = true
+            } else {
+                var isFav = false
+            }
 
             return (
-                <DateCard key={id} id={id} image={image} name={name} category={category} location={location} price={price}></DateCard>
+                <DateCard key={id} id={id} image={image} name={name} category={category} location={location} price={price} favorites={favorites} inFavorite={isFav}></DateCard>
             )
         })
     )
@@ -153,6 +178,7 @@ export default function PublicDates() {
         setCurrentPage(page)
     })
 
+    // FOR PUBLIC DATE IDEA FILTER & SEARCH
     const onCategorySelect = (event, value)  =>{
         let category = value.props.value
         setCategorySelect(category)
@@ -203,45 +229,38 @@ export default function PublicDates() {
         )
     }
 
+    // FOR TICKETMASTER EVENT FILTER & SEARCH
     const onStartDateChange = (date)  =>{
-        // console.log(date, date.$d.getMonth())
+        // Check start date format & set start date
+        var day = date.$D.toString()
         if (date.$D < 10) {
-            var day = date.$D.toString().padStart(2,'0')
-        } else {
-            var day = date.$D.toString()
-        }
-
+            var day = day.padStart(2,'0')
+        } 
+        var month = date.$M+1
         if (date.$M+1 < 10) {
-            var month = date.$M+1
             month = month.toString().padStart(2,'0')
         } else {
-            var month = date.$M+1
             month = month.toString()
         }
-
         let year = date.$y.toString()
         var startDate = year+"-"+month+"-"+day
         setEventStart(startDate)
     }
 
     const onEndDateChange = (date)  =>{
+        // Check end date format & set end date
+        var day = date.$D.toString()
         if (date.$D < 10) {
-            var day = date.$D.toString().padStart(2,'0')
-        } else {
-            var day = date.$D.toString()
-        }
-
-        if (date.$M+1 < 10) {
-            var month = date.$M+1
+            var day = day.padStart(2,'0')
+        } 
+        var month = date.$M+1
+        if (month < 10) {
             month = month.toString().padStart(2,'0')
         } else {
-            var month = date.$M+1
             month = month.toString()
         }
-
         let year = date.$y.toString()
         var endDate = year+"-"+month+"-"+day
-
         setEventEnd(endDate)
     }
 
@@ -259,18 +278,14 @@ export default function PublicDates() {
             setEventStart(currentDate)
             setEventInfo({start:currentDate,end:eventEnd,city:citySearch,country:countryCode})
         }
-
         if (eventEnd < eventStart) {
             alert("Event end date must be after start date!")
             setEventEnd(eventStart)
             setEventInfo({start:eventStart,end:eventStart,city:citySearch,country:countryCode})
         }
-
         if (eventStart >= currentDate && eventEnd >= eventStart) {
             setEventInfo({start:eventStart,end:eventEnd,city:citySearch,country:countryCode})
         }
-        
-
         retrieveEvents()
     }
 

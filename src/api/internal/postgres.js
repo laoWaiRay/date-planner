@@ -110,9 +110,16 @@ async function getUserById(id) {
   return data;
 }
 
-// Returns
+// Returns current session if available
 async function getSession() {
   const res = await fetch("http://localhost:8000/users/session", fetchOptions.GET);
+  const data = await res.json();
+  return data;
+}
+
+// Refresh session with updated avatar and cover photo data
+async function refreshSession() {
+  const res = await fetch("http://localhost:8000/users/session/refresh", fetchOptions.GET);
   const data = await res.json();
   return data;
 }
@@ -124,6 +131,23 @@ async function logoutUser() {
 async function loginWithGoogle(token) {
   await fetch("http://localhost:8000/users/login/google", fetchOptions.BEARER_TOKEN(token));
 }
+
+// Set user avatar photo
+async function setAvatar(id, avatar) {
+  await fetch(`http://localhost:8000/users/${id}/avatar`, {
+    ...fetchOptions.POST,
+    body: JSON.stringify({id, avatar})
+  })
+}
+
+// Set user cover photo
+async function setCoverPhoto(id, cover_photo) {
+  await fetch(`http://localhost:8000/users/${id}/cover_photo`, {
+    ...fetchOptions.POST,
+    body: JSON.stringify({id, cover_photo})
+  })
+}
+
 
 // EVENTS
 
@@ -198,8 +222,11 @@ export {
   getUserByUsername,
   getUserById,
   getSession,
+  refreshSession,
   logoutUser,
   loginWithGoogle,
+  setAvatar,
+  setCoverPhoto,
   createInvitation,
   getEventById,
   deleteEvent,

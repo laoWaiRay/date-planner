@@ -25,6 +25,7 @@ export default function App() {
   // React Router
   // TODO: Uncomment/add protected routes
   const router = createBrowserRouter([
+    
     {
       path: "/",
       // element: user ? <Home /> : <Login />,

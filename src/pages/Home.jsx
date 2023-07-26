@@ -8,6 +8,9 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Polaroid from "../components/Polaroid";
 import Slider from "react-slick";
+import { AddAPhoto } from "@mui/icons-material";
+import { useState } from "react";
+import AvatarUploadModal from "../components/AvatarUploadModal";
 const polaroids = [
   {
     imageSrc: "src/assets/Hero.jpg",
@@ -21,8 +24,10 @@ const polaroids = [
 
 export default function Home() {
   const { user } = useAuthContext();
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
 
   const logout = useLogout();
+  console.log(user)
 
   const backgroundImage = "src/assets/Hero.jpg";
   const avatarImage = "src/assets/avatar.png";
@@ -37,6 +42,10 @@ export default function Home() {
     autoplay: true,
   };
 
+  const handleUploadBtnClick = () => {
+    setUploadModalOpen(true);
+  }
+
   return (
     <>
       <div className="homepage-container">
@@ -48,8 +57,22 @@ export default function Home() {
           />
           <div className="avatar-overlay">
             <div className="avatar-container">
+<<<<<<< HEAD
               <img src={avatarImage} alt="Avatar" className="avatar" />
               <div className="welcome-message">Welcome {user.username}</div>
+=======
+              <div className="relative">
+                <img src={avatarImage} alt="Avatar" className="avatar" />
+                <button 
+                  onClick={handleUploadBtnClick}
+                  className="absolute bg-slate-300 -bottom-2 -right-4 p-[10px] rounded-full flex 
+                  justify-center items-center hover:brightness-[98%] hover:-translate-y-[1px] duration-300"
+                >
+                  <AddAPhoto className="text-slate-800"/>
+                </button>
+              </div>
+              <div className="welcome-message">Welcome {username}</div>
+>>>>>>> origin/master
             </div>
           </div>
         </div>
@@ -81,6 +104,14 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Photo Upload Modal */}
+      {uploadModalOpen &&
+        <AvatarUploadModal 
+          onClose={() => setUploadModalOpen(false)}
+          userId={user.id}
+        />
+      }
     </>
   );
 }

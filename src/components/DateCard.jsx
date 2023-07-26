@@ -4,6 +4,7 @@ import CardMedia from '@mui/material/CardMedia';
 import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import IconButton from '@mui/material/IconButton';
 import CreateDateInvite from "./DateInviteModal"
 import { useEffect, useState } from 'react';
@@ -11,17 +12,40 @@ import { useNavigate } from 'react-router-dom';
 import { getDefaultImage } from '../helpers/getDefaultImage';
 import { Rating } from '@mui/material';
 import { getAverageReviewScore } from '../api/internal/postgres';
+import { red } from '@mui/material/colors';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 const isAPIevt = (id) => {
   return id.length > 10;
 }
 
-export default function DateCard({ id, name, description, category, location, image, price }) {
+export default function DateCard({ id, name, description, category, location, image, price, inFavorite, isticketmaster=false }) {
+    const { user } = useAuthContext();
     const [showInviteModal, setShowInviteModal] = useState(false);
     const [isAPIEvent] = useState(isAPIevt(id));
     const [averageScore, setAverageScore] = useState(0.0);
+    const [isFav, setIsFav] = useState(inFavorite);
     const navigate = useNavigate();
+    const eventid = id
 
+    useEffect(() => {
+      if (isAPIEvent) return;
+      (async () => {
+        let avgScore = parseFloat((await getAverageReviewScore(id)).avg).toFixed(1);
+        if (avgScore == "NaN")
+          avgScore = 0.0;
+        setAverageScore(parseFloat(avgScore));
+      })()
+    }, [])
+
+    const toggleIsFav = () => {
+      if(isFav == false) {
+        setIsFav(true)
+      } else {
+        setIsFav(false)
+      }
+    }
+    
     const handleInviteClick = () => {
         setShowInviteModal(true);
       };
@@ -34,16 +58,42 @@ export default function DateCard({ id, name, description, category, location, im
       navigate(`/dates/${id}`);
     }
 
-    useEffect(() => {
-      if (isAPIEvent) return;
+    const handleFavoriteClick = async () => {
+      if (isFav == false) {
+        let url = `http://localhost:8000/favorites?user=${user.id}&event=${eventid}`
+        fetch(url, {
+          method: "POST"
+        })
+        .then((response) => {
+            return response.json()
+        })
+        .catch (error => {
+            console.log(error)
+        })
+        console.log("SETTING FAV")
+       toggleIsFav()
+       console.log(isFav)
+      }
+    }
 
-      (async () => {
-        let avgScore = parseFloat((await getAverageReviewScore(id)).avg).toFixed(1);
-        if (avgScore == "NaN")
-          avgScore = 0.0;
-        setAverageScore(parseFloat(avgScore));
-      })()
-    }, [])
+    const handleUnfavoriteClick = () => {
+      if (isFav == true) {
+        let url = `http://localhost:8000/favorites?user=${user.id}&event=${eventid}`
+        fetch(url, {
+          method: "DELETE"
+        })
+        .then((response) => {
+          return response.json()
+        })
+        .catch (error => {
+            console.log(error)
+        })
+        console.log("REMOVE FAV")
+        toggleIsFav()
+        console.log(isFav)
+      }
+    }
+
     
     return (
         <Card className="h-full flex flex-col bg-red-200" variant="outlined" sx={{ maxWidth: 350 }}>
@@ -71,7 +121,6 @@ export default function DateCard({ id, name, description, category, location, im
                   )
                 }
                 
-
                 <p className="text-sm text-slate-500 my-0">Location: {location}</p>
                 <p className="text-sm text-slate-500 my-0">Category: <span style={{textTransform:'capitalize'}}>{category}</span></p>
                 {price ? <p className="text-sm text-slate-500 my-0">Price: {price}</p>:<></>}
@@ -81,7 +130,17 @@ export default function DateCard({ id, name, description, category, location, im
             <CardActions className='mt-auto'>
                 <Button onClick={handleClickDetails}>Details</Button>
                 <Button onClick={handleInviteClick} size="small">Invite</Button>
-                <IconButton color="default"><FavoriteBorderIcon></FavoriteBorderIcon></IconButton>
+                <div>
+                {isticketmaster === true 
+                  ? null :
+                  <div>
+                  {isFav === false ? 
+                    <><IconButton color="default" onClick={handleFavoriteClick}><FavoriteBorderIcon></FavoriteBorderIcon></IconButton></>:
+                    <><IconButton onClick={handleUnfavoriteClick}><FavoriteIcon sx={{ color: red[700] }}></FavoriteIcon></IconButton></>
+                  }
+                  </div>
+                }
+                </div>
             </CardActions>
 
             {showInviteModal && (<CreateDateInvite onClose={handleCloseModal} eventID={id}/>)}
