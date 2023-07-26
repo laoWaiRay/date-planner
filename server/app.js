@@ -463,27 +463,42 @@ app.get("/pendingUserInvites", async (req, res) =>{
 })
 
 //fetch upcoming users invites
-app.get("/upcomingUserInvites", async (req, res) =>{
+app.get("/upcomingUserInvites", async (req, res) => {
   const user_id = req.query.user_id;
-    // Define INSERT query
-    const currentDate = new Date();
-    const selectQuery = `
-      SELECT * 
-      FROM invitations 
-      WHERE (receiver_id = $1 OR sender_id = $2) 
-        AND status = $3
-        AND (date > $4 OR (date = $4 AND start_time < $5));
-    `;
+  const currentDate = new Date();
 
-    const values = [user_id, user_id, "accepted", currentDate.toISOString().slice(0, 10), currentDate.toISOString().slice(11, 19)];
+   const selectQuery = `
+    SELECT 
+      invitations.id AS invitation_id,
+      users.username AS sender_username,
+      users.avatar AS sender_avatar_url,
+      receivers.avatar AS receiver_avatar_url,
+      invitations.start_time AS invitation_start_time,
+      invitations.date AS invitation_date,
+      events.id AS event_id,
+      events.title AS event_title,
+      locations.detailed_address AS event_detailed_address,
+      locations.city AS event_city,
+      locations.country AS event_country
+    FROM invitations
+    JOIN users ON invitations.sender_id = users.id
+    JOIN users AS receivers ON invitations.receiver_id = receivers.id
+    JOIN events ON invitations.event_id = events.id
+    JOIN locations ON events.location_id = locations.id
+    WHERE invitations.receiver_id = $1 
+      AND invitations.status = 'accepted'
+      AND (invitations.date > $2 OR (invitations.date = $2 AND invitations.start_time > $3));
+  `;
+
+  const values = [user_id, currentDate.toISOString().slice(0, 10), currentDate.toISOString().slice(11, 19)];
 
   try {
     const result = await pool.query(selectQuery, values);
     res.json(result.rows);
   } catch (error) {
-    res.status(500).json({ error: "Cannot select users upcoming invitations" });
+    res.status(500).json({ error: "Cannot select user's upcoming invitations" });
   }
-})
+});
 
 // Add a new review for a given event ID
 app.post("/reviews/:id", async (req, res, next) => {

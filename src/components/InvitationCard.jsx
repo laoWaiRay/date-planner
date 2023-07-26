@@ -7,6 +7,7 @@ import Avatar from "@mui/material/Avatar";
 import Chip from "@mui/material/Chip";
 import "./InvitationCard.css";
 import { useNavigate } from "react-router-dom";
+
 const formatTime = (timeString) => {
   const [hours, minutes] = timeString.split(":");
   let formattedHours = parseInt(hours) % 12;

@@ -26,6 +26,7 @@ export default function Home() {
   const { user } = useAuthContext();
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [invitations, setInvitations] = useState([]);
+  const [upcomingInvitations, setUpcomingInvitations] = useState([]);
 
   const logout = useLogout();
   console.log(user);
@@ -60,12 +61,23 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    console.log("here");
-    console.log(user);
+  const fetchUpcomingInvitations = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/upcomingUserInvites?user_id=${user.id}`
+      );
+      const data = await response.json();
+      console.log("Fetched upcoming invitations:", data);
+      setUpcomingInvitations(data);
+    } catch (error) {
+      console.error("Error fetching  upcoming invitations:", error.message);
+    }
+  };
 
+  useEffect(() => {
     if (user && user.id) {
       fetchInvitations();
+      fetchUpcomingInvitations();
     }
   }, [user]);
 
@@ -81,6 +93,7 @@ export default function Home() {
 
       if (response.ok) {
         fetchInvitations();
+        fetchUpcomingInvitations();
       } else {
         console.error("Failed to update invitation status.");
       }
@@ -152,9 +165,28 @@ export default function Home() {
           </div>
           <div className="floating-card-upcoming">
             <h2 className="text-center">UPCOMING DATES</h2>
-            <UpcomingCard />
-            <UpcomingCard />
-            <UpcomingCard />
+            {upcomingInvitations.length === 0 ? (
+              <p>No upcoming dates.</p>
+            ) : (
+              upcomingInvitations.map((upcomingInvitation, index) => (
+                <UpcomingCard
+                  key={index}
+                  eventId={upcomingInvitation.event_id}
+                  invitationId={upcomingInvitation.invitation_id}
+                  senderUsername={upcomingInvitation.sender_username}
+                  senderAvatarUrl={upcomingInvitation.sender_avatar_url}
+                  receiverAvatarUrl={upcomingInvitation.receiver_avatar_url}
+                  invitationStartTime={upcomingInvitation.invitation_start_time}
+                  invitationDate={upcomingInvitation.invitation_date}
+                  eventTitle={upcomingInvitation.event_title}
+                  eventDetailedAddress={
+                    upcomingInvitation.event_detailed_address
+                  }
+                  eventCity={upcomingInvitation.event_city}
+                  eventCountry={upcomingInvitation.event_country}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>
