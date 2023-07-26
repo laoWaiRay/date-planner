@@ -6,6 +6,7 @@ import userRouter from "./routes/users.js";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
 import { Policy } from "@mui/icons-material";
+import { sendRejectionMail } from "./emails/rejectionEmail.js";
 dotenv.config();
 
 const app = express();
@@ -347,6 +348,38 @@ app.get("/reviews/:id/average", async (req, res, next) => {
   `;
   const result = await pool.query(query, [id]);
   res.json(result.rows[0]);
+})
+
+app.get("/rejectionEmail", async (req, res) => {
+  const invitation_id = req.query.invitation_id;
+
+  const query = `
+    SELECT 
+    users_receiver.username AS receiver_username,
+    users_sender.email AS sender_email,
+    invitations.date
+    FROM invitations
+    JOIN users AS users_sender ON invitations.sender_id = users_sender.id
+    JOIN users AS users_receiver ON invitations.receiver_id = users_receiver.id
+    WHERE invitations.id = $1;
+  `;
+
+  const values = [invitation_id];
+
+  try{
+    const result = await pool.query(query, values);
+    const senderInfo = {
+      receiver_username: result.rows[0].receiver_username,
+      sender_email: result.rows[0].sender_email,
+      date: result.rows[0].date,
+    };
+    sendRejectionMail(senderInfo.sender_email, senderInfo.receiver_username, senderInfo.date);
+    res.status(200);
+    res.json("Email sent!")
+  } catch(error){
+    res.status(500).json({ error: "Cannot send rejection email" });
+  }
+
 })
 
 app.listen(PORT, () => {
