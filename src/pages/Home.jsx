@@ -47,27 +47,47 @@ export default function Home() {
     setUploadModalOpen(true);
   };
 
+  const fetchInvitations = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/pendingUserInvites?user_id=${user.id}`
+      );
+      const data = await response.json();
+      console.log("Fetched invitations:", data);
+      setInvitations(data);
+    } catch (error) {
+      console.error("Error fetching invitations:", error.message);
+    }
+  };
+
   useEffect(() => {
     console.log("here");
     console.log(user);
 
     if (user && user.id) {
-      const fetchInvitations = async () => {
-        try {
-          const response = await fetch(
-            `http://localhost:8000/pendingUserInvites?user_id=${user.id}`
-          );
-          const data = await response.json();
-          console.log(data);
-          setInvitations(data);
-        } catch (error) {
-          console.error("Error fetching invitations:", error.message);
-        }
-      };
-
       fetchInvitations();
     }
   }, [user]);
+
+  const updateInviteStatus = async (inviteId, newStatus) => {
+    const url = `http://localhost:8000/updateInviteStatus?invite_id=${inviteId}&status=${newStatus}`;
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.ok) {
+        fetchInvitations();
+      } else {
+        console.error("Failed to update invitation status.");
+      }
+    } catch (error) {
+      console.error("Error updating invitation status:", error.message);
+    }
+  };
 
   return (
     <>
@@ -115,6 +135,7 @@ export default function Home() {
               invitations.map((invitation, index) => (
                 <InvitationCard
                   key={index}
+                  invitationId={invitation.invitation_id}
                   eventId={invitation.event_id}
                   senderUsername={invitation.sender_username}
                   senderAvatarUrl={invitation.sender_avatar_url}
@@ -124,6 +145,7 @@ export default function Home() {
                   eventDetailedAddress={invitation.event_detailed_address}
                   eventCity={invitation.event_city}
                   eventCountry={invitation.event_country}
+                  updateInvitationStatus={updateInviteStatus}
                 />
               ))
             )}

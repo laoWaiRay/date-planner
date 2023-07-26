@@ -434,6 +434,7 @@ app.get("/pendingUserInvites", async (req, res) =>{
     // Define INSERT query
  const selectQuery = `
   SELECT 
+    invitations.id AS invitation_id,
     users.username AS sender_username,
     users.avatar AS sender_avatar_url,
     invitations.start_time AS invitation_start_time,

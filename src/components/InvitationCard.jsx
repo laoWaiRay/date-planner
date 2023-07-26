@@ -41,6 +41,7 @@ const formatDate = (dateString) => {
 };
 
 function InvitationCard({
+  invitationId,
   eventId,
   senderUsername,
   senderAvatarUrl,
@@ -50,6 +51,7 @@ function InvitationCard({
   eventDetailedAddress,
   eventCity,
   eventCountry,
+  updateInvitationStatus,
 }) {
   const navigate = useNavigate();
   const handleClick = (id) => {
@@ -97,10 +99,18 @@ function InvitationCard({
                     marginRight: "10%",
                   }}
                 >
-                  <CheckIcon />
+                  <CheckIcon
+                    onClick={() =>
+                      updateInvitationStatus(invitationId, "accepted")
+                    }
+                  />
                 </Fab>
                 <Fab size="small" color="error" aria-label="decline">
-                  <CloseIcon />
+                  <CloseIcon
+                    onClick={() =>
+                      updateInvitationStatus(invitationId, "rejected")
+                    }
+                  />
                 </Fab>
               </div>
             </div>
