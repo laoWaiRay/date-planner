@@ -14,6 +14,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { Outlet, useOutlet } from "react-router-dom";
 import { useAuthContext } from '../hooks/useAuthContext';
+import { getLocations } from "../api/internal/postgres";
 
 
 export default function PublicDates() {
@@ -26,6 +27,8 @@ export default function PublicDates() {
     // For date idea filtering
     const [categorySelect, setCategorySelect] = useState("all");
     const [priceSelect, setPriceSelect] = useState("all");
+    const [locations, setLocations] = useState([])
+    const [locationSelect, setLocationSelect] = useState("all");
 
     // For ticketmaster event filtering
     const dateObj = new Date()
@@ -59,11 +62,13 @@ export default function PublicDates() {
         retrieveFavorites();
         retrieveEvents();
         retrieveDates();
+        retrieveLocations()
+        // setLocations()
     }, []);
 
     useEffect(() => {
         retrieveDates();
-      }, [categorySelect, priceSelect, outlet]);
+      }, [categorySelect, priceSelect, locationSelect, outlet]);
 
     useEffect(() => {
         // retrieveFavorites();
@@ -89,11 +94,8 @@ export default function PublicDates() {
     }
 
     const retrieveDates = () => {
-        if (categorySelect == "all" && priceSelect == "all") {
-            var url = `http://localhost:8000/publicdates`
-        } else {
-            var url = `http://localhost:8000/publicdates?category=${categorySelect}&price=${priceSelect}`
-        }
+
+        var url = `http://localhost:8000/publicdates?category=${categorySelect}&price=${priceSelect}&location=${locationSelect}`
 
         fetch(url)
         .then((response) => {
@@ -109,7 +111,6 @@ export default function PublicDates() {
     }
 
     const retrieveFavorites = () => {
-        console.log("FAV USER",user)
         if (user) {
             let url = `http://localhost:8000/favorites?user=${user.id}`;
             fetch(url)
@@ -124,6 +125,11 @@ export default function PublicDates() {
             })
         }
   
+    }
+
+    const retrieveLocations = async () => {
+        let locationList = await getLocations()
+        setLocations(locationList)
     }
 
     const displayEvents = (() => 
@@ -189,6 +195,17 @@ export default function PublicDates() {
         setPriceSelect(value.props.value)
     }
 
+    const onLocationSelect = (event, value)  =>{
+        setLocationSelect(value.props.value)
+    }
+
+    const forLocations = () => {
+        locations.map((location) => {
+            console.log("FOR EACH",location)
+            return <><MenuItem value="all">{location.city}</MenuItem></>
+        })
+    }
+
     const DatesFilterBar = () => {
         return (
             <>
@@ -224,6 +241,26 @@ export default function PublicDates() {
                         <MenuItem value="$$">$$</MenuItem>
                         <MenuItem value="$$$">$$$</MenuItem>
                         <MenuItem value="$$$$">$$$$</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <FormControl sx={{ mx: 2, minWidth: 140 }}>
+                    <InputLabel id="location-select-label">Location</InputLabel>
+                    <Select
+                        labelId="location-select-label"
+                        id="location-select"
+                        value={locationSelect}
+                        label="Location"
+                        onChange={onLocationSelect}
+                    > 
+                    <MenuItem value="all">All</MenuItem>
+                    {locations.map((location) => {
+                        return <MenuItem key={location.id} value={location.city}>{location.city}</MenuItem>
+                        })
+    
+                    }
+
+
                     </Select>
                 </FormControl>
             </>

@@ -122,7 +122,10 @@ export default function MyDates() {
   return (
     <>
       {dates.length === 0 ? (
-        <AddDate retrieveDates={retrieveDates} />
+        <AddDate
+          retrieveDates={retrieveDates}
+          retrieveFavorites={retrieveFavorites}
+        />
       ) : (
         <div className="md:container mx-auto">
           <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4">
@@ -135,7 +138,7 @@ export default function MyDates() {
             centered
           >
             <Tab value="0" label="Your Date Ideas" />
-            <Tab value="1" label="Favorite Date Ideas" />
+            <Tab value="1" label="Favorites" />
           </Tabs>
           <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
             {tabValue == "0" ? (

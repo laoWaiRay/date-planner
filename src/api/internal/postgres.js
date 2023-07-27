@@ -163,6 +163,14 @@ async function deleteEvent(id ) {
 
 // LOCATION
 
+//Get all locations in database
+async function getLocations() {
+  const result = await fetch(`http://localhost:8000/locations`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
+//Get location by id
 async function getLocationById(id) {
   const result = await fetch(`http://localhost:8000/locations/${id}`, fetchOptions.GET);
   const data = await result.json();
@@ -221,6 +229,12 @@ async function sendEventRejectionEmail(invitation_id){
   return data;
 }
 
+async function sendEventAcceptanceEmail(invitation_id){
+  const result = await fetch(`http://localhost:8000/acceptanceEmail?invitation_id=${invitation_id}`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
 export {
   loginUser,
   signupUser,
@@ -237,6 +251,7 @@ export {
   createInvitation,
   getEventById,
   deleteEvent,
+  getLocations,
   getLocationById,
   addReview,
   editReview,
