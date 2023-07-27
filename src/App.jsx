@@ -17,6 +17,7 @@ import { getSession } from "./api/internal/postgres";
 import { initGoogleIdentity, handleCallbackResponse } from "./GoogleIdentity";
 import DrawerAppBar from "./components/Header";
 import Details from "./pages/Details";
+import AddDate from "./components/AddDate";
 
 export default function App() {
   const { user, dispatch } = useAuthContext();
@@ -64,14 +65,25 @@ export default function App() {
           path: "/dates/:id",
           element: user ? (
             <>
-              {" "}
-              <DrawerAppBar /> <Details />{" "}
+              <DrawerAppBar />
+              <Details />
             </>
           ) : (
             <Navigate to="/" />
           ),
         },
       ],
+    },
+    {
+      path: "/dates/new",
+      element: user ? (
+        <>
+          <DrawerAppBar />
+          <AddDate />
+        </>
+      ) : (
+        <Navigate to="/" />
+      ),
     },
     {
       path: "/mydates",

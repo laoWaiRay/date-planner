@@ -31,8 +31,8 @@ export default function Home() {
   const logout = useLogout();
   console.log(user);
 
-  const backgroundImage = "src/assets/Hero.jpg";
-  const avatarImage = "src/assets/avatar.png";
+  const backgroundImage = user.cover_photo || "src/assets/Hero.jpg";
+  const avatarImage = user.avatar || "src/assets/avatar.png";
 
   const settings = {
     dots: false,

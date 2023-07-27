@@ -42,7 +42,7 @@ export default function DrawerAppBar(props) {
         navigate("/mydates");
         break;
       case "Add Date":
-        navigate("/mydates");
+        navigate("/dates/new");
         break;
       case "Logout":
         logout();

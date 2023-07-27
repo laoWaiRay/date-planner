@@ -5,7 +5,7 @@ import DateForm from "./DateForm";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
 
-export default function HomeScreen({ retrieveDates, retrieveFavorites }) {
+export default function AddDate({ retrieveDates, retrieveFavorites }) {
   const [modalShow, setModalShow] = useState(false);
 
   const postData = async (body) => {

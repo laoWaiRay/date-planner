@@ -128,9 +128,12 @@ export default function Details() {
               
               {/* Buttons to like and share */}
               <div className="!ml-auto space-x-4">
-                <button type="button">
-                  <Favorite />
-                </button>
+                {!isAPIEvent &&
+                  <button type="button">
+                    <Favorite />
+                  </button>
+                }
+                
                 <button type="button" onClick={() => setShowInviteModal(true)}>
                   <Send className="-rotate-45 -translate-y-[3px]"/>
                 </button>

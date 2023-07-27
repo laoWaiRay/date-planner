@@ -7,12 +7,14 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import { getUserById } from "../api/internal/postgres";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import { Navigate } from "react-router-dom";
 
 export default function MyDates() {
   const { user } = useAuthContext();
   const [dates, setDates] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [tabValue, setTabValue] = useState("0");
+  const [isLoading, setIsLoading] = useState(true);
 
   // For pagination viewing
   const [currentPage, setCurrentPage] = useState(1);
@@ -40,6 +42,7 @@ export default function MyDates() {
       })
       .then((data) => {
         setDates(data);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -67,6 +70,7 @@ export default function MyDates() {
       let category = date.category;
       let location = date.city;
       let id = date.id;
+      let image = date.image;
 
       var check = (fav) => fav.id === id;
       if (favorites.some(check)) {
@@ -83,6 +87,7 @@ export default function MyDates() {
           category={category}
           location={location}
           inFavorite={isFav}
+          image={image}
         ></DateCard>
       );
     });
@@ -96,6 +101,7 @@ export default function MyDates() {
       let locationCountry = fav.country;
       let locationAddress = fav.detailed_address;
       let id = fav.id;
+      let image = fav.image;
 
       var check = (fav) => fav.id === id;
       if (favorites.some(check)) {
@@ -111,6 +117,7 @@ export default function MyDates() {
           category={category}
           location={location}
           inFavorite={nextFav}
+          image={image}
         ></DateCard>
       );
     });
@@ -121,11 +128,8 @@ export default function MyDates() {
 
   return (
     <>
-      {dates.length === 0 ? (
-        <AddDate
-          retrieveDates={retrieveDates}
-          retrieveFavorites={retrieveFavorites}
-        />
+      {!isLoading && dates.length == 0 ? (
+        <Navigate to="/dates/new" />
       ) : (
         <div className="md:container mx-auto">
           <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4">
