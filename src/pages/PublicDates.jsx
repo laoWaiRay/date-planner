@@ -109,6 +109,7 @@ export default function PublicDates() {
     }
 
     const retrieveFavorites = () => {
+        console.log("FAV USER",user)
         if (user) {
             let url = `http://localhost:8000/favorites?user=${user.id}`;
             fetch(url)
