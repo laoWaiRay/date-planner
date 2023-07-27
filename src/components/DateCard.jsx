@@ -19,7 +19,8 @@ const isAPIevt = (id) => {
   return id.length > 10;
 }
 
-export default function DateCard({ id, name, description, category, location, image, price, inFavorite, isticketmaster=false }) {
+export default function DateCard({ id, name, description, category, location, 
+  retrieveFavorites, image, price, inFavorite, isticketmaster=false }) {
     const { user } = useAuthContext();
     const [showInviteModal, setShowInviteModal] = useState(false);
     const [isAPIEvent] = useState(isAPIevt(id));
@@ -71,8 +72,8 @@ export default function DateCard({ id, name, description, category, location, im
             console.log(error)
         })
         console.log("SETTING FAV")
-       toggleIsFav()
-       console.log(isFav)
+        toggleIsFav()
+        console.log(isFav)
       }
     }
 
@@ -83,6 +84,7 @@ export default function DateCard({ id, name, description, category, location, im
           method: "DELETE"
         })
         .then((response) => {
+          retrieveFavorites();
           return response.json()
         })
         .catch (error => {

@@ -152,11 +152,12 @@ app.post("/favorites", async (req, res) => {
   if (favResult.rows.length == 0) {
     console.log("INSERTING FAV")
     var addFavoriteQuery = `INSERT INTO saved(user_id,event_id) VALUES(${userid},'${eventid}')`
-    await pool.query(addFavoriteQuery, (err, result) => {
+    pool.query(addFavoriteQuery, (err, result) => {
       if (err) {
         console.log(err)
         res.end(err);
       }
+      res.json(result)
     }) 
   }
 });
@@ -169,11 +170,12 @@ app.delete("/favorites", async (req, res) => {
 
   var delFavoriteQuery = `DELETE FROM saved WHERE user_id='${del_userid}' AND event_id='${del_eventid}'`
 
-  await pool.query(delFavoriteQuery, (err, result) => {
+  pool.query(delFavoriteQuery, (err, result) => {
     if (err) {
       console.log(err)
       res.end(err);
     }
+    res.json(result)
   });
 });
 
@@ -478,6 +480,7 @@ app.get("/upcomingUserInvites", async (req, res) => {
     SELECT 
       invitations.id AS invitation_id,
       users.username AS sender_username,
+      receivers.username AS receiver_username,
       users.avatar AS sender_avatar_url,
       receivers.avatar AS receiver_avatar_url,
       invitations.start_time AS invitation_start_time,
@@ -492,7 +495,7 @@ app.get("/upcomingUserInvites", async (req, res) => {
     JOIN users AS receivers ON invitations.receiver_id = receivers.id
     JOIN events ON invitations.event_id = events.id
     JOIN locations ON events.location_id = locations.id
-    WHERE invitations.receiver_id = $1 
+    WHERE (invitations.receiver_id = $1 OR invitations.sender_id = $1)
       AND invitations.status = 'accepted'
       AND (invitations.date > $2 OR (invitations.date = $2 AND invitations.start_time > $3));
   `;

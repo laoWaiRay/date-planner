@@ -50,6 +50,7 @@ export default function MyDates() {
   };
 
   const retrieveFavorites = () => {
+    console.log("lol");
     let url = `http://localhost:8000/favorites?user=${user.id}`;
     fetch(url)
       .then((response) => {
@@ -57,6 +58,7 @@ export default function MyDates() {
       })
       .then((data) => {
         setFavorites(data);
+        console.log("lol");
       })
       .catch((error) => {
         console.log(error);
@@ -117,6 +119,7 @@ export default function MyDates() {
           category={category}
           location={location}
           inFavorite={nextFav}
+          retrieveFavorites={retrieveFavorites}
           image={image}
         ></DateCard>
       );

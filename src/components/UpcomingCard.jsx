@@ -41,7 +41,9 @@ const formatDate = (dateString) => {
 function UpcomingCard({
   eventId,
   invitationId,
+  loggedInUsername,
   senderUsername,
+  receiverUsername,
   senderAvatarUrl,
   receiverAvatarUrl,
   invitationStartTime,
@@ -73,12 +75,22 @@ function UpcomingCard({
               />
             }
           >
-            <Avatar alt="Travis Howard" src={receiverAvatarUrl} />
+            <Avatar alt="Date Partner Avatar" src={receiverAvatarUrl} />
           </Badge>
           <div className="ml-3">
             <span>
               <b>
-                <i>Date with {senderUsername}</i>
+                {/* 
+                  The logged in user can either be the sender or the receiver
+                  for the upcoming date 
+                */}
+                <i>Date with {' '}
+                  {
+                    senderUsername == loggedInUsername ? 
+                    receiverUsername : 
+                    senderUsername
+                  }
+                </i>
               </b>
             </span>
             <div>

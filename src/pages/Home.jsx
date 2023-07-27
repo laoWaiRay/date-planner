@@ -123,7 +123,12 @@ export default function Home() {
                   <AddAPhoto className="text-slate-800" />
                 </button>
               </div>
-              <div className="welcome-message">Welcome {user.username}</div>
+              <div 
+                className="welcome-message
+                drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
+              >
+                Welcome back, {user.username}!
+              </div>
             </div>
           </div>
         </div>
@@ -173,7 +178,9 @@ export default function Home() {
                   key={index}
                   eventId={upcomingInvitation.event_id}
                   invitationId={upcomingInvitation.invitation_id}
+                  loggedInUsername={user.username}
                   senderUsername={upcomingInvitation.sender_username}
+                  receiverUsername={upcomingInvitation.receiver_username}
                   senderAvatarUrl={upcomingInvitation.sender_avatar_url}
                   receiverAvatarUrl={upcomingInvitation.receiver_avatar_url}
                   invitationStartTime={upcomingInvitation.invitation_start_time}
