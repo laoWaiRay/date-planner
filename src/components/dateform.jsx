@@ -19,6 +19,15 @@ function DateForm(props) {
     image: ""
   };
 
+  const postData = async (body) => {
+    const response = await fetch("http://localhost:8000/mydates", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  };
+
   const handleFormChange = (event) => {
     const { name, value } = event.target;
     setFormValues({ ...formValues, [name]: value });
@@ -53,8 +62,9 @@ function DateForm(props) {
       const body = {
         date: { ...formValues, isPrivate: isPrivate, author: user.id },
       };
-      await props.postData(body);
+      await postData(body);
       setFormValues({ ...newEvent });
+      console.log("SUBMIT FORM")
       setIsPrivate(false);
       props.onHide();
     } catch (error) {

@@ -5,22 +5,8 @@ import DateForm from "./DateForm";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
 
-export default function AddDate({ retrieveDates, retrieveFavorites }) {
+export default function AddDate() {
   const [modalShow, setModalShow] = useState(false);
-
-  const postData = async (body) => {
-    const response = await fetch("http://localhost:8000/mydates", {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-
-    if (response.ok) {
-      retrieveDates();
-      retrieveFavorites();
-    }
-  };
 
   return (
     <>
@@ -43,7 +29,6 @@ export default function AddDate({ retrieveDates, retrieveFavorites }) {
                 <DateForm
                   show={modalShow}
                   onHide={() => setModalShow(false)}
-                  postData={postData}
                 />
               </div>
               <div className="subheading">
