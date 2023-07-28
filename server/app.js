@@ -635,6 +635,38 @@ app.get("/acceptanceEmail", async (req, res) => {
 
 })
 
+//fetch all upcoming events with status set to accepted
+app.get('/allUpcomingEvents', async (req, res)=>{
+
+  const now = new Date(); // Get the current date and time
+
+    // Query the database to get the invitations with the desired conditions
+    const query = `
+      SELECT
+        sender.username as sender_username,
+        sender.email as sender_email,
+        receiver.username as receiver_username,
+        receiver.email as receiver_email
+      FROM invitations
+      INNER JOIN users AS sender ON invitations.sender_id = sender.id
+      INNER JOIN users AS receiver ON invitations.receiver_id = receiver.id
+      WHERE
+        status = 'accepted' AND
+        (date = $1 AND start_time > $2)
+    ;`
+
+    const values = [now.toISOString().slice(0, 10), now.toISOString().slice(11, 19)];
+    try{ 
+      const result = await pool.query(query, values);
+      res.json(result.rows);
+
+    }catch(error){
+      res.status(500).json({ error: "Cannot fetch all upcoming dates" });
+    }
+})
+
+
+
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
