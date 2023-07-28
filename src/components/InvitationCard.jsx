@@ -7,6 +7,7 @@ import Avatar from "@mui/material/Avatar";
 import Chip from "@mui/material/Chip";
 import "./InvitationCard.css";
 import { useNavigate } from "react-router-dom";
+import { sendEventRejectionEmail, sendEventAcceptanceEmail } from "../api/internal/postgres"
 
 const formatTime = (timeString) => {
   const [hours, minutes] = timeString.split(":");
@@ -101,15 +102,19 @@ function InvitationCard({
                   }}
                 >
                   <CheckIcon
-                    onClick={() =>
-                      updateInvitationStatus(invitationId, "accepted")
+                    onClick={() =>{
+                      updateInvitationStatus(invitationId, "accepted");
+                      sendEventAcceptanceEmail(invitationId);
+                    }
                     }
                   />
                 </Fab>
                 <Fab size="small" color="error" aria-label="decline">
                   <CloseIcon
-                    onClick={() =>
-                      updateInvitationStatus(invitationId, "rejected")
+                    onClick={() =>{
+                      updateInvitationStatus(invitationId, "rejected");
+                      sendEventRejectionEmail(invitationId);
+                    }
                     }
                   />
                 </Fab>
