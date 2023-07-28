@@ -15,6 +15,8 @@ import Button from "@mui/material/Button";
 import useLogout from "../hooks/useLogout";
 import { useNavigate } from "react-router-dom";
 
+
+
 const key = "user_session";
 
 const drawerWidth = 240;
@@ -80,7 +82,7 @@ export default function DrawerAppBar(props) {
   return (
     <Box sx={{ display: "flex" }} className="h-[64px]">
       <AppBar component="nav">
-        <Toolbar>
+        <Toolbar style={{ background: "#39798f"}}>
           <IconButton
             color="inherit"
             aria-label="open drawer"

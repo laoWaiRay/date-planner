@@ -26,7 +26,6 @@ export default function App() {
   // React Router
   // TODO: Uncomment/add protected routes
   const router = createBrowserRouter([
-    
     {
       path: "/",
       // element: user ? <Home /> : <Login />,
@@ -107,6 +106,29 @@ export default function App() {
         <Navigate to="/" />
       ),
     },
+    {
+      path: "/favorites",
+      element: user ? (
+        <>
+          {" "}
+          <DrawerAppBar /> <MyDates entryTab={"1"}/>{" "}
+        </>
+      ) : (
+        <Navigate to="/" />
+      ),
+    },
+    {
+      path: "/events",
+      element: user ? (
+        <>
+          {" "}
+          <DrawerAppBar /> <PublicDates entryTab={"1"}/>{" "}
+        </>
+      ) : (
+        <Navigate to="/" />
+      ),
+    },
+    
   ]);
 
   // On page refresh, make a call to DB to restore client-side state about

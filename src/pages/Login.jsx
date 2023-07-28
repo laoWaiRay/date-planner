@@ -2,6 +2,7 @@ import { Switch } from "@mui/material";
 import Input from "../components/Input";
 import useForm from "../hooks/useForm";
 import Hero from "../assets/Hero.jpg"
+import LoginVideo from "../assets/login-video.mp4"
 import { useLoaderData, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { renderGoogleBtn } from "../GoogleIdentity";
@@ -54,8 +55,11 @@ export default function Login() {
   return (
     <div className="w-full min-h-screen flex">
       {/* Hero Image */}
-      <div className="overflow-hidden">
-        {heroImg}
+      <div className="overflow-hidden" style={{background: "linear-gradient(#397b8e, #323335)"}}>
+        {/* {heroImg} */}
+        <video className="" autoPlay loop muted style={{height: "100vh" }}>
+          <source src={LoginVideo} type='video/mp4' />
+        </video>
       </div>
 
       {/* Form Sidebar*/}

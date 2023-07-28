@@ -11,6 +11,22 @@ import Slider from "react-slick";
 import { AddAPhoto } from "@mui/icons-material";
 import { useState, useEffect } from "react";
 import AvatarUploadModal from "../components/AvatarUploadModal";
+import { useNavigate } from "react-router-dom";
+import date3  from "../assets/date3.jpg"
+import date1 from "../assets/date1.jpg"
+import date2 from "../assets/date2.jpg"
+import date4 from "../assets/date4.jpg"
+import date5 from "../assets/date5.jpg"
+import date6 from "../assets/date6.jpg"
+import date7 from "../assets/date7.jpg"
+import date8 from "../assets/date8.jpg"
+ 
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import { CardActionArea } from '@mui/material';
+
 const polaroids = [
   {
     imageSrc: "src/assets/Hero.jpg",
@@ -28,10 +44,11 @@ export default function Home() {
   const [invitations, setInvitations] = useState([]);
   const [upcomingInvitations, setUpcomingInvitations] = useState([]);
 
+  const navigate = useNavigate();
   const logout = useLogout();
   console.log(user);
 
-  const backgroundImage = user.cover_photo || "src/assets/Hero.jpg";
+  const backgroundImage = user.cover_photo || "src/assets/background6.jpg";
   const avatarImage = user.avatar || "src/assets/avatar.png";
 
   const settings = {
@@ -102,15 +119,37 @@ export default function Home() {
     }
   };
 
+  const handleNavCardClick = (event, navItem) => {
+    switch (navItem) {
+      case "add":
+        navigate("/dates/new");
+        break;
+      case "public":
+        navigate("/dates");
+        break;
+      case "mydates":
+        navigate("/mydates");
+        break;
+      case "favorites":
+        navigate("/favorites");
+        break;
+      case "events":
+        navigate("/events");
+        break;
+      default:
+        return () => {};
+    }
+  };
+
   return (
     <>
       <div className="homepage-container">
-        <div className="background-image-container">
-          <img
+        <div id="background-image-container" style={{ backgroundImage: `url(${backgroundImage})` }}>
+          {/* <img
             src={backgroundImage}
             alt="Background"
             className="background-image"
-          />
+          /> */}
           <div className="avatar-overlay">
             <div className="avatar-container">
               <div className="relative">
@@ -132,70 +171,170 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="floating-card-polariod">
-          <Slider {...settings}>
-            {polaroids.map((polaroid, index) => (
-              <div key={index}>
-                <Polaroid
-                  imageSrc={polaroid.imageSrc}
-                  caption={polaroid.caption}
-                />
-              </div>
-            ))}
-          </Slider>
-        </div>
-        <div className="cards-container-all">
-          <div className="floating-card-invitations">
-            <h2 className="text-center">INVITATIONS</h2>
-            {invitations.length === 0 ? (
-              <p>No pending invitations.</p>
-            ) : (
-              invitations.map((invitation, index) => (
-                <InvitationCard
-                  key={index}
-                  invitationId={invitation.invitation_id}
-                  eventId={invitation.event_id}
-                  senderUsername={invitation.sender_username}
-                  senderAvatarUrl={invitation.sender_avatar_url}
-                  invitationStartTime={invitation.invitation_start_time}
-                  invitationDate={invitation.invitation_date}
-                  eventTitle={invitation.event_title}
-                  eventDetailedAddress={invitation.event_detailed_address}
-                  eventCity={invitation.event_city}
-                  eventCountry={invitation.event_country}
-                  updateInvitationStatus={updateInviteStatus}
-                />
-              ))
-            )}
+
+        <div className ="flex">
+        <div className="floating-card-invitations my-5">
+              <h2 className="text-center">INVITATIONS</h2>
+              {invitations.length === 0 ? (
+                <p className="text-center">No pending invitations.</p>
+              ) : (
+                invitations.map((invitation, index) => (
+                  <InvitationCard
+                    key={index}
+                    invitationId={invitation.invitation_id}
+                    eventId={invitation.event_id}
+                    senderUsername={invitation.sender_username}
+                    senderAvatarUrl={invitation.sender_avatar_url}
+                    invitationStartTime={invitation.invitation_start_time}
+                    invitationDate={invitation.invitation_date}
+                    eventTitle={invitation.event_title}
+                    eventDetailedAddress={invitation.event_detailed_address}
+                    eventCity={invitation.event_city}
+                    eventCountry={invitation.event_country}
+                    updateInvitationStatus={updateInviteStatus}
+                  />
+                ))
+              )}
+            </div>
+
+          <div className="grid container gap-3  mx-auto my-5">
+            <div className="grid grid-cols-3 gap-3">
+              <Card>
+                <CardActionArea onClick={(e) => handleNavCardClick(e, "add")}>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={date1}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      Favorites
+                    </Typography>
+                    <Typography variant="body2">
+                      CHECK OUT YOUR FAVORITE DATE IDEAS
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+              <Card>
+                <CardActionArea onClick={(e) => handleNavCardClick(e, "public")}>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={date3}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      Explore Dates
+                    </Typography>
+                    <Typography variant="body2">
+                      FIND INSPIRATION FOR YOUR NEXT HANG OUT
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+
+              <Card>
+                <CardActionArea onClick={(e) => handleNavCardClick(e, "mydates")}>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={date2}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      Your Date Ideas
+                    </Typography>
+                    <Typography variant="body2">
+                      REVIEW THE IDEAS YOU HAVE COME UP WITH
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <Card >
+                <CardActionArea onClick={(e) => handleNavCardClick(e, "favorites")}>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={date5}
+
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      
+                      Add Date Ideas
+                    </Typography>
+                    <Typography variant="body2">
+                      
+                      SAVE YOUR UNIQUE DATE IDEAS AND SHARE THEM WITH OTHERS
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+              <Card >
+                <CardActionArea onClick={(e) => handleNavCardClick(e, "events")}>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={date6}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      Events & Concerts
+                    </Typography>
+                    <Typography variant="body2">
+                      FIND LOCAL EVENTS AND CONCERTS HAPPENING IN YOUR AREA
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </div>
+            {/* <div className="floating-card-polariod">
+              <Slider {...settings}>
+                {polaroids.map((polaroid, index) => (
+                  <div key={index}>
+                    <Polaroid
+                      imageSrc={polaroid.imageSrc}
+                      caption={polaroid.caption}
+                    />
+                  </div>
+                ))}
+              </Slider>
+            </div> */}
           </div>
-          <div className="floating-card-upcoming">
-            <h2 className="text-center">UPCOMING DATES</h2>
-            {upcomingInvitations.length === 0 ? (
-              <p>No upcoming dates.</p>
-            ) : (
-              upcomingInvitations.map((upcomingInvitation, index) => (
-                <UpcomingCard
-                  key={index}
-                  eventId={upcomingInvitation.event_id}
-                  invitationId={upcomingInvitation.invitation_id}
-                  loggedInUsername={user.username}
-                  senderUsername={upcomingInvitation.sender_username}
-                  receiverUsername={upcomingInvitation.receiver_username}
-                  senderAvatarUrl={upcomingInvitation.sender_avatar_url}
-                  receiverAvatarUrl={upcomingInvitation.receiver_avatar_url}
-                  invitationStartTime={upcomingInvitation.invitation_start_time}
-                  invitationDate={upcomingInvitation.invitation_date}
-                  eventTitle={upcomingInvitation.event_title}
-                  eventDetailedAddress={
-                    upcomingInvitation.event_detailed_address
-                  }
-                  eventCity={upcomingInvitation.event_city}
-                  eventCountry={upcomingInvitation.event_country}
-                />
-              ))
-            )}
+
+        {/* <div className="cards-container-all"> */}
+            <div className="floating-card-upcoming my-5">
+              <h2 className="text-center">UPCOMING DATES</h2>
+              {upcomingInvitations.length === 0 ? (
+                <p className="text-center">No upcoming dates.</p>
+              ) : (
+                upcomingInvitations.map((upcomingInvitation, index) => (
+                  <UpcomingCard
+                    key={index}
+                    eventId={upcomingInvitation.event_id}
+                    invitationId={upcomingInvitation.invitation_id}
+                    loggedInUsername={user.username}
+                    senderUsername={upcomingInvitation.sender_username}
+                    receiverUsername={upcomingInvitation.receiver_username}
+                    senderAvatarUrl={upcomingInvitation.sender_avatar_url}
+                    receiverAvatarUrl={upcomingInvitation.receiver_avatar_url}
+                    invitationStartTime={upcomingInvitation.invitation_start_time}
+                    invitationDate={upcomingInvitation.invitation_date}
+                    eventTitle={upcomingInvitation.event_title}
+                    eventDetailedAddress={
+                      upcomingInvitation.event_detailed_address
+                    }
+                    eventCity={upcomingInvitation.event_city}
+                    eventCountry={upcomingInvitation.event_country}
+                  />
+                ))
+              )}
+            </div>
+          {/* </div> */}
           </div>
-        </div>
       </div>
 
       {/* Photo Upload Modal */}

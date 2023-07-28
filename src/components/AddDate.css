@@ -5,12 +5,15 @@
 }
 
 .image-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 92vh;
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
+  height: 96vh;
   overflow: hidden;
-  margin-left: -1%;
+  /* margin-left: -1%; */
+  background-size:cover;
+  background-position: 100% 90%;
+  background-image:url(../assets/home_screen.jpg);
 }
 
 .image {
@@ -67,5 +70,5 @@
 }
 
 .styleScoped {
-  background-color: #f8f8f8;
+  height: 90vh;
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import "./AddDate.css";
-import CoupleImage from "../assets/home_screen.jpg";
+// import CoupleImage from "../assets/home_screen.jpg";
 import DateForm from "./DateForm";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
@@ -10,10 +10,10 @@ export default function AddDate() {
 
   return (
     <>
-      <div className="container-fluid styleScoped">
-        <div className="row">
+      <div className="container-fluid styleScoped row">
+        {/* <div className="row"> */}
           <div className="col-md-8 image-container">
-            <img src={CoupleImage} className="image" alt="Couple" />
+            {/* <img src={CoupleImage} className="image" alt="Couple" /> */}
           </div>
           <div className="col-md-4">
             <div className="card-container-date">
@@ -36,7 +36,7 @@ export default function AddDate() {
               </div>
             </div>
           </div>
-        </div>
+        {/* </div> */}
       </div>
     </>
   );

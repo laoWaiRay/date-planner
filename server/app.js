@@ -146,11 +146,9 @@ app.post("/favorites", async (req, res) => {
 
   // Add event to favorites table
   var checkFavQuery = `SELECT * FROM saved WHERE user_id=$1 AND event_id=$2`
-  console.log(checkFavQuery)
   const favResult = await pool.query(checkFavQuery, [userid, eventid]);
 
   if (favResult.rows.length == 0) {
-    console.log("INSERTING FAV")
     var addFavoriteQuery = `INSERT INTO saved(user_id,event_id) VALUES(${userid},'${eventid}')`
     pool.query(addFavoriteQuery, (err, result) => {
       if (err) {
@@ -166,7 +164,7 @@ app.post("/favorites", async (req, res) => {
 app.delete("/favorites", async (req, res) => {
   var del_userid = req.query.user
   var del_eventid = req.query.event
-  console.log("DELETING FAV",del_userid,del_eventid)
+  // console.log("DELETING FAV",del_userid,del_eventid)
 
   var delFavoriteQuery = `DELETE FROM saved WHERE user_id='${del_userid}' AND event_id='${del_eventid}'`
 
@@ -339,7 +337,7 @@ app.get("/ticketmaster", (req, res) => {
         res.json([]);
     })
     .catch((error) => {
-      console.log("ERROR HERE")
+      // console.log("ERROR HERE")
       res.send([])
     });
 });
@@ -438,8 +436,7 @@ app.post("/updateInviteStatus", async (req, res) =>{
 app.get("/pendingUserInvites", async (req, res) =>{
   
   const user_id = req.query.user_id;
-  
-  console.log(user_id)
+
     // Define INSERT query
  const selectQuery = `
   SELECT 

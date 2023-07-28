@@ -1,14 +1,16 @@
 .homepage-container {
-  height: 100vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   position: relative;
 }
 
-.background-image-container {
+#background-image-container {
   position: relative;
   width: 100%;
-  height: 20%;
+  height: 30%;
+  background-size:cover;
+  background-position: 80% 85%;
 }
 
 .background-image {
@@ -56,12 +58,14 @@
 }
 
 .floating-card-invitations {
-  position: absolute;
+  /* position: absolute;
   top: 21%;
-  left: 250px;
+  left: 250px; */
   margin-left: 2%;
-  transform: translateX(-50%);
-  background-color: rgba(255, 255, 255, 0.8);
+  /* transform: translateX(-50%); */
+  min-width: 300px;
+  width: 15%;
+  background-color: rgba(255, 255, 255, 1);
   padding: 16px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
@@ -70,12 +74,14 @@
 }
 
 .floating-card-upcoming {
-  position: absolute;
+  /* position: absolute;
   top: 21%;
-  right: 250px;
+  right: 250px; */
   margin-right: 2%;
-  transform: translateX(50%);
-  background-color: rgba(255, 255, 255, 0.8);
+  /* transform: translateX(50%); */
+  min-width: 300px;
+  width: 15%;
+  background-color: rgba(255, 255, 255, 1);
   padding: 16px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
