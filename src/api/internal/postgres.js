@@ -257,5 +257,7 @@ export {
   editReview,
   deleteReview,
   getReviews,
-  getAverageReviewScore
+  getAverageReviewScore,
+  sendEventRejectionEmail,
+  sendEventAcceptanceEmail
 };
