@@ -20,6 +20,22 @@ async function getUpcomingDates(){
     return await results.json();
 }
 
+function sendEmail(sender_email, receiver_username){
+    const mailOptions = {
+        from: 'dateplanner@zohomail.com',
+        to: sender_email,
+        subject: `Event Reminder `,
+        html: `Upcoming Date today with ${receiver_username}. Please check out Dateplanner for more details.`                       
+    };
+    return transporter.sendMail(mailOptions, (error, data) => {
+        console.log("sent!")
+        if (error) {
+            console.log(error)
+            return
+        }
+    });
+}
+
 //// credentials for your Mail
 const transporter = mailer.createTransport({
     host: 'smtp.zoho.com',
@@ -31,7 +47,7 @@ const transporter = mailer.createTransport({
     }
   });
 //Cron Job to run around 7am Server Time 
-cron.schedule('30 11 * * *', async () => {
+cron.schedule('37 17 * * *', async () => {
     console.log("cron-job running");
     const inviteData = await getUpcomingDates();
     console.log(inviteData);
@@ -39,18 +55,7 @@ cron.schedule('30 11 * * *', async () => {
     const sendReminder =  
     // looping through the users
     inviteData.forEach(element => {
-        const mailOptions = {
-            from: 'dateplanner@zohomail.com',
-            to: element.sender_email,
-            subject: `Event Reminder `,
-            html: `Upcoming Date today with ${element.receiver_username}. Please check out Dateplanner for more details.`                       
-        };
-        return transporter.sendMail(mailOptions, (error, data) => {
-            console.log("sent!")
-            if (error) {
-                console.log(error)
-                return
-            }
-        });
+        sendEmail(element.sender_email, element.receiver_username);
+        sendEmail(element.receiver_email, element.sender_username);
     });
 });
