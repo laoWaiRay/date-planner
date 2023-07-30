@@ -23,7 +23,7 @@ export default function DrawerAppBar(props) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const logout = useLogout();
   const navigate = useNavigate();
-  const currentLocation = useLocation()
+  const currentLocation = useLocation();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -67,15 +67,14 @@ export default function DrawerAppBar(props) {
         url = "/dates/new";
         break;
     }
-    if (currentLocation.pathname == url)
-      return true;
+    if (currentLocation.pathname == url) return true;
     return false;
-  }
+  };
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        Date Planner
+        Ignite
       </Typography>
       <Divider />
       <List>
@@ -100,7 +99,7 @@ export default function DrawerAppBar(props) {
   return (
     <Box sx={{ display: "flex" }} className="h-[64px]">
       <AppBar component="nav">
-        <Toolbar style={{ background: "#39798f"}}>
+        <Toolbar style={{ background: "#39798f" }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
