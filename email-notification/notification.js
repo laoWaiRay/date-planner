@@ -28,7 +28,6 @@ function sendEmail(sender_email, receiver_username){
         html: `Upcoming Date today with ${receiver_username}. Please check out Dateplanner for more details.`                       
     };
     return transporter.sendMail(mailOptions, (error, data) => {
-        console.log("sent!")
         if (error) {
             console.log(error)
             return
@@ -48,9 +47,7 @@ const transporter = mailer.createTransport({
   });
 //Cron Job to run at 6am Server Time 
 cron.schedule('0 6 * * *', async () => {
-    console.log("cron-job running");
     const inviteData = await getUpcomingDates();
-    console.log(inviteData);
     ///The Main Function 
     const sendReminder =  
     // looping through the users

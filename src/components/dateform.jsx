@@ -34,9 +34,6 @@ function DateForm(props) {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file.type == "image/jpeg" || file.type == "image/png") {
-      console.log("OK")
-      console.log(file)
-
       const reader = new FileReader();
 
       const handleLoadEvent = async () => {
@@ -58,7 +55,6 @@ function DateForm(props) {
       };
       await props.postData(body);
       setFormValues({ ...newEvent });
-      console.log("SUBMIT FORM")
       setIsPrivate(false);
       props.onHide();
       if (props.redirect) {

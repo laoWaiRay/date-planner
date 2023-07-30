@@ -325,7 +325,6 @@ app.get("/ticketmaster", (req, res) => {
 
   fetch(url)
     .then((response) => {
-      // console.log(response);
       return response.json();
     })
     .then((data) => {
@@ -336,7 +335,6 @@ app.get("/ticketmaster", (req, res) => {
         res.json([]);
     })
     .catch((error) => {
-      // console.log("ERROR HERE")
       res.send([])
     });
 });

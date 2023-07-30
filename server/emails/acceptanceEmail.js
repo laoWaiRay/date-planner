@@ -13,7 +13,6 @@ const transporter = mailer.createTransport({
 });
     ///The Main Function 
 export function sendAcceptanceMail(email, name, date){
-    console.log("working!")
     const mailOptions = {
         from: process.env.ZOHO_EMAIL,
         to: email,
@@ -21,7 +20,6 @@ export function sendAcceptanceMail(email, name, date){
         html: `Your event with ${name} on the date ${date} has been accepted`                       
     };
     return transporter.sendMail(mailOptions, (error, data) => {
-        console.log("sent acceptance letter")
         if (error) {
             console.log(error)
             return

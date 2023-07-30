@@ -55,7 +55,6 @@ function UpcomingCard({
 }) {
   const navigate = useNavigate();
   const handleClick = (id) => {
-    console.log(id);
     navigate(`/dates/${id}`);
   };
 

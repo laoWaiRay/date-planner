@@ -46,7 +46,6 @@ export default function Home() {
 
   const navigate = useNavigate();
   const logout = useLogout();
-  // console.log(user);
 
   const backgroundImage = user.cover_photo || "src/assets/homepage/background6.jpg";
   const avatarImage = user.avatar || "src/assets/avatar.png";
@@ -71,7 +70,6 @@ export default function Home() {
         `http://localhost:8000/pendingUserInvites?user_id=${user.id}`
       );
       const data = await response.json();
-      console.log("Fetched invitations:", data);
       setInvitations(data);
     } catch (error) {
       console.error("Error fetching invitations:", error.message);
@@ -142,7 +140,6 @@ export default function Home() {
   };
 
   const navigationCard = (link, cardImage, title, message) => {
-    console.log("NAVIG CARD", {link})
     return (
       <>
         <Card>

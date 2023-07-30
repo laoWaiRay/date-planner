@@ -133,7 +133,6 @@ export default function PublicDates({ entryTab }) {
 
     const displayEvents = (() => 
         events.slice(firstCardIndex, lastCardIndex).map(function(event) {
-            // console.log(event)
             var name = event.name
             var description = event.info
             var event_id = event.id
@@ -200,7 +199,6 @@ export default function PublicDates({ entryTab }) {
 
     const forLocations = () => {
         locations.map((location) => {
-            console.log("FOR EACH",location)
             return <><MenuItem value="all">{location.city}</MenuItem></>
         })
     }

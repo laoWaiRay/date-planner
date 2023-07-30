@@ -67,7 +67,6 @@ export default function AvatarUploadModal({onClose, userId}) {
       getSessionDetails();
     }
 
-    console.log("Success!")
     onClose();
   }
 

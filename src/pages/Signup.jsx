@@ -40,7 +40,6 @@ export default function Signup() {
       return;
     }
 
-    console.log('changed')
     let { errors: { username, email, password, confirmPassword } } 
         = validateSignupForm(formState);
 
