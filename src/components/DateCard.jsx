@@ -98,13 +98,13 @@ export default function DateCard({ id, name, description, category, location,
 
     
     return (
-        <Card className="h-full flex flex-col bg-red-200" variant="outlined" sx={{ maxWidth: 350 }}>
+        <Card className="h-full flex flex-col bg-red-200" variant="outlined" sx={{ maxWidth: 350}}>
             <CardMedia
                 sx={{ height: 180 }}
                 image={image ? image : getDefaultImage(category)}
                 className='min-h-[180px]'
             />
-            <CardContent>
+            <CardContent className="py-2 px-3">
                 <h1 className="text-base font-medium m-0">{name}</h1>
 
                 {/* Star rating */}
@@ -125,20 +125,20 @@ export default function DateCard({ id, name, description, category, location,
                 
                 <p className="text-sm text-slate-500 my-0">Location: {location}</p>
                 <p className="text-sm text-slate-500 my-0">Category: <span style={{textTransform:'capitalize'}}>{category}</span></p>
-                {price ? <p className="text-sm text-slate-500 my-0">Price: {price}</p>:<></>}
-                <p className="text-sm">{description}</p>
+                {price ? <p className="text-sm text-slate-500 my-2">Price: {price}</p>:<></>}
+                { description !== undefined ? <p className="text-sm">{description}</p>: null}
             </CardContent>
             
-            <CardActions className='mt-auto'>
-                <Button onClick={handleClickDetails}>Details</Button>
-                <Button onClick={handleInviteClick} size="small">Invite</Button>
+            <CardActions className='mt-auto px-3'>
+                <Button onClick={handleClickDetails} size="small" variant="contained" sx={{backgroundColor: "#39798f", ':hover': {bgcolor: '#1d3d48'}}}>Details</Button>
+                <Button onClick={handleInviteClick} size="small" variant="contained" sx={{backgroundColor: "#39798f", ':hover': {bgcolor: '#1d3d48'}}}>Invite</Button>
                 <div>
                 {isticketmaster === true 
                   ? null :
                   <div>
                   {isFav === false ? 
-                    <><IconButton color="default" onClick={handleFavoriteClick}><FavoriteBorderIcon></FavoriteBorderIcon></IconButton></>:
-                    <><IconButton onClick={handleUnfavoriteClick}><FavoriteIcon sx={{ color: red[700] }}></FavoriteIcon></IconButton></>
+                    <><IconButton className="mx-2" color="default" onClick={handleFavoriteClick}><FavoriteBorderIcon></FavoriteBorderIcon></IconButton></>:
+                    <><IconButton className="mx-2" onClick={handleUnfavoriteClick}><FavoriteIcon sx={{ color: red[700] }}></FavoriteIcon></IconButton></>
                   }
                   </div>
                 }

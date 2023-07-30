@@ -9,7 +9,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Navigate } from "react-router-dom";
 
-export default function MyDates() {
+export default function MyDates({ entryTab }) {
   const { user } = useAuthContext();
   const [dates, setDates] = useState([]);
   const [favorites, setFavorites] = useState([]);
@@ -27,6 +27,11 @@ export default function MyDates() {
   useEffect(() => {
     retrieveDates();
     retrieveFavorites();
+    
+    if (entryTab === "1") {
+      setTabValue(entryTab)
+    }
+
   }, []);
 
   const handleChange = (event, newValue) => {
@@ -50,7 +55,6 @@ export default function MyDates() {
   };
 
   const retrieveFavorites = () => {
-    console.log("lol");
     let url = `http://localhost:8000/favorites?user=${user.id}`;
     fetch(url)
       .then((response) => {
@@ -58,7 +62,6 @@ export default function MyDates() {
       })
       .then((data) => {
         setFavorites(data);
-        console.log("lol");
       })
       .catch((error) => {
         console.log(error);
@@ -131,11 +134,11 @@ export default function MyDates() {
 
   return (
     <>
-      {!isLoading && dates.length == 0 ? (
+      {!isLoading && dates.length == 0 && tabValue == 0 ? (
         <Navigate to="/dates/new" />
       ) : (
         <div className="md:container mx-auto">
-          <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4">
+          <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4" style= {{color: "#39798f"}}>
             Your Personal Date Ideas
           </h1>
           <Tabs
@@ -143,6 +146,7 @@ export default function MyDates() {
             value={tabValue}
             onChange={handleChange}
             centered
+            sx={{" .Mui-selected": {color: `#39798f`}, "& .MuiTabs-indicator": {backgroundColor: `#39798f`}}}
           >
             <Tab value="0" label="Your Date Ideas" />
             <Tab value="1" label="Favorites" />
@@ -161,7 +165,6 @@ export default function MyDates() {
                   className="mx-auto my-4"
                   page={currentPage}
                   count={totalPageCount}
-                  color="primary"
                   onChange={onPageChange}
                 />
               </>
@@ -171,7 +174,6 @@ export default function MyDates() {
                   className="mx-auto my-4"
                   page={currentPage}
                   count={totalFavPageCount}
-                  color="primary"
                   onChange={onPageChange}
                 />
               </>

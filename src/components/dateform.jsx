@@ -1,4 +1,5 @@
-import Button from "react-bootstrap/Button";
+// import Button from "react-bootstrap/Button";
+import Button from '@mui/material/Button';
 import Modal from "react-bootstrap/Modal";
 import resizeImage from "../helpers/resizeImage";
 import { useEffect, useState } from "react";
@@ -95,7 +96,7 @@ function DateForm(props) {
         <Modal.Title id="contained-modal-title-vcenter">
           <span
             className="text-blue-600 text-2xl font-display font-semibold italic"
-            style={{ fontWeight: "bold" }}
+            style={{ fontWeight: "bold", color:"#39798f" }}
           >
             Share Your Perfect Date Idea!{" "}
           </span>
@@ -286,13 +287,13 @@ function DateForm(props) {
           </div>
 
           <div className="row" style={{ marginTop: "2%" }}>
-            <div className="col-md-12 text-center">
-              <Button variant="primary" type="reset" className="w-50">
+            <div className="col-md-12 text-center" >
+              <Button variant="primary" type="reset" className="w-50" sx={{backgroundColor: "#39798f", color:"white", ':hover': {bgcolor: '#1d3d48'}}}>
                 Reset
               </Button>
             </div>
             <div className="col-md-12 text-center">
-              <Button variant="primary" type="submit" className="w-50 mt-2">
+              <Button variant="primary" type="submit" className="w-50 mt-2" sx={{backgroundColor: "#39798f", color:"white", ':hover': {bgcolor: '#1d3d48'}}}>
                 Submit
               </Button>
             </div>
