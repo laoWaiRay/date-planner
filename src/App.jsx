@@ -24,11 +24,9 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   // React Router
-  // TODO: Uncomment/add protected routes
   const router = createBrowserRouter([
     {
       path: "/",
-      // element: user ? <Home /> : <Login />,
       element: user ? (
         <>
           <DrawerAppBar /> <Home />
@@ -90,17 +88,6 @@ export default function App() {
         <>
           {" "}
           <DrawerAppBar /> <MyDates />{" "}
-        </>
-      ) : (
-        <Navigate to="/" />
-      ),
-    },
-    {
-      path: "/dates/:id",
-      element: user ? (
-        <>
-          {" "}
-          <DrawerAppBar /> <Details />{" "}
         </>
       ) : (
         <Navigate to="/" />

@@ -71,7 +71,7 @@ export default function PublicDates({ entryTab }) {
 
     useEffect(() => {
         retrieveDates();
-      }, [categorySelect, priceSelect, locationSelect, outlet]);
+      }, [categorySelect, priceSelect, locationSelect]);
 
     const handleChange = (event, newValue) => {
         setTabValue(newValue);
@@ -258,8 +258,6 @@ export default function PublicDates({ entryTab }) {
                         })
     
                     }
-
-
                     </Select>
                 </FormControl>
             </>
