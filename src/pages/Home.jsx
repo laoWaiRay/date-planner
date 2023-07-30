@@ -155,7 +155,12 @@ export default function Home() {
 
             <CardContent>
               <Typography gutterBottom variant="h5" component="div" > { title } </Typography>
-              <Typography variant="body2"> { message } </Typography>
+              <Typography 
+                variant="body2" 
+                className="text-gray-600 !font-light"
+              > 
+                { message[0].toUpperCase() + message.toLowerCase().slice(1) } 
+              </Typography>
             </CardContent>
 
           </CardActionArea>
@@ -168,16 +173,16 @@ export default function Home() {
   return (
     <>
       <div className="homepage-container">
-        <div id="background-image-container" style={{ backgroundImage: `url(${backgroundImage})` }}>
-          {/* <img
+        <div id="background-image-container">
+          <img
             src={backgroundImage}
             alt="Background"
-            className="background-image"
-          /> */}
+            className={`background-image ${user.cover_photo ? "!object-center" : ""}`}
+          />
           <div className="avatar-overlay">
             <div className="avatar-container">
               <div className="relative">
-                <img src={avatarImage} alt="Avatar" className="avatar" />
+                <img src={avatarImage} alt="Avatar" className="avatar object-cover" />
                 <button
                   onClick={handleUploadBtnClick}
                   className="absolute bg-slate-300 -bottom-2 -right-4 p-[10px] rounded-full flex 
@@ -187,7 +192,7 @@ export default function Home() {
                 </button>
               </div>
               <div 
-                className="welcome-message
+                className="welcome-message mt-2
                 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
               >
                 Welcome back, {user.username}!
@@ -198,10 +203,15 @@ export default function Home() {
         
         {/* Container for invitation, link, upcoming tables */}
         <div className ="flex bgColor">
-            <div className="floating-card-invitations my-5">
-              <h2 className="text-center" style= {{color: "#39798f"}}>INVITATIONS</h2>
+            <div className="floating-card-invitations my-5 max-h-[100vh] overflow-y-auto !space-y-4">
+              <h2 
+                className="text-center font-light tracking-wider pb-2 mb-4 border-b"
+                style= {{color: "#39798f"}}
+              >
+                INVITATIONS
+              </h2>
               {invitations.length === 0 ? (
-                <p className="text-center">No pending invitations.</p>
+                <p className="text-center text-gray-600 !font-light">No pending invitations.</p>
               ) : (
                 invitations.map((invitation, index) => (
                   <InvitationCard
@@ -227,32 +237,37 @@ export default function Home() {
             {/* Top row of Navigation Links table*/}
             <div className="grid grid-cols-3 gap-3">
               {/* Favorites Card */}
-                {navigationCard("favorites","src/assets/homepage/date1.jpg", "Favorites", "CHECK OUT YOUR FAVORITE DATE IDEAS")}
+                {navigationCard("favorites", date1, "Favorites", "CHECK OUT YOUR FAVORITE DATE IDEAS")}
 
               {/* Explore Dates Card */}
-                {navigationCard("public","src/assets/homepage/date3.jpg", "Explore Dates", "FIND INSPIRATION FOR YOUR NEXT HANG OUT")}
+                {navigationCard("public", date3, "Explore Dates", "FIND INSPIRATION FOR YOUR NEXT HANG OUT")}
 
               
               {/* Your Date Ideas Card */}
-                {navigationCard("mydates","src/assets/homepage/date2.jpg", "Your Date Ideas", "REVIEW THE IDEAS YOU HAVE COME UP WITH")}
+                {navigationCard("mydates", date2, "Your Date Ideas", "REVIEW THE IDEAS YOU HAVE COME UP WITH")}
             </div>
 
             {/* Bottom row of Navigation Links table*/}
             <div className="grid grid-cols-2 gap-3 mx-auto">
               {/* Add Dates Card */}
-                {navigationCard("add","src/assets/homepage/date5.jpg", "Add Date Ideas", "SAVE YOUR UNIQUE DATE IDEAS AND SHARE THEM WITH OTHERS")}
+                {navigationCard("add", date5, "Add Date Ideas", "SAVE YOUR UNIQUE DATE IDEAS AND SHARE THEM WITH OTHERS")}
 
               {/* Events & Concerts Card */}
-                {navigationCard("events","src/assets/homepage/date6.jpg", "Events & Concerts", "FIND LOCAL EVENTS AND CONCERTS HAPPENING IN YOUR AREA")}
+                {navigationCard("events", date6, "Events & Concerts", "FIND LOCAL EVENTS AND CONCERTS HAPPENING IN YOUR AREA")}
 
             </div>
           </div>
             
           {/* Upcoming Dates Table */}
-            <div className="floating-card-upcoming my-5">
-              <h2 className="text-center" style= {{color: "#39798f"}}>UPCOMING DATES</h2>
+            <div className="floating-card-upcoming my-5 max-h-[100vh] overflow-y-auto !space-y-4">
+              <h2 
+                className="text-center font-light tracking-wider pb-2 mb-4 border-b"
+                style= {{color: "#39798f"}}
+              >
+                UPCOMING
+              </h2>
                 {upcomingInvitations.length === 0 ? (
-                  <p className="text-center">No upcoming dates.</p>
+                  <p className="text-center text-gray-600 !font-light">No upcoming dates.</p>
                 ) : (
                   upcomingInvitations.map((upcomingInvitation, index) => (
                     <UpcomingCard

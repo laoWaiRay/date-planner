@@ -83,7 +83,9 @@ function InvitationCard({
             <div>
               <b>Where:</b> {eventDetailedAddress}, {eventCity}, {eventCountry}
             </div>
-            <div className="parent-container">
+          </div>
+        </div>
+        <div className="parent-container">
               <div className="left-corner">
                 <Chip
                   label="View Event"
@@ -120,8 +122,6 @@ function InvitationCard({
                 </Fab>
               </div>
             </div>
-          </div>
-        </div>
       </Card.Body>
     </Card>
   );

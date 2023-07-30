@@ -73,10 +73,6 @@ export default function PublicDates({ entryTab }) {
         retrieveDates();
       }, [categorySelect, priceSelect, locationSelect, outlet]);
 
-    useEffect(() => {
-        // retrieveFavorites();
-    })
-
     const handleChange = (event, newValue) => {
         setTabValue(newValue);
         retrieveFavorites();

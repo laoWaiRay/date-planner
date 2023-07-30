@@ -89,7 +89,7 @@ export default function Login() {
                   onClick={() => setRememberMeChecked(!rememberMeChecked)}
                 />
                 <span className="text-sm">Remember me</span> */}
-                <a className="text-sm ml-auto mr-4" style={{color: "#39798f"}}>Forgot password?</a>
+                {/* <a className="text-sm ml-auto mr-4" style={{color: "#39798f"}}>Forgot password?</a> */}
               </div>
             </div>
             

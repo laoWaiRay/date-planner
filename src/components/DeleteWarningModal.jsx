@@ -27,7 +27,7 @@ export default function DeleteWarningModal({onClose, eventId, event_username}) {
           <p>This action cannot be undone.</p>
           <div className="space-x-2">
             <Button type="submit" variant="danger">Delete</Button>
-            <Button type="button" variant="secondary">Cancel</Button>
+            <Button type="button" onClick={onClose} variant="secondary">Cancel</Button>
           </div>
         </Form>
       </Modal.Body>

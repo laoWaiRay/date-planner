@@ -8,7 +8,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import IconButton from '@mui/material/IconButton';
 import CreateDateInvite from "./DateInviteModal"
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getDefaultImage } from '../helpers/getDefaultImage';
 import { Rating } from '@mui/material';
 import { getAverageReviewScore } from '../api/internal/postgres';
@@ -27,6 +27,7 @@ export default function DateCard({ id, name, description, category, location,
     const [averageScore, setAverageScore] = useState(0.0);
     const [isFav, setIsFav] = useState(inFavorite);
     const navigate = useNavigate();
+    const currentRoute = useLocation();
     const eventid = id
 
     useEffect(() => {
@@ -37,7 +38,7 @@ export default function DateCard({ id, name, description, category, location,
           avgScore = 0.0;
         setAverageScore(parseFloat(avgScore));
       })()
-    }, [])
+    }, [currentRoute])
 
     const toggleIsFav = () => {
       if(isFav == false) {
@@ -71,9 +72,7 @@ export default function DateCard({ id, name, description, category, location,
         .catch (error => {
             console.log(error)
         })
-        console.log("SETTING FAV")
         toggleIsFav()
-        console.log(isFav)
       }
     }
 
@@ -90,13 +89,10 @@ export default function DateCard({ id, name, description, category, location,
         .catch (error => {
             console.log(error)
         })
-        console.log("REMOVE FAV")
         toggleIsFav()
-        console.log(isFav)
       }
     }
 
-    
     return (
         <Card className="h-full flex flex-col bg-red-200" variant="outlined" sx={{ maxWidth: 350}}>
             <CardMedia
@@ -137,7 +133,7 @@ export default function DateCard({ id, name, description, category, location,
                   ? null :
                   <div>
                   {isFav === false ? 
-                    <><IconButton className="mx-2" color="default" onClick={handleFavoriteClick}><FavoriteBorderIcon></FavoriteBorderIcon></IconButton></>:
+                    <><IconButton className="mx-2" color="default" onClick={handleFavoriteClick}><FavoriteBorderIcon></FavoriteBorderIcon></IconButton></> :
                     <><IconButton className="mx-2" onClick={handleUnfavoriteClick}><FavoriteIcon sx={{ color: red[700] }}></FavoriteIcon></IconButton></>
                   }
                   </div>

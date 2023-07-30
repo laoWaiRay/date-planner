@@ -4,9 +4,11 @@ import Modal from "react-bootstrap/Modal";
 import resizeImage from "../helpers/resizeImage";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useNavigate } from 'react-router-dom';
 
 function DateForm(props) {
   const { user } = useAuthContext();
+  const navigate = useNavigate();
   const newEvent = {
     title: "",
     date_idea: "",
@@ -18,15 +20,6 @@ function DateForm(props) {
     preferred_time: "",
     comments: "",
     image: ""
-  };
-
-  const postData = async (body) => {
-    const response = await fetch("http://localhost:8000/mydates", {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
   };
 
   const handleFormChange = (event) => {
@@ -63,11 +56,14 @@ function DateForm(props) {
       const body = {
         date: { ...formValues, isPrivate: isPrivate, author: user.id },
       };
-      await postData(body);
+      await props.postData(body);
       setFormValues({ ...newEvent });
       console.log("SUBMIT FORM")
       setIsPrivate(false);
       props.onHide();
+      if (props.redirect) {
+        navigate(props.redirect)
+      }
     } catch (error) {
       console.error(error.message);
     }
