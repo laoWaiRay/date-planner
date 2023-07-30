@@ -129,7 +129,7 @@ function DateForm(props) {
               onChange={handleFormChange}
             ></textarea>
           </div>
-          <div className="row">
+          <div className="row mb-3">
             <div className="col-md-4">
               <div className="form-group">
                 <label htmlFor="location">Location</label>
@@ -173,7 +173,7 @@ function DateForm(props) {
               </div>
             </div>
           </div>
-          <div className="row">
+          <div className="row mb-3">
             <div className="col-md-6">
               <div className="form-group">
                 <label htmlFor="price_range">Price Range</label>
@@ -232,7 +232,7 @@ function DateForm(props) {
               </div>
             </div>
           </div>
-          <div className="row">
+          <div className="row mb-3">
             <div className="col-md-6">
               <div className="form-group">
                 <label htmlFor="preferred_time">Preferred Time of Day</label>
@@ -265,7 +265,7 @@ function DateForm(props) {
               </div>
             </div>
           </div>
-          <div className="row" style={{ marginTop: "2%" }}>
+          <div className="row mb-3">
             <div className="col-md-12">
               <div className="form-group">
                 <div className="form-check">
@@ -283,7 +283,7 @@ function DateForm(props) {
             </div>
           </div>
 
-          <div className="row" style={{ marginTop: "2%" }}>
+          <div className="row mb-3">
             <div className="col-md-12">
               <div className="form-group">
                 <div className="mb-3">
@@ -302,7 +302,7 @@ function DateForm(props) {
             </div>
           </div>
 
-          <div className="row" style={{ marginTop: "2%" }}>
+          <div className="row mb-3">
             <div className="col-md-12 text-center">
               <Button
                 variant="primary"
