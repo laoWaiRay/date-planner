@@ -208,7 +208,7 @@ export default function Home() {
                 INVITATIONS
               </h2>
               {invitations.length === 0 ? (
-                <p className="text-center text-gray-600 !font-light">No pending invitations.</p>
+                <p className="text-center text-gray-600 !font-light">No pending invitations</p>
               ) : (
                 invitations.map((invitation, index) => (
                   <InvitationCard
@@ -264,7 +264,7 @@ export default function Home() {
                 UPCOMING
               </h2>
                 {upcomingInvitations.length === 0 ? (
-                  <p className="text-center text-gray-600 !font-light">No upcoming dates.</p>
+                  <p className="text-center text-gray-600 !font-light">No upcoming dates</p>
                 ) : (
                   upcomingInvitations.map((upcomingInvitation, index) => (
                     <UpcomingCard

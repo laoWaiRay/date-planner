@@ -91,7 +91,7 @@ app.get("/publicdates", async (req, res) => {
   var publicDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id 
-                        WHERE private='f'`
+                        WHERE private='f' AND isticketmasterevent='f'`
   var values = []
   var count=1
 
