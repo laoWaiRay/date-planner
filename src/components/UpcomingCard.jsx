@@ -100,16 +100,14 @@ function UpcomingCard({
             <div>
               <b>Where:</b> {eventDetailedAddress}, {eventCity}, {eventCountry}
             </div>
-            <div className="parent-container">
-              <div className="left-corner">
-                <Chip
-                  label="View Event"
-                  onClick={() => handleClick(eventId)}
-                  sx={{backgroundColor: "#39798f", color:"white", ':hover': {bgcolor: '#1d3d48'}}}
-                />
-              </div>
-            </div>
           </div>
+        </div>
+        <div className="parent-container !justify-center">
+          <Chip
+            label="View Event"
+            onClick={() => handleClick(eventId)}
+            sx={{backgroundColor: "#39798f", color:"white", ':hover': {bgcolor: '#1d3d48'}}}
+          />
         </div>
       </Card.Body>
     </Card>

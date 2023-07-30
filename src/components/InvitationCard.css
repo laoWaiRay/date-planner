@@ -17,6 +17,14 @@
   justify-content: space-between;
 }
 
+.parent-container {
+  margin-top: 1rem !important;
+}
+
+.right-corner {
+  display: flex;
+}
+
 .card-container:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);

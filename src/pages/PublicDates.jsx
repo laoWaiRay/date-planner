@@ -71,11 +71,7 @@ export default function PublicDates({ entryTab }) {
 
     useEffect(() => {
         retrieveDates();
-      }, [categorySelect, priceSelect, locationSelect, outlet]);
-
-    useEffect(() => {
-        // retrieveFavorites();
-    })
+      }, [categorySelect, priceSelect, locationSelect]);
 
     const handleChange = (event, newValue) => {
         setTabValue(newValue);
@@ -262,8 +258,6 @@ export default function PublicDates({ entryTab }) {
                         })
     
                     }
-
-
                     </Select>
                 </FormControl>
             </>
@@ -381,7 +375,7 @@ export default function PublicDates({ entryTab }) {
           <Outlet />
           <div className={`${outlet ? "hidden" : ""}`}>
             <div className="md:container mx-auto">
-            <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4" style= {{color: "#39798f"}}>Find Date Ideas</h1>
+            <h1 className="font-display text-blue-500 font-bold text-4xl text-center mt-8 mb-0" style= {{color: "#39798f"}}>Find Date Ideas</h1>
             <Tabs className="mb-2" value ={tabValue} onChange={handleChange} centered sx={{" .Mui-selected": {color: `#39798f`}, "& .MuiTabs-indicator": {backgroundColor: `#39798f`}}}>
                 <Tab value="0" label="Shared by Users" />
                 <Tab value="1" label="Events/Concerts" />

@@ -138,7 +138,7 @@ export default function MyDates({ entryTab }) {
         <Navigate to="/dates/new" />
       ) : (
         <div className="md:container mx-auto">
-          <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4" style= {{color: "#39798f"}}>
+          <h1 className="font-display text-blue-500 mt-8 mb-0 font-bold text-4xl text-center" style= {{color: "#39798f"}}>
             Your Personal Date Ideas
           </h1>
           <Tabs
