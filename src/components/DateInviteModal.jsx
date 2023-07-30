@@ -1,9 +1,10 @@
 import { Pending } from '@mui/icons-material';
 import React, { useState } from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
+import { Modal, Form } from 'react-bootstrap';
 import { getUserByUsername } from '../api/internal/postgres'
 import { createInvitation } from '../api/internal/postgres'
 import { useAuthContext } from '../hooks/useAuthContext';
+import Button from '@mui/material/Button';
 
 function CreateDateInviteModal({ onClose, eventID }) {
   const [username, setUsername] = useState('');
@@ -68,7 +69,7 @@ function CreateDateInviteModal({ onClose, eventID }) {
               required
             />
           </Form.Group>
-          <Button className="mt-4" type="submit" variant="primary">Send Invite</Button>
+          <Button className="mt-4" type="submit" variant="contained" sx={{backgroundColor: "#39798f", ':hover': {bgcolor: '#1d3d48'}}}>Send Invite</Button>
         </Form>
       </Modal.Body>
     </Modal>

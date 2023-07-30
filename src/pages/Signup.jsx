@@ -109,7 +109,7 @@ export default function Signup() {
       justify-center sm:w-[28rem] items-center">
         
         <form onSubmit={(e) => handleSubmit(e)} className="max-w-sm w-full">
-          <h1 className="font-display text-blue-500 font-bold text-4xl mb-0">Date Planner</h1>
+          <h1 className="font-display text-blue-500 font-bold text-4xl mb-0" style={{color: "#39798f"}}>Date Planner</h1>
           <h2 className="font-semibold text-lg ml-[3px] tracking-wide mb-4">Create a new account</h2>
 
           {/* Error Message Popup */}
@@ -130,6 +130,7 @@ export default function Signup() {
             
             <button 
               className="w-full bg-blue-500 text-white font-semibold h-10 rounded-md hover:brightness-110 transition duration-200"
+              style={{backgroundColor: "#39798f"}}
             >
               Register
             </button>
@@ -144,7 +145,7 @@ export default function Signup() {
 
             <div className="text-sm mt-8 flex justify-center">
               Already have an account?
-              <Link to="/login" className="ml-3">Log in</Link>
+              <Link to="/login" className="ml-3" style={{color: "#39798f"}}>Log in</Link>
             </div>
           </section>
         </form>

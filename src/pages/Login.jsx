@@ -2,6 +2,7 @@ import { Switch } from "@mui/material";
 import Input from "../components/Input";
 import useForm from "../hooks/useForm";
 import Hero from "../assets/Hero.jpg"
+import LoginVideo from "../assets/login/login-video.mp4"
 import { useLoaderData, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { renderGoogleBtn } from "../GoogleIdentity";
@@ -54,8 +55,11 @@ export default function Login() {
   return (
     <div className="w-full min-h-screen flex">
       {/* Hero Image */}
-      <div className="overflow-hidden">
-        {heroImg}
+      <div className="overflow-hidden" style={{background: "linear-gradient(#397b8e, #323335)"}}>
+        {/* {heroImg} */}
+        <video className="" autoPlay loop muted style={{height: "100vh" }}>
+          <source src={LoginVideo} type='video/mp4' />
+        </video>
       </div>
 
       {/* Form Sidebar*/}
@@ -63,7 +67,7 @@ export default function Login() {
       justify-center sm:w-[28rem] items-center">
         
         <form onSubmit={(e) => handleSubmit(e)} className="mb-10 max-w-sm w-full">
-          <h1 className="font-display text-blue-500 font-bold text-4xl mb-0">Date Planner</h1>
+          <h1 className="font-display text-blue-500 font-bold text-4xl mb-0" style={{color: "#39798f"}}>Date Planner</h1>
           <h2 className="font-semibold text-lg ml-[3px] tracking-wide mb-4">Nice to see you again</h2>
 
           {/* Error Message Popup */}
@@ -85,13 +89,14 @@ export default function Login() {
                   onClick={() => setRememberMeChecked(!rememberMeChecked)}
                 />
                 <span className="text-sm">Remember me</span> */}
-                <a className="text-sm ml-auto mr-4">Forgot password?</a>
+                <a className="text-sm ml-auto mr-4" style={{color: "#39798f"}}>Forgot password?</a>
               </div>
             </div>
             
             <button 
               className="w-full bg-blue-500 text-white font-semibold h-10 rounded-md 
               hover:brightness-110 transition duration-200"
+              style={{backgroundColor: "#39798f"}}
             >
               Sign in
             </button>
@@ -106,7 +111,7 @@ export default function Login() {
 
             <div className="text-sm mt-8 flex justify-center">
               Don't have an account?
-              <Link to="/signup" className="ml-3">Sign up now</Link>
+              <Link to="/signup" className="ml-3" style={{color: "#39798f"}}>Sign up now</Link>
             </div>
           </section>
         </form>
