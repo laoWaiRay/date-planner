@@ -74,7 +74,7 @@ function DateForm(props) {
 
   useEffect(() => {
     if (props.initValues) {
-      setFormValues({ ...newEvent, ...props.initValues })
+      setFormValues({ ...newEvent, ...props.initValues });
     }
   }, [props.show]);
 
@@ -129,7 +129,7 @@ function DateForm(props) {
               onChange={handleFormChange}
             ></textarea>
           </div>
-          <div className="row">
+          <div className="row mb-3">
             <div className="col-md-4">
               <div className="form-group">
                 <label htmlFor="location">Location</label>
@@ -173,7 +173,7 @@ function DateForm(props) {
               </div>
             </div>
           </div>
-          <div className="row">
+          <div className="row mb-3">
             <div className="col-md-6">
               <div className="form-group">
                 <label htmlFor="price_range">Price Range</label>
@@ -186,9 +186,11 @@ function DateForm(props) {
                   onChange={handleFormChange}
                 >
                   <option value="">Select Price</option>
+                  <option value="Free">Free</option>
                   <option value="$">$</option>
                   <option value="$$">$$</option>
                   <option value="$$$">$$$</option>
+                  <option value="$$$$">$$$$</option>
                 </select>
               </div>
             </div>
@@ -205,15 +207,32 @@ function DateForm(props) {
                 >
                   <option value="">Select a Category</option>
                   <option value="romantic">Romantic</option>
-                  <option value="stayathome">Stay at home</option>
+                  <option value="stayathome">Stay at Home</option>
                   <option value="adventurous">Adventurous</option>
                   <option value="relaxing">Relaxing</option>
-                  <option value="indoor">Indoor</option>
+                  <option value="cultural">Cultural</option>
+                  <option value="natureandoutdoors">Nature and Outdoors</option>
+                  <option value="foodanddrink">
+                    Food and Drink Adventures
+                  </option>
+                  <option value="intellectual">
+                    Intellectual and Educational
+                  </option>
+                  <option value="musicandentertainment">
+                    Music and Entertainment
+                  </option>
+                  <option value="seasonal">Seasonal and Holiday-Themed</option>
+                  <option value="technologyandgaming">
+                    Technology and Gaming
+                  </option>
+                  <option value="mysteryandadventure">
+                    Mystery and Adventure
+                  </option>
                 </select>
               </div>
             </div>
           </div>
-          <div className="row">
+          <div className="row mb-3">
             <div className="col-md-6">
               <div className="form-group">
                 <label htmlFor="preferred_time">Preferred Time of Day</label>
@@ -246,7 +265,7 @@ function DateForm(props) {
               </div>
             </div>
           </div>
-          <div className="row" style={{ marginTop: "2%" }}>
+          <div className="row mb-3">
             <div className="col-md-12">
               <div className="form-group">
                 <div className="form-check">
@@ -264,7 +283,7 @@ function DateForm(props) {
             </div>
           </div>
 
-          <div className="row" style={{ marginTop: "2%" }}>
+          <div className="row mb-3">
             <div className="col-md-12">
               <div className="form-group">
                 <div className="mb-3">
@@ -283,7 +302,7 @@ function DateForm(props) {
             </div>
           </div>
 
-          <div className="row" style={{ marginTop: "2%" }}>
+          <div className="row mb-3">
             <div className="col-md-12 text-center">
               <Button
                 variant="primary"
