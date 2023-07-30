@@ -365,7 +365,7 @@ export default function PublicDates({ entryTab }) {
                     </Select>
                 </FormControl>
 
-                <Button variant ="contained" sx={{ m: 1}} onClick={onSearchEvent}>Search Dates</Button>
+                <Button variant ="contained" sx={{ m: 1, backgroundColor: "#39798f", ':hover': {bgcolor: '#1d3d48'} }} onClick={onSearchEvent}>Search Dates</Button>
             </>
         )
     }
@@ -376,7 +376,7 @@ export default function PublicDates({ entryTab }) {
           <div className={`${outlet ? "hidden" : ""}`}>
             <div className="md:container mx-auto">
             <h1 className="font-display text-blue-500 font-bold text-4xl text-center mt-8 mb-0" style= {{color: "#39798f"}}>Find Date Ideas</h1>
-            <Tabs className="mb-2" value ={tabValue} onChange={handleChange} centered sx={{" .Mui-selected": {color: `#39798f`}, "& .MuiTabs-indicator": {backgroundColor: `#39798f`}}}>
+            <Tabs className="mb-2" value ={tabValue} onChange={handleChange} centered sx={{" .Mui-selected": {color: `#39798f !important`}, "& .MuiTabs-indicator": {backgroundColor: `#39798f`}}}>
                 <Tab value="0" label="Shared by Users" />
                 <Tab value="1" label="Events/Concerts" />
             </Tabs>

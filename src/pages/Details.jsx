@@ -145,7 +145,7 @@ export default function Details() {
           {/* Title and Average Score */}
           <div>
             <div className="flex items-center space-x-1 px-2">
-              <h2 className="text-2xl m-0">{data.title}</h2>
+              <h2 className="text-2xl my-0 mr-4">{data.title}</h2>
 
               { (!isAPIEvent && user.username == data.author) && (
                 <>
@@ -229,9 +229,9 @@ export default function Details() {
 
       {/* Reviews Section */}
       {!isAPIEvent && 
-        <section className="flex flex-col m-8 max-h-96 mt-0">
+        <section className="flex flex-col m-8 max-h-96 mt-0 mb-8">
           <div className="flex space-x-4 items-center -mt-2 pb-2 border-b-2 mr-2">
-            <h2 className="text-2xl m-0">Reviews</h2>
+            <h2 className="text-2xl m-0 mb-2">Reviews</h2>
             <button type="button" onClick={() => {setIsCreateReviewModalOpen(true)}}>
               <AddCircleOutlineIcon className="text-[#39798f] opacity-80 hover:opacity-100" fontSize="large" />
             </button>
@@ -240,6 +240,15 @@ export default function Details() {
             </div>
           </div>
           <div className="overflow-y-auto">
+            {
+              reviews.length == 0 && 
+              <div 
+                className="bg-[#ebf3f6] py-8 flex justify-center italic text-[#39798f] drop-shadow-lg"
+              >
+                There don't seem to be any reviews yet for this date.
+              </div>
+            }
+
             {reviews.map((review) => (
               <Review 
                 key={review.id}
