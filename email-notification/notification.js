@@ -46,8 +46,8 @@ const transporter = mailer.createTransport({
       pass: "d%#Gv@g@5Lh@X-3"
     }
   });
-//Cron Job to run around 7am Server Time 
-cron.schedule('37 17 * * *', async () => {
+//Cron Job to run at 6am Server Time 
+cron.schedule('0 6 * * *', async () => {
     console.log("cron-job running");
     const inviteData = await getUpcomingDates();
     console.log(inviteData);
