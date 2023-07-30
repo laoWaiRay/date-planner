@@ -68,4 +68,8 @@
     margin: 0;
     min-height: 100vh;
   }
+
+  main {
+    background-color: rgb(241, 244, 247);
+  }
 }

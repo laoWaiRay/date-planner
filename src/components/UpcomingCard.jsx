@@ -103,9 +103,9 @@ function UpcomingCard({
             <div className="parent-container">
               <div className="left-corner">
                 <Chip
-                  color="secondary"
                   label="View Event"
                   onClick={() => handleClick(eventId)}
+                  sx={{backgroundColor: "#39798f", color:"white", ':hover': {bgcolor: '#1d3d48'}}}
                 />
               </div>
             </div>

@@ -27,7 +27,6 @@ export default function MyDates({ entryTab }) {
   useEffect(() => {
     retrieveDates();
     retrieveFavorites();
-    console.log("TAB VALUE",entryTab)
     
     if (entryTab === "1") {
       setTabValue(entryTab)
@@ -135,7 +134,7 @@ export default function MyDates({ entryTab }) {
 
   return (
     <>
-      {!isLoading && dates.length == 0 ? (
+      {!isLoading && dates.length == 0 && tabValue == 0 ? (
         <Navigate to="/dates/new" />
       ) : (
         <div className="md:container mx-auto">
@@ -147,7 +146,7 @@ export default function MyDates({ entryTab }) {
             value={tabValue}
             onChange={handleChange}
             centered
-            sx={{".Mui-selected": {color: `#39798f`}, "& .MuiTabs-indicator": {backgroundColor: `#39798f`}}}
+            sx={{" .Mui-selected": {color: `#39798f`}, "& .MuiTabs-indicator": {backgroundColor: `#39798f`}}}
           >
             <Tab value="0" label="Your Date Ideas" />
             <Tab value="1" label="Favorites" />
@@ -166,7 +165,6 @@ export default function MyDates({ entryTab }) {
                   className="mx-auto my-4"
                   page={currentPage}
                   count={totalPageCount}
-                  color="primary"
                   onChange={onPageChange}
                 />
               </>
@@ -176,7 +174,6 @@ export default function MyDates({ entryTab }) {
                   className="mx-auto my-4"
                   page={currentPage}
                   count={totalFavPageCount}
-                  color="primary"
                   onChange={onPageChange}
                 />
               </>

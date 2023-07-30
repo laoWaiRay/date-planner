@@ -5,10 +5,11 @@ import { getAverageReviewScore, getEventById, getLocationById, getReviews, getUs
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CreateReviewModal from "../components/CreateReviewModal";
 import Review from "../components/Review";
-import { Button } from "react-bootstrap";
+import Button from '@mui/material/Button';
 import { getDefaultImage } from "../helpers/getDefaultImage";
 import { Rating } from "@mui/material";
 import { Delete, Edit, Favorite, Send } from "@mui/icons-material";
+import IconButton from '@mui/material/IconButton';
 import { useAuthContext } from "../hooks/useAuthContext";
 import DateForm from "../components/DateForm";
 import CreateDateInvite from "../components/DateInviteModal"
@@ -103,9 +104,9 @@ export default function Details() {
   }
 
   return (
-    <div className="grid grid-cols-2 -my-12">
+    <div className="grid grid-cols-1 -my-12 mx-auto max-w-7xl" >
       {/* Details Section */}
-      <section className="overscroll-y-scroll m-8 mr-4 flex flex-col">
+      <section className="overscroll-y-scroll m-8 mb-4 flex flex-col">
         <div className="flex flex-col">
           {/* Image */}
           <img src={data.imageURL} alt={data.title} className="max-w-full aspect-[16/9] object-cover rounded-md mb-2"/>
@@ -117,26 +118,25 @@ export default function Details() {
 
               { (!isAPIEvent && user.username == data.author) && (
                 <>
-                <button onClick={() => setModalShow(true)}>
-                  <Edit />
-                </button>
-                <button onClick={() => setShowDeleteModal(true)}>
-                  <Delete />
-                </button>
+                  <IconButton aria-label="delete" onClick={() => setModalShow(true)}>
+                    <Edit className="m-1" fontSize="large" sx={{ color: "#39798f" }}/>
+                  </IconButton>
+                  
+                  <IconButton aria-label="delete" onClick={() => setShowDeleteModal(true)}>
+                    <Delete className="m-1" fontSize="large" sx={{ color: "#39798f" }}/>
+                  </IconButton>
                 </>
               )}
               
               {/* Buttons to like and share */}
               <div className="!ml-auto space-x-4">
-                {!isAPIEvent &&
-                  <button type="button">
-                    <Favorite />
-                  </button>
-                }
-                
-                <button type="button" onClick={() => setShowInviteModal(true)}>
-                  <Send className="-rotate-45 -translate-y-[3px]"/>
-                </button>
+                <Button variant="contained" 
+                  endIcon={<Send className="-rotate-45 -translate-y-[3px]"/>} 
+                  onClick={() => setShowInviteModal(true)} 
+                  sx={{backgroundColor: "#39798f", ':hover': {bgcolor: '#1d3d48'}}}
+                >
+                  Invite
+                </Button>
               </div>
               
             </div>
@@ -198,17 +198,17 @@ export default function Details() {
 
       {/* Reviews Section */}
       {!isAPIEvent && 
-        <section className="flex flex-col m-8 ml-4">
-          <div className="flex space-x-4 items-center -mt-2 pb-2 border-b-2">
+        <section className="flex flex-col m-8 max-h-96">
+          <div className="flex space-x-4 items-center -mt-2 pb-2 border-b-2 mr-2">
             <h2 className="text-2xl m-0">Reviews</h2>
             <button type="button" onClick={() => {setIsCreateReviewModalOpen(true)}}>
               <AddCircleOutlineIcon className="text-blue-400 opacity-80 hover:opacity-100" fontSize="large" />
             </button>
             <div className="!ml-auto">
-              <Button onClick={handleNavigate}>Go Back</Button>
+              <Button onClick={handleNavigate} variant="contained" sx={{backgroundColor: "#39798f", ':hover': {bgcolor: '#1d3d48'}}}>Go Back</Button>
             </div>
           </div>
-          <div>
+          <div className="overflow-y-auto">
             {reviews.map((review) => (
               <Review 
                 key={review.id}
@@ -229,8 +229,8 @@ export default function Details() {
       }
       
       {isAPIEvent && 
-        <div className="mt-8 w-full space-x-4">
-          <Button className="ml-auto mr-8" onClick={handleNavigate}>Go Back</Button>
+        <div className="mt-8 w-full space-x-4 ml-8">
+          <Button className="ml-auto mr-8" onClick={handleNavigate} variant="contained" sx={{backgroundColor: "#39798f", ':hover': {bgcolor: '#76A4AF'}}}>Go Back</Button>
         </div>
       }
 

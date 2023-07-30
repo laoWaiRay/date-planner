@@ -2,7 +2,7 @@ import React from "react";
 import "./AddDate.css";
 // import CoupleImage from "../assets/home_screen.jpg";
 import DateForm from "./DateForm";
-import Button from "react-bootstrap/Button";
+import Button from '@mui/material/Button';
 import { useState } from "react";
 
 export default function AddDate() {
@@ -20,8 +20,9 @@ export default function AddDate() {
               <div className="tagline-button-container">
                 <div className="button-container">
                   <Button
-                    variant="primary button-container"
+                    variant="contained"
                     onClick={() => setModalShow(true)}
+                    sx={{backgroundColor: "#39798f", color:"white", ':hover': {bgcolor: '#1d3d48'}}}
                   >
                     Add Date
                   </Button>

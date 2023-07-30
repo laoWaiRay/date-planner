@@ -47,7 +47,7 @@
 .subheading {
   font-family: "Lato", sans-serif;
   font-size: 18px;
-  color: #1e90ff;
+  color: #39798f;
   text-align: center;
   text-decoration: overline;
   margin-top: 1%;
@@ -61,12 +61,16 @@
   text-decoration: none;
   text-transform: uppercase;
   border-radius: 4px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:#39798f 0.3s ease, color 0.3s ease;
+  background-color: #39798f;
+  border-color: #39798f;
+  color:white;
 }
 
 .button-container:hover {
   background-color: white;
-  color: #0d6efd;
+  color: #39798f;
+  border-color: #39798f;
 }
 
 .styleScoped {

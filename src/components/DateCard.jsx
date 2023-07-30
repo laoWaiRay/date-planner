@@ -125,13 +125,13 @@ export default function DateCard({ id, name, description, category, location,
                 
                 <p className="text-sm text-slate-500 my-0">Location: {location}</p>
                 <p className="text-sm text-slate-500 my-0">Category: <span style={{textTransform:'capitalize'}}>{category}</span></p>
-                {price ? <p className="text-sm text-slate-500 my-0">Price: {price}</p>:<></>}
+                {price ? <p className="text-sm text-slate-500 my-2">Price: {price}</p>:<></>}
                 { description !== undefined ? <p className="text-sm">{description}</p>: null}
             </CardContent>
             
             <CardActions className='mt-auto px-3'>
-                <Button onClick={handleClickDetails} size="small" variant="outlined">Details</Button>
-                <Button onClick={handleInviteClick} size="small" variant="outlined">Invite</Button>
+                <Button onClick={handleClickDetails} size="small" variant="contained" sx={{backgroundColor: "#39798f", ':hover': {bgcolor: '#1d3d48'}}}>Details</Button>
+                <Button onClick={handleInviteClick} size="small" variant="contained" sx={{backgroundColor: "#39798f", ':hover': {bgcolor: '#1d3d48'}}}>Invite</Button>
                 <div>
                 {isticketmaster === true 
                   ? null :
