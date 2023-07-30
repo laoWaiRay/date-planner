@@ -164,7 +164,6 @@ app.post("/favorites", async (req, res) => {
 app.delete("/favorites", async (req, res) => {
   var del_userid = req.query.user
   var del_eventid = req.query.event
-  // console.log("DELETING FAV",del_userid,del_eventid)
 
   var delFavoriteQuery = `DELETE FROM saved WHERE user_id='${del_userid}' AND event_id='${del_eventid}'`
 
@@ -390,7 +389,31 @@ app.post("/createInvite", async (req, res) =>{
   const event_id = req.query.event_id;
   const status = req.query.status;
   const date = req.query.date;
-  const start_time = req.query.start_time;  
+  const start_time = req.query.start_time;
+
+  // If invitation is for ticketmaster event, it must be added to the events table first
+  if (event_id.length > 10) {
+    const result = await pool.query(`SELECT * FROM Events WHERE id = $1`, [event_id])
+    if (result.rows.length == 0) {
+      // GET location and populate locations table
+      let result = await fetch(`https://app.ticketmaster.com/discovery/v2/events.json?id=${event_id}&apikey=${ticketmaster_api}`);
+      let data = await result.json();
+      const locationsRef = data._embedded?.events?.[0]?._links?.venues?.[0]?.href;
+      result = await fetch (`https://app.ticketmaster.com/${locationsRef}&apikey=${ticketmaster_api}`)
+      data = await result.json()
+      const city = data?.city?.name;
+      const country = data?.country?.name;
+      const detailedAddress = data?.name;
+
+      const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
+      const locationValues = [city, country, detailedAddress];
+      const locationResult = await pool.query(locationQuery, locationValues);
+      const locationId = locationResult.rows[0]?.id;
+
+      const query = `INSERT INTO Events (id, title, location_id, isticketmasterevent) VALUES ($1, $2, $3, $4)`
+      await pool.query(query, [event_id, event_id, locationId, true])
+    }
+  }
 
   // Define INSERT query
   const insertQuery = `
