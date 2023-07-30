@@ -8,7 +8,7 @@ import Review from "../components/Review";
 import Button from '@mui/material/Button';
 import { getDefaultImage } from "../helpers/getDefaultImage";
 import { Rating } from "@mui/material";
-import { Delete, Edit, Favorite, Send } from "@mui/icons-material";
+import { Delete, Edit, Send } from "@mui/icons-material";
 import IconButton from '@mui/material/IconButton';
 import { useAuthContext } from "../hooks/useAuthContext";
 import DateForm from "../components/DateForm";
@@ -109,7 +109,10 @@ export default function Details() {
       <section className="overscroll-y-scroll m-8 mb-4 flex flex-col">
         <div className="flex flex-col">
           {/* Image */}
-          <img src={data.imageURL} alt={data.title} className="max-w-full aspect-[16/9] object-cover rounded-md mb-2"/>
+          <img 
+            src={data.imageURL} alt={data.title} 
+            className="max-w-full lg:max-w-2xl aspect-[16/9] object-cover rounded-md mb-2 self-center"
+          />
 
           {/* Title and Average Score */}
           <div>
@@ -198,11 +201,11 @@ export default function Details() {
 
       {/* Reviews Section */}
       {!isAPIEvent && 
-        <section className="flex flex-col m-8 max-h-96">
+        <section className="flex flex-col m-8 max-h-96 mt-0">
           <div className="flex space-x-4 items-center -mt-2 pb-2 border-b-2 mr-2">
             <h2 className="text-2xl m-0">Reviews</h2>
             <button type="button" onClick={() => {setIsCreateReviewModalOpen(true)}}>
-              <AddCircleOutlineIcon className="text-blue-400 opacity-80 hover:opacity-100" fontSize="large" />
+              <AddCircleOutlineIcon className="text-[#39798f] opacity-80 hover:opacity-100" fontSize="large" />
             </button>
             <div className="!ml-auto">
               <Button onClick={handleNavigate} variant="contained" sx={{backgroundColor: "#39798f", ':hover': {bgcolor: '#1d3d48'}}}>Go Back</Button>
