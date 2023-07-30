@@ -6,7 +6,6 @@ import userRouter from "./routes/users.js";
 import reviewRouter from "./routes/reviews.js"
 import dotenv from "dotenv";
 import fetch from "node-fetch";
-import { Policy } from "@mui/icons-material";
 import { sendRejectionMail } from "./emails/rejectionEmail.js";
 import { sendAcceptanceMail } from "./emails/acceptanceEmail.js";
 dotenv.config();
