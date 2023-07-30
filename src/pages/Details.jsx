@@ -249,7 +249,7 @@ export default function Details() {
               </div>
             }
 
-            {reviews.map((review) => (
+            {reviews.length > 0 && reviews.map((review) => (
               <Review 
                 key={review.id}
                 review={review}

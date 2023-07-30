@@ -29,6 +29,7 @@ export default function PublicDates({ entryTab }) {
     const [priceSelect, setPriceSelect] = useState("all");
     const [locations, setLocations] = useState([])
     const [locationSelect, setLocationSelect] = useState("all");
+    const [preferredTimeSelect, setPreferredTimeSelect] = useState("all");
 
     // For ticketmaster event filtering
     const dateObj = new Date()
@@ -71,7 +72,7 @@ export default function PublicDates({ entryTab }) {
 
     useEffect(() => {
         retrieveDates();
-      }, [categorySelect, priceSelect, locationSelect]);
+      }, [categorySelect, priceSelect, locationSelect, preferredTimeSelect]);
 
     const handleChange = (event, newValue) => {
         setTabValue(newValue);
@@ -94,7 +95,7 @@ export default function PublicDates({ entryTab }) {
 
     const retrieveDates = () => {
 
-        var url = `http://localhost:8000/publicdates?category=${categorySelect}&price=${priceSelect}&location=${locationSelect}`
+        var url = `http://localhost:8000/publicdates?category=${categorySelect}&price=${priceSelect}&location=${locationSelect}&preferredTime=${preferredTimeSelect}`
 
         fetch(url)
         .then((response) => {
@@ -197,6 +198,10 @@ export default function PublicDates({ entryTab }) {
         setLocationSelect(value.props.value)
     }
 
+    const onPreferredTimeSelect = (event, value) => {
+      setPreferredTimeSelect(value.props.value)
+    }
+
     const forLocations = () => {
         locations.map((location) => {
             return <><MenuItem value="all">{location.city}</MenuItem></>
@@ -256,6 +261,22 @@ export default function PublicDates({ entryTab }) {
                         })
     
                     }
+                    </Select>
+                </FormControl>
+
+                <FormControl sx={{ mx: 2, minWidth: 140 }}>
+                    <InputLabel id="location-select-label">Time</InputLabel>
+                    <Select
+                        labelId="location-select-label"
+                        id="location-select"
+                        value={preferredTimeSelect}
+                        label="Location"
+                        onChange={onPreferredTimeSelect}
+                    > 
+                      <MenuItem value="all">All</MenuItem>
+                      <MenuItem value="morning">Morning</MenuItem>
+                      <MenuItem value="afternoon">Afternoon</MenuItem>
+                      <MenuItem value="evening">Evening</MenuItem>
                     </Select>
                 </FormControl>
             </>

@@ -88,6 +88,7 @@ app.get("/publicdates", async (req, res) => {
   var category = req.query.category
   var price = req.query.price
   var city = req.query.location
+  var preferredTime=req.query.preferredTime
   var publicDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id 
@@ -113,7 +114,13 @@ app.get("/publicdates", async (req, res) => {
     values.push(city)
   }
 
-  await pool.query(publicDatesQuery, values, (err, result) => {
+  if (preferredTime !== undefined && preferredTime !== "all") {
+    var publicDatesQuery = publicDatesQuery + ` AND preferred_time =$${count}`
+    count++;
+    values.push(preferredTime)
+  }
+
+  pool.query(publicDatesQuery, values, (err, result) => {
     if (err) {
       res.end(err);
     }
