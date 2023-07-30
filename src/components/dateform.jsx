@@ -1,10 +1,10 @@
 // import Button from "react-bootstrap/Button";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 import Modal from "react-bootstrap/Modal";
 import resizeImage from "../helpers/resizeImage";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 function DateForm(props) {
   const { user } = useAuthContext();
@@ -19,7 +19,7 @@ function DateForm(props) {
     category: "",
     preferred_time: "",
     comments: "",
-    image: ""
+    image: "",
   };
 
   const handleFormChange = (event) => {
@@ -38,14 +38,18 @@ function DateForm(props) {
 
       const handleLoadEvent = async () => {
         const resizedImg = await resizeImage(reader.result, 1600);
-        setFormValues({...formValues, image: resizedImg});
+        setFormValues({ ...formValues, image: resizedImg });
         reader.removeEventListener("loadend", handleLoadEvent);
-      }
-      
+      };
+
       reader.addEventListener("loadend", handleLoadEvent);
       reader.readAsDataURL(file);
     }
-  }
+  };
+
+  const handleReset = () => {
+    setFormValues({ ...newEvent });
+  };
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
@@ -58,7 +62,7 @@ function DateForm(props) {
       setIsPrivate(false);
       props.onHide();
       if (props.redirect) {
-        navigate(props.redirect)
+        navigate(props.redirect);
       }
     } catch (error) {
       console.error(error.message);
@@ -72,7 +76,7 @@ function DateForm(props) {
     if (props.initValues) {
       setFormValues({ ...newEvent, ...props.initValues })
     }
-  }, [props.show])
+  }, [props.show]);
 
   return (
     <Modal
@@ -81,13 +85,13 @@ function DateForm(props) {
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
-      style={{overlay: {zIndex: 1000}}}
+      style={{ overlay: { zIndex: 1000 } }}
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
           <span
             className="text-blue-600 text-2xl font-display font-semibold italic"
-            style={{ fontWeight: "bold", color:"#39798f" }}
+            style={{ fontWeight: "bold", color: "#39798f" }}
           >
             Share Your Perfect Date Idea!{" "}
           </span>
@@ -259,16 +263,18 @@ function DateForm(props) {
               </div>
             </div>
           </div>
-          
+
           <div className="row" style={{ marginTop: "2%" }}>
             <div className="col-md-12">
               <div className="form-group">
                 <div className="mb-3">
-                  <label htmlFor="formImage" className="form-label">Image Upload</label>
-                  <input 
-                    className="form-control" 
-                    type="file" 
-                    id="formImage" 
+                  <label htmlFor="formImage" className="form-label">
+                    Image Upload
+                  </label>
+                  <input
+                    className="form-control"
+                    type="file"
+                    id="formImage"
                     name="formImage"
                     onChange={(e) => handleImageUpload(e)}
                   />
@@ -278,13 +284,32 @@ function DateForm(props) {
           </div>
 
           <div className="row" style={{ marginTop: "2%" }}>
-            <div className="col-md-12 text-center" >
-              <Button variant="primary" type="reset" className="w-50" sx={{backgroundColor: "#39798f", color:"white", ':hover': {bgcolor: '#1d3d48'}}}>
+            <div className="col-md-12 text-center">
+              <Button
+                variant="primary"
+                onClick={handleReset}
+                type="reset"
+                className="w-50"
+                sx={{
+                  backgroundColor: "#39798f",
+                  color: "white",
+                  ":hover": { bgcolor: "#1d3d48" },
+                }}
+              >
                 Reset
               </Button>
             </div>
             <div className="col-md-12 text-center">
-              <Button variant="primary" type="submit" className="w-50 mt-2" sx={{backgroundColor: "#39798f", color:"white", ':hover': {bgcolor: '#1d3d48'}}}>
+              <Button
+                variant="primary"
+                type="submit"
+                className="w-50 mt-2"
+                sx={{
+                  backgroundColor: "#39798f",
+                  color: "white",
+                  ":hover": { bgcolor: "#1d3d48" },
+                }}
+              >
                 Submit
               </Button>
             </div>

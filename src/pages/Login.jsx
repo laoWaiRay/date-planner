@@ -1,8 +1,8 @@
 import { Switch } from "@mui/material";
 import Input from "../components/Input";
 import useForm from "../hooks/useForm";
-import Hero from "../assets/Hero.jpg"
-import LoginVideo from "../assets/login/login-video.mp4"
+import Hero from "../assets/Hero.jpg";
+import LoginVideo from "../assets/login/login-video.mp4";
 import { useLoaderData, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { renderGoogleBtn } from "../GoogleIdentity";
@@ -13,26 +13,29 @@ export default function Login() {
   const [isValid, setIsValid] = useState(true);
   const [errors, setErrors] = useState({
     form: "",
-  })
+  });
   const [errorMessagesEnabled, setErrorMessagesEnabled] = useState(false);
   const [rememberMeChecked, setRememberMeChecked] = useState(true);
   const login = useLogin();
 
   const [formState, handleInputChange] = useForm({
-    "username": "",
-    "password": "",
+    username: "",
+    password: "",
   });
 
   const heroImg = useLoaderData();
 
   useEffect(() => {
-    renderGoogleBtn("googleSignInBtn", "login")
-  }, [])
+    renderGoogleBtn("googleSignInBtn", "login");
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Client-side input validation
-    let {isValid, errors: {form} } = validateLoginForm(formState);
+    let {
+      isValid,
+      errors: { form },
+    } = validateLoginForm(formState);
 
     // Form is validated on client, attempt to login user on server
     if (isValid) {
@@ -44,21 +47,24 @@ export default function Login() {
         form = error.message;
       }
     } else {
-      form = "Invalid login credentials"
+      form = "Invalid login credentials";
     }
 
     // Set error messages state
     setIsValid(isValid);
-    setErrors({form});
-  }
-  
+    setErrors({ form });
+  };
+
   return (
     <div className="w-full min-h-screen flex">
       {/* Hero Image */}
-      <div className="overflow-hidden" style={{background: "linear-gradient(#397b8e, #323335)"}}>
+      <div
+        className="overflow-hidden"
+        style={{ background: "linear-gradient(#397b8e, #323335)" }}
+      >
         {/* {heroImg} */}
-        <video className="" autoPlay loop muted style={{height: "100vh" }}>
-          <source src={LoginVideo} type='video/mp4' />
+        <video className="" autoPlay loop muted style={{ height: "100vh" }}>
+          <source src={LoginVideo} type="video/mp4" />
         </video>
       </div>
 
@@ -76,9 +82,9 @@ export default function Login() {
           <h2 className="font-semibold text-lg ml-[3px] tracking-wide mb-4 select-none">Nice to see you again</h2>
 
           {/* Error Message Popup */}
-          { !isValid && errors.form &&
+          {!isValid && errors.form && (
             <div className="my-4 ml-1 text-red-500">{errors.form}</div>
-          }
+          )}
 
           {/* Main Form Section */}
           <section className="space-y-4 border-b-2 border-gray-200 pb-4">
@@ -105,16 +111,24 @@ export default function Login() {
 
             <div className="text-sm mt-8 flex justify-center">
               Don't have an account?
-              <Link to="/signup" className="ml-3" style={{color: "#39798f"}}>Sign up now</Link>
+              <Link to="/signup" className="ml-3" style={{ color: "#39798f" }}>
+                Sign up now
+              </Link>
             </div>
           </section>
         </form>
       </main>
     </div>
-  )
+  );
 }
 
 // Preload large hero image
 export function loader() {
-  return (<img src={Hero} className="object-cover w-full h-full" alt="Concert Lights" />);
+  return (
+    <img
+      src={Hero}
+      className="object-cover w-full h-full"
+      alt="Concert Lights"
+    />
+  );
 }
