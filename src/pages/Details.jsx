@@ -193,8 +193,8 @@ export default function Details() {
           </div>
 
           {/* Description and extra notes*/}
-          <p className="px-2">{data.description}</p>
-          <p className="px-2">{data.comments}</p>
+          <p className="px-2 mt-2">{data.description}</p>
+          <p className="px-2 mb-0">{data.comments}</p>
 
         </div>
       </section>
@@ -232,7 +232,7 @@ export default function Details() {
       }
       
       {isAPIEvent && 
-        <div className="mt-8 w-full space-x-4 ml-8">
+        <div className="mb-8 w-full space-x-4 ml-8">
           <Button className="ml-auto mr-8" onClick={handleNavigate} variant="contained" sx={{backgroundColor: "#39798f", ':hover': {bgcolor: '#76A4AF'}}}>Go Back</Button>
         </div>
       }

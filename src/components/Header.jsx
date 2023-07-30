@@ -13,11 +13,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import useLogout from "../hooks/useLogout";
-import { useNavigate } from "react-router-dom";
-
-
-
-const key = "user_session";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 const navItems = ["Home", "Explore", "Your Date Ideas", "Add Date", "Logout"];
@@ -27,6 +23,7 @@ export default function DrawerAppBar(props) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const logout = useLogout();
   const navigate = useNavigate();
+  const currentLocation = useLocation()
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -53,6 +50,27 @@ export default function DrawerAppBar(props) {
         return () => {};
     }
   };
+
+  const isActiveLink = (navItem) => {
+    let url;
+    switch (navItem) {
+      case "Home":
+        url = "/";
+        break;
+      case "Explore":
+        url = "/dates";
+        break;
+      case "Your Date Ideas":
+        url = "/mydates";
+        break;
+      case "Add Date":
+        url = "/dates/new";
+        break;
+    }
+    if (currentLocation.pathname == url)
+      return true;
+    return false;
+  }
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
@@ -105,6 +123,7 @@ export default function DrawerAppBar(props) {
                 key={item}
                 sx={{ color: "#fff" }}
                 onClick={(e) => handleNavButtonClick(e, item)}
+                className={`relative ${isActiveLink(item) ? "activeLink" : ""}`}
               >
                 {item}
               </Button>
