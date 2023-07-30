@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom"
+import { useLoaderData, useNavigate, useParams } from "react-router-dom"
 import { getTicketmasterEventById } from "../api/external/ticketmaster";
 import { getAverageReviewScore, getEventById, getLocationById, getReviews, getUserById } from "../api/internal/postgres";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -32,6 +32,8 @@ export default function Details() {
   const [modalShow, setModalShow] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const preloadedData = useLoaderData();
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   const postData = async (body) => {
     await fetch("http://localhost:8000/mydates", {
@@ -57,6 +59,32 @@ export default function Details() {
 
   useEffect(() => {
     (async () => {
+      if (isFirstLoad) {
+        console.log("FIRST LOAD", preloadedData);
+        const data = preloadedData.eventData;
+        let average = preloadedData.averageScore;
+
+        if (isAPIEvent) {
+          setData(extractDataFromTicketmaster(data));
+        } else {
+          const userData = await getUserById(data.author);
+          const locationData = await getLocationById(data.location_id);
+          setData(extractDataFromUserEvent(data, userData, locationData));
+          await fetchAverageScore();
+
+          if (!average) {
+            setAverageScore(0.0);
+          }
+          else {
+            average = Math.round(parseFloat(average.avg) * 10) / 10;
+          }
+          setAverageScore(average);
+        }
+  
+        setIsFirstLoad(false);
+        return;
+      }
+
       let eventData;
 
       // Detail page is for an event from Ticketmaster API
@@ -294,4 +322,21 @@ const extractDataFromTicketmaster = (data) => {
       link:               data?.url,
       comments:           data?.pleaseNote
     }
+}
+
+export async function reactRouterLoader({ params }) {
+  const id = params.id;
+  let eventData;
+  let averageScore = null;
+
+  // Detail page is for an event from Ticketmaster API
+  if (id.length > 10) {
+    eventData = await getTicketmasterEventById(id);
+  } else {
+    // Detail page is for a user-submitted event
+    eventData = await getEventById(id);
+    averageScore = await getAverageReviewScore();
+  }
+
+  return {eventData, averageScore}
 }

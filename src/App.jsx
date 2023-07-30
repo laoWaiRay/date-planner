@@ -18,6 +18,7 @@ import { initGoogleIdentity, handleCallbackResponse } from "./GoogleIdentity";
 import DrawerAppBar from "./components/Header";
 import Details from "./pages/Details";
 import AddDate from "./components/AddDate";
+import { reactRouterLoader as detailsPageLoader } from "./pages/Details";
 
 export default function App() {
   const { user, dispatch } = useAuthContext();
@@ -68,6 +69,7 @@ export default function App() {
           ) : (
             <Navigate to="/" />
           ),
+          loader: detailsPageLoader
         },
       ],
     },

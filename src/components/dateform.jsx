@@ -74,7 +74,6 @@ function DateForm(props) {
 
   useEffect(() => {
     if (props.initValues) {
-      console.log("DEBUG", props.initValues)
       setFormValues({ ...newEvent, ...props.initValues })
     }
   }, [props.show])
