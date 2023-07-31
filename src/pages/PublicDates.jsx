@@ -418,7 +418,8 @@ export default function PublicDates({ entryTab }) {
                 <></>
             }
             
-                <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
+            <div className="md:grid md:grid-cols-4 gap-5 md:max-w-5xl md:mx-auto flex flex-col items-center">
+            {/* <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto"> */}
                     
                     {tabValue == "0" ? <>{displayDates()}</>: <>{displayEvents()}</>}
                 </div>
