@@ -20,15 +20,13 @@ function DateForm(props) {
     preferred_time: "",
     comments: "",
     image: "",
+    private: false,
   };
 
   const handleFormChange = (event) => {
-    const { name, value } = event.target;
-    setFormValues({ ...formValues, [name]: value });
-  };
-
-  const handlePrivateCheckboxChange = () => {
-    setIsPrivate(!isPrivate);
+    const { name, value, type, checked } = event.target;
+    const newValue = type === "checkbox" ? checked : value;
+    setFormValues({ ...formValues, [name]: newValue });
   };
 
   const handleImageUpload = (e) => {
@@ -55,11 +53,10 @@ function DateForm(props) {
     event.preventDefault();
     try {
       const body = {
-        date: { ...formValues, isPrivate: isPrivate, author: user.id },
+        date: { ...formValues, author: user.id },
       };
       await props.postData(body);
       setFormValues({ ...newEvent });
-      setIsPrivate(false);
       props.onHide();
       if (props.redirect) {
         navigate(props.redirect);
@@ -70,7 +67,6 @@ function DateForm(props) {
   };
 
   const [formValues, setFormValues] = useState(newEvent);
-  const [isPrivate, setIsPrivate] = useState(false);
 
   useEffect(() => {
     if (props.initValues) {
@@ -275,8 +271,8 @@ function DateForm(props) {
                     type="checkbox"
                     id="private"
                     name="private"
-                    checked={isPrivate}
-                    onChange={handlePrivateCheckboxChange}
+                    checked={formValues.private}
+                    onChange={handleFormChange}
                   />
                 </div>
               </div>
