@@ -216,7 +216,7 @@ app.post("/mydates", async (req, res) => {
       date.category,
       date.preferred_time,
       locationId,
-      date.isPrivate,
+      date.private,
       date.comments,
       date.image
     ];
@@ -241,19 +241,16 @@ app.patch("/mydates", async (req, res, next) => {
   try {
     const { date } = req.body;
 
-    const { event_id, title, date_idea, location, city, country, price_range, category, 
-      preferred_time, comments, image, isPrivate, author } = date;
-
     // Check if location is already in DB before insert
     let locationId = null;
     const existsQuery = `SELECT * FROM locations WHERE city = $1 AND country = $2 AND detailed_address = $3`;
-    let result = await pool.query(existsQuery, [city, country, location]);
+    let result = await pool.query(existsQuery, [date.city, date.country, date.location]);
     if (result.rows.length > 0) {
       locationId = result.rows[0].id;
     }
 
     if (!locationId) {
-      //Insert location table first
+      // Insert location table first
       const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
       const locationValues = [date.city, date.country, date.location];
       const locationResult = await pool.query(locationQuery, locationValues);
@@ -265,33 +262,34 @@ app.patch("/mydates", async (req, res, next) => {
     const query = `
       UPDATE events 
       SET title = $1, description = $2, price = $3, category = $4, preferred_time = $5, 
-          location_id = $6, date_posted = CURRENT_DATE, private = $7, comments = $8 ${image ? " ,image = $10 " : " "}
+          location_id = $6, date_posted = CURRENT_DATE, private = $7, comments = $8 ${date.image ? " ,image = $10 " : " "}
       WHERE id = $9;
     `;
-    
+
     const queryValues = [
-      title, 
-      date_idea, 
-      price_range, 
-      category, 
-      preferred_time, 
-      locationId, 
-      isPrivate, 
-      comments, 
-      event_id
+      date.title,
+      date.date_idea,
+      date.price_range,
+      date.category,
+      date.preferred_time,
+      locationId,
+      date.private,
+      date.comments,
+      date.event_id
     ];
 
-    if (image)
-      queryValues.push(image);
+    if (date.image)
+      queryValues.push(date.image);
 
     await pool.query(query, queryValues);
 
-    res.end();
+    res.status(200).end();
   } catch (error) {
     console.error(error);
-    res.end();
+    res.status(500).end();
   }
-})
+});
+
 
 app.get("/ticketmaster", (req, res) => {
   var start = req.query.start
