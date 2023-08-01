@@ -1,5 +1,5 @@
 import React from "react";
-import "./Memories.css";
+import styles from "./Memories.module.css";
 import Button from "@mui/material/Button";
 import { useState, useEffect } from "react";
 import UploadMemory from "../components/UploadMemoryModal";

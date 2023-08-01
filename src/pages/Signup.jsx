@@ -151,7 +151,7 @@ export default function Signup() {
               Ignite
             </h1>
           </div>
-          <h2 className="font-semibold text-lg ml-[3px] tracking-wide mb-3">
+          <h2 className="font-semibold text-lg ml-[3px] tracking-wide mb-3 mt-1 text-left">
             Create a new account
           </h2>
 

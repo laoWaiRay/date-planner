@@ -273,18 +273,18 @@ export default function PublicDates({ entryTab }) {
                 </FormControl>
 
                 <FormControl sx={{ mx: 2, minWidth: 140 }}>
-                    <InputLabel id="location-select-label">Time</InputLabel>
+                    <InputLabel id="time-select-label">Time</InputLabel>
                     <Select
-                        labelId="location-select-label"
-                        id="location-select"
+                        labelId="time-select-label"
+                        id="time-select"
                         value={preferredTimeSelect}
-                        label="Location"
+                        label="time"
                         onChange={onPreferredTimeSelect}
                     > 
                       <MenuItem value="all">All</MenuItem>
-                      <MenuItem value="morning">Morning</MenuItem>
-                      <MenuItem value="afternoon">Afternoon</MenuItem>
-                      <MenuItem value="evening">Evening</MenuItem>
+                      <MenuItem value="Morning">Morning</MenuItem>
+                      <MenuItem value="Afternoon">Afternoon</MenuItem>
+                      <MenuItem value="Evening">Evening</MenuItem>
                     </Select>
                 </FormControl>
             </>

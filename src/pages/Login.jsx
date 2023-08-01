@@ -79,7 +79,7 @@ export default function Login() {
               Ignite
             </h1>
           </div>
-          <h2 className="font-semibold text-lg ml-[3px] tracking-wide mb-4 select-none">Nice to see you again</h2>
+          <h2 className="font-semibold text-lg ml-[3px] tracking-wide mb-4 select-none mb-3 mt-1 text-left">Nice to see you again</h2>
 
           {/* Error Message Popup */}
           {!isValid && errors.form && (

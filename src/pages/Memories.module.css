@@ -10,19 +10,20 @@
   margin: 0 auto;
 }
 
-h2 {
+.h2,
+.p {
   text-align: center;
 }
 
-.text-center {
-  text-align: center;
-}
-
-
-h2 {
+.h2 {
   margin-top: 60px;
   font-size: 2.6rem;
 }
+
+.p {
+  color: #4e4e4e;
+}
+
 
 .gallery {
   -webkit-column-count: 3;
@@ -65,7 +66,7 @@ h2 {
   }
 }
 
-.polaroid-photo {
+.polaroidPhoto {
   min-width: 80vh;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -76,17 +77,17 @@ h2 {
   flex-direction: column;
   align-items: center;
   position: relative;
-  margin: auto;
+  /* margin: auto; */
 }
 
-.polaroid-photo img {
+.polaroidPhoto img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 4px;
 }
 
-.polaroid-caption {
+.polaroidCaption {
   font-size: 14px;
   font-weight: bold;
   color: #333;
@@ -103,7 +104,7 @@ h2 {
   }
 }
 
-.delete-icon-container {
+.deleteIconContainer {
   position: absolute;
   top: 5px;
   right: 5px;
@@ -112,16 +113,16 @@ h2 {
   transition: background-color 0.3s ease;
 }
 
-.delete-icon-container:hover {
+.deleteIconContainer:hover {
   background-color: rgba(0, 0, 0, 0.7);
 }
 
-.delete-icon {
+.deleteIcon {
   color: red;
   transition: color 0.3s ease;
 }
 
-.polaroid-city {
+.polaroidCity {
   font-family: "Orbitron", sans-serif;
   font-family: "Roboto Mono", monospace;
   position: absolute;
@@ -134,7 +135,7 @@ h2 {
   padding: 5px;
 }
 
-.polaroid-date {
+.polaroidDate {
   font-family: "Orbitron", sans-serif;
   font-family: "Roboto Mono", monospace;
   position: absolute;
