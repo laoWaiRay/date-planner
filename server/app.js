@@ -543,9 +543,9 @@ JOIN users AS receivers ON invitations.receiver_id = receivers.id
 JOIN events ON invitations.event_id = events.id
 JOIN locations ON events.location_id = locations.id
 WHERE (invitations.receiver_id = $1 OR invitations.sender_id = $1)
-  AND invitations.status = 'accepted';
-
-
+  AND invitations.status = 'accepted'
+  AND invitations.date < NOW()::date
+  AND invitations.start_time < NOW()::time;
 `;
 
   // Defining parameter values for the INSERT query

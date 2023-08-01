@@ -202,7 +202,7 @@ export default function Home() {
 
         {/* Container for invitation, link, upcoming tables */}
         <div className="flex bgColor">
-          <div className="floating-card-invitations my-5 max-h-[90vh] overflow-y-auto !space-y-4">
+          <div className="floating-card-invitations my-5 overflow-y-auto !space-y-4">
             <h2
               className="text-center font-light tracking-wider pb-2 border-b my-4"
               style={{ color: "#39798f" }}
@@ -302,7 +302,7 @@ export default function Home() {
           </div>
 
           {/* Upcoming Dates Table */}
-          <div className="floating-card-upcoming my-5 max-h-[90vh] overflow-y-auto !space-y-4">
+          <div className="floating-card-upcoming my-5 overflow-y-auto !space-y-4">
             <h2
               className="text-center font-light tracking-wider pb-2 border-b my-4"
               style={{ color: "#39798f" }}
