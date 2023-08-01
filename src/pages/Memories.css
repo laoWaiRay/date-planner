@@ -1,0 +1,19 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap");
+
+body {
+  font-family: "Noto Serif";
+}
+
+h2,
+p {
+  text-align: center;
+}
+
+h2 {
+  margin-top: 60px;
+  font-size: 2.6rem;
+}
+
+p {
+  color: #4e4e4e;
+}

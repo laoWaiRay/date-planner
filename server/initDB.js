@@ -36,6 +36,18 @@ const createTables = async () => {
   `);
 
   await pool.query(`
+    CREATE TABLE images(
+      id serial PRIMARY KEY,
+      user_id integer REFERENCES users (id) ON DELETE CASCADE,
+      image_url text NOT NULL,
+      caption text NOT NULL,
+      image_label text NOT NULL, 
+      created_at timestamp NOT NULL DEFAULT NOW()
+    );
+  `);
+
+
+  await pool.query(`
     CREATE TABLE locations(
       id serial PRIMARY KEY,
       city text,

@@ -495,6 +495,53 @@ app.get("/pendingUserInvites", async (req, res) =>{
   }
 })
 
+app.get("/acceptedUserInvites", async (req, res) =>{
+  
+  const user_id = req.query.user_id;
+
+    // Define INSERT query
+ const selectQuery = `
+SELECT 
+    invitations.id AS invitation_id,
+    CASE 
+        WHEN invitations.receiver_id = $1 THEN receivers.username
+        ELSE users.username
+    END AS your_username,
+    CASE 
+        WHEN invitations.receiver_id = $1 THEN users.username
+        ELSE receivers.username
+    END AS other_people_username,
+    users.avatar AS your_avatar_url,
+    receivers.avatar AS other_people_avatar_url,
+    invitations.start_time AS invitation_start_time,
+    invitations.date AS invitation_date,
+    events.id AS event_id,
+    events.title AS event_title,
+    locations.detailed_address AS event_detailed_address,
+    locations.city AS event_city,
+    locations.country AS event_country
+FROM invitations
+JOIN users ON invitations.sender_id = users.id
+JOIN users AS receivers ON invitations.receiver_id = receivers.id
+JOIN events ON invitations.event_id = events.id
+JOIN locations ON events.location_id = locations.id
+WHERE (invitations.receiver_id = $1 OR invitations.sender_id = $1)
+  AND invitations.status = 'accepted';
+
+
+`;
+
+// Defining parameter values for the INSERT query
+  const values = [user_id];
+
+  try {
+    const result = await pool.query(selectQuery, values);
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: "Cannot select users pending invitations" });
+  }
+})
+
 //fetch upcoming users invites
 app.get("/upcomingUserInvites", async (req, res) => {
   const user_id = req.query.user_id;
