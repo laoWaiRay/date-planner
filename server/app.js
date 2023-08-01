@@ -756,6 +756,25 @@ app.post("/memories/images", async (req, res) => {
   }
 });
 
+app.get("/memories/images", async (req, res) => {
+  const user_id = req.query.user_id;
+  try {
+    const query = `
+      SELECT * FROM images
+      WHERE user_id = $1;
+    `;
+
+    const result = await pool.query(query, [user_id]);
+    const memories = result.rows;
+
+    return res.status(200).json(memories);
+  } catch (error) {
+    console.error("Error fetching images:", error.message);
+    return res.status(500).json({ error: "Failed to fetch images." });
+  }
+});
+
+
 
 
 app.listen(PORT, () => {
