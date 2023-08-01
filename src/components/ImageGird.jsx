@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import styles from "../pages/Memories.module.css"
 
 import Modal from "react-bootstrap/Modal";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -44,19 +45,19 @@ function ImageGrid({ images, onDeleteImage }) {
 
   return (
     <>
-      <div className="gallery">
+      <div className={`${styles.gallery}`}>
         {images.map((image, index) => {
           return (
             <div
-              className="pics"
+              className={`${styles.pics}`}
               key={index}
               onClick={() => handleImageClick(image)}
             >
               <span
-                className="delete-icon-container"
+                className={`${styles.deleteIconContainer}`}
                 onClick={(event) => handleDeleteClick(event, image.id)}
               >
-                <DeleteIcon className="delete-icon" />
+                <DeleteIcon className={`${styles.deleteIcon}`} />
               </span>
               <img
                 src={image.image_url}
@@ -79,20 +80,20 @@ function ImageGrid({ images, onDeleteImage }) {
         }}
       >
         <Modal.Body>
-          <div className="polaroid-photo">
+          <div className={`${styles.polaroidPhoto}`}>
             <img
               src={selectedImage.image_url}
               alt="Clicked Image"
               style={{ width: "100%" }}
             />
-            <div className="polaroid-city">{selectedImage.city}</div>
+            <div className={`${styles.polaroidCity}`}>{selectedImage.city}</div>
 
-            <div className="polaroid-caption">{selectedImage.image_label}</div>
-            <div className="polaroid-date">
+            <div className={`${styles.polaroidCaption}`}>{selectedImage.image_label}</div>
+            <div className={`${styles.polaroidDate}`}>
               {formatDate(selectedImage.date)}
             </div>
             <div>
-              <p>{selectedImage.caption}</p>
+              <p className={`${styles.p}`}>{selectedImage.caption}</p>
             </div>
           </div>
         </Modal.Body>

@@ -1,5 +1,5 @@
 import React from "react";
-import "./Memories.css";
+import styles from "./Memories.module.css";
 import Button from "@mui/material/Button";
 import { useState, useEffect } from "react";
 import UploadMemory from "../components/UploadMemoryModal";
@@ -39,10 +39,10 @@ function Memories() {
 
   return (
     <>
-      <div className="memories mb-3">
-        <div className="title">
-          <h2>Memories that Last</h2>
-          <p>Remember, Rejoice, Relive: Your Memorable Ignite Moments</p>
+      <div className={`${styles.memories} mb-3`}>
+        <div className={`${styles.title}`}>
+          <h2 className={`${styles.h2}`}>Memories that Last</h2>
+          <p className={`${styles.p}`}>Remember, Rejoice, Relive: Your Memorable Ignite Moments</p>
         </div>
         <Button
           variant="contained"
