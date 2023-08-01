@@ -42,6 +42,8 @@ const createTables = async () => {
       image_url text NOT NULL,
       caption text NOT NULL,
       image_label text NOT NULL, 
+      date text NOT NULL,
+      city text NOT NULL,
       created_at timestamp NOT NULL DEFAULT NOW()
     );
   `);
