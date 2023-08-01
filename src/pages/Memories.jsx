@@ -39,10 +39,13 @@ function Memories() {
 
   return (
     <>
-      <div className={`${styles.memories} mb-3`}>
-        <div className={`${styles.title}`}>
-          <h2 className={`${styles.h2}`}>Memories that Last</h2>
-          <p className={`${styles.p}`}>Remember, Rejoice, Relive: Your Memorable Ignite Moments</p>
+      <div className="memories mb-3">
+        <div className="title">
+        <h1 className="text-center mt-12 mb-2 tracking-wider text-center font-light tracking-wider" 
+            style= {{color: "#39798f"}}>
+              MEMORIES THAT LAST
+          </h1>
+          <p className="text-gray-500" style={{ textAlign: "center"}}>Remember, Rejoice, Relive: Your Memorable Ignite Moments</p>
         </div>
         <Button
           variant="contained"

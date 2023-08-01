@@ -86,6 +86,17 @@ export default function App() {
       ),
     },
     {
+      path: "/dates/add",
+      element: user ? (
+        <>
+          <DrawerAppBar />
+          <AddDate noDates={true}/>
+        </>
+      ) : (
+        <Navigate to="/" />
+      ),
+    },
+    {
       path: "/mydates",
       element: user ? (
         <>

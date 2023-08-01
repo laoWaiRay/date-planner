@@ -123,6 +123,7 @@ app.get("/publicdates", async (req, res) => {
     values.push(city);
   }
 
+
   if (preferredTime !== undefined && preferredTime !== "all") {
     var publicDatesQuery = publicDatesQuery + ` AND preferred_time =$${count}`;
     count++;

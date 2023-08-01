@@ -121,7 +121,7 @@ export default function DateCard({ id, name, description, category, location,
                 
                 <p className="text-sm text-slate-500 my-0">Location: {location}</p>
                 <p className="text-sm text-slate-500 my-0">Category: <span style={{textTransform:'capitalize'}}>{category}</span></p>
-                {price ? <p className="text-sm text-slate-500 my-2">Price: {price}</p>:<></>}
+                {price ? <p className="text-sm text-slate-500 mb-2">Price: {price}</p>:<></>}
                 { description !== undefined ? <p className="text-sm">{description}</p>: null}
             </CardContent>
             
