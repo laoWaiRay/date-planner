@@ -52,6 +52,7 @@ function UpcomingCard({
   eventDetailedAddress,
   eventCity,
   eventCountry,
+  updateInvitationStatus,
 }) {
   const navigate = useNavigate();
   const handleClick = (id) => {
@@ -83,12 +84,11 @@ function UpcomingCard({
                   The logged in user can either be the sender or the receiver
                   for the upcoming date 
                 */}
-                <i>Date with {' '}
-                  {
-                    senderUsername == loggedInUsername ? 
-                    receiverUsername : 
-                    senderUsername
-                  }
+                <i>
+                  Date with{" "}
+                  {senderUsername == loggedInUsername
+                    ? receiverUsername
+                    : senderUsername}
                 </i>
               </b>
             </span>
@@ -105,7 +105,24 @@ function UpcomingCard({
           <Chip
             label="View Event"
             onClick={() => handleClick(eventId)}
-            sx={{backgroundColor: "#39798f", color:"white", ':hover': {bgcolor: '#1d3d48'}}}
+            sx={{
+              backgroundColor: "#39798f",
+              color: "white",
+              ":hover": { bgcolor: "#1d3d48" },
+            }}
+          />
+          <Chip
+            label="Cancel"
+            onClick={() => {
+              updateInvitationStatus(invitationId, "rejected");
+              sendEventRejectionEmail(invitationId);
+            }}
+            sx={{
+              backgroundColor: "#ff0000",
+              color: "white",
+              ml: 1,
+              ":hover": { bgcolor: "#c70000" },
+            }}
           />
         </div>
       </Card.Body>
