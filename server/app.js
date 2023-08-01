@@ -752,7 +752,7 @@ app.post("/memories/images", async (req, res) => {
     return res.status(200).end();
   } catch (error) {
     console.error("Error inserting image:", error.message);
-    return res.status(500).end();
+    return res.status(500).json({ error: error.message });
   }
 });
 
