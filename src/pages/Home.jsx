@@ -206,7 +206,7 @@ export default function Home() {
               INVITATIONS
             </h2>
             {invitations.length === 0 ? (
-              <p className="text-center text-gray-600 !font-light">
+              <p className="text-center text-gray-600">
                 No pending invitations
               </p>
             ) : (
@@ -231,6 +231,19 @@ export default function Home() {
 
           {/* Navigation Links Table */}
           <div className="grid container gap-2  mx-auto my-5">
+
+          <div className="grid grid-cols-1 gap-3 mx-auto relative rounded-lg">
+              {/* Add Dates Card */}
+              <div className="">
+              <img
+                src={date7} 
+                className=" w-full h-fit rounded-lg"
+              />
+
+              </div>
+
+            </div>
+
             {/* Top row of Navigation Links table*/}
             <div className="grid grid-cols-3 gap-3">
               {/* Favorites Card */}
@@ -256,6 +269,8 @@ export default function Home() {
                 "Your Date Ideas",
                 "REVIEW THE IDEAS YOU HAVE COME UP WITH"
               )}
+
+              
             </div>
 
             {/* Bottom row of Navigation Links table*/}
@@ -287,7 +302,7 @@ export default function Home() {
               UPCOMING
             </h2>
             {upcomingInvitations.length === 0 ? (
-              <p className="text-center text-gray-600 !font-light">
+              <p className="text-center text-gray-600">
                 No upcoming dates
               </p>
             ) : (

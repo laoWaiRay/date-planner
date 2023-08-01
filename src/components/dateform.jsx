@@ -207,9 +207,9 @@ function DateForm(props) {
                   <option value="adventurous">Adventurous</option>
                   <option value="relaxing">Relaxing</option>
                   <option value="cultural">Cultural</option>
-                  <option value="natureandoutdoors">Nature and Outdoors</option>
+                  <option value="natureandoutdoors">Outdoors</option>
                   <option value="foodanddrink">
-                    Food and Drink Adventures
+                    Food and Drink
                   </option>
                   <option value="intellectual">
                     Intellectual and Educational
@@ -217,12 +217,12 @@ function DateForm(props) {
                   <option value="musicandentertainment">
                     Music and Entertainment
                   </option>
-                  <option value="seasonal">Seasonal and Holiday-Themed</option>
+                  <option value="seasonal">Seasonal</option>
                   <option value="technologyandgaming">
                     Technology and Gaming
                   </option>
                   <option value="mysteryandadventure">
-                    Mystery and Adventure
+                    Mystery
                   </option>
                 </select>
               </div>

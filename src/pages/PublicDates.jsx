@@ -222,9 +222,17 @@ export default function PublicDates({ entryTab }) {
                     >   
                         <MenuItem value="all">All</MenuItem>
                         <MenuItem value="romantic">Romantic</MenuItem>
-                        <MenuItem value="indoor">Indoors</MenuItem>
+                        <MenuItem value="stayathome">Stay at Home</MenuItem>
                         <MenuItem value="adventurous">Adventurous</MenuItem>
                         <MenuItem value="relaxing">Relaxing</MenuItem>
+                        <MenuItem value="cultural">Cultural</MenuItem>
+                        <MenuItem value="natureandoutdoors">Outdoors</MenuItem>
+                        <MenuItem value="foodanddrink">Food and Drink</MenuItem>
+                        <MenuItem value="intellectual">Intellectual and Educational</MenuItem>
+                        <MenuItem value="musicandentertainment">Music and Entertainment</MenuItem>
+                        <MenuItem value="seasonal">Seasonal</MenuItem>
+                        <MenuItem value="technologyandgaming">Technology and Gaming</MenuItem>
+                        <MenuItem value="mysteryandadventure">Mystery</MenuItem>
                     </Select>
                 </FormControl>
 
@@ -394,7 +402,11 @@ export default function PublicDates({ entryTab }) {
           <Outlet />
           <div className={`${outlet ? "hidden" : ""}`}>
             <div className="md:container mx-auto">
-            <h1 className="font-display text-blue-500 font-bold text-4xl text-center mt-8 mb-0" style= {{color: "#39798f"}}>Find Date Ideas</h1>
+            <h1 className="text-center mt-12 mb-4 tracking-wider text-center font-light tracking-wider border-b"  
+                style= {{color: "#39798f"}}>
+                    FIND DATE IDEAS
+            </h1>
+
             <Tabs className="mb-2" value ={tabValue} onChange={handleChange} centered sx={{" .Mui-selected": {color: `#39798f !important`}, "& .MuiTabs-indicator": {backgroundColor: `#39798f`}}}>
                 <Tab value="0" label="Shared by Users" />
                 <Tab value="1" label="Events/Concerts" />

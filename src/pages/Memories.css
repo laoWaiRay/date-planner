@@ -1,26 +1,26 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap");
 /* css inspiration for grid https://www.youtube.com/watch?v=cDwa_JwuC-w*/
-body {
+/* body {
   font-family: "Noto Serif";
-}
+} */
 
 .memories {
   max-width: 960px;
   margin: 0 auto;
 }
 
-h2,
-p {
+h2 {
   text-align: center;
 }
+
+.text-center {
+  text-align: center;
+}
+
 
 h2 {
   margin-top: 60px;
   font-size: 2.6rem;
-}
-
-p {
-  color: #4e4e4e;
 }
 
 .gallery {
