@@ -106,6 +106,8 @@ function UploadMemory(props) {
         return;
       }
       console.log("Image uploaded successfully!");
+      props.fetchImages();
+      setSelectedChipId(null);
       props.onHide();
     } catch (error) {
       console.error("Error uploading image:", error.message);
