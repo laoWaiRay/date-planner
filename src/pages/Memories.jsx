@@ -10,6 +10,7 @@ function Memories() {
   const { user } = useAuthContext();
   const [modalShow, setModalShow] = useState(false);
   const [images, setImages] = useState([]);
+
   const fetchImages = async () => {
     try {
       const response = await fetch(
@@ -23,6 +24,12 @@ function Memories() {
     } catch (error) {
       console.error("Error fetching images:", error.message);
     }
+  };
+
+  const handleDeleteImage = (deletedImageId) => {
+    setImages((prevImages) =>
+      prevImages.filter((image) => image.id !== deletedImageId)
+    );
   };
 
   useEffect(() => {
@@ -59,7 +66,7 @@ function Memories() {
         />
       </div>
 
-      <ImageGrid images={images} />
+      <ImageGrid images={images} onDeleteImage={handleDeleteImage} />
     </>
   );
 }

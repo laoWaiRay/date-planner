@@ -52,7 +52,8 @@ function UploadMemory(props) {
   useEffect(() => {
     fetchAcceptedInvitations();
   }, []);
-  const types = ["image/png", "image/jpeg"];
+
+  const types = ["image/png", "image/jpeg", "image/jpg"];
 
   const changeHandler = (e) => {
     let selected = e.target.files[0];
@@ -111,7 +112,9 @@ function UploadMemory(props) {
       );
 
       if (!response.ok) {
-        setError("Failed to upload image. Please try again later.");
+        const errorResponse = await response.json();
+        const errorMessage = errorResponse.error;
+        setError(errorMessage);
         return;
       }
       props.fetchImages();
