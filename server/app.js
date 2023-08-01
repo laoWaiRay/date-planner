@@ -437,7 +437,7 @@ app.post("/createInvite", async (req, res) =>{
 
 });
 
-app.post("/updateInviteStatus", async (req, res) =>{
+app.patch("/updateInviteStatus", async (req, res) =>{
   //URL parmaters
   const invite_id = req.query.invite_id;
   const newStatus = req.query.status;
