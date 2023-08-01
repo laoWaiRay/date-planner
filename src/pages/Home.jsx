@@ -6,8 +6,6 @@ import InvitationCard from "../components/InvitationCard";
 import UpcomingCard from "../components/UpcomingCard";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Polaroid from "../components/Polaroid";
-import Slider from "react-slick";
 import { AddAPhoto } from "@mui/icons-material";
 import { useState, useEffect } from "react";
 import AvatarUploadModal from "../components/AvatarUploadModal";
