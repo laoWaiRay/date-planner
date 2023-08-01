@@ -10,6 +10,12 @@ function ImageGrid({ images, onDeleteImage }) {
     setShowModal(true);
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", options);
+  };
+
   const handleDeleteClick = async (event, imageID) => {
     event.stopPropagation();
     try {
@@ -79,7 +85,12 @@ function ImageGrid({ images, onDeleteImage }) {
               alt="Clicked Image"
               style={{ width: "100%" }}
             />
+            <div className="polaroid-city">{selectedImage.city}</div>
+
             <div className="polaroid-caption">{selectedImage.image_label}</div>
+            <div className="polaroid-date">
+              {formatDate(selectedImage.date)}
+            </div>
             <div>
               <p>{selectedImage.caption}</p>
             </div>

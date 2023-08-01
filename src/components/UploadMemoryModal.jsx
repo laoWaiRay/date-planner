@@ -27,6 +27,12 @@ function UploadMemory(props) {
     setFormData({ caption: "" });
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", options);
+  };
+
   const { caption } = formData;
   const handleCaptionChange = (e) => {
     const { value } = e.target;
@@ -42,8 +48,11 @@ function UploadMemory(props) {
         return {
           id: invitation.invitation_id,
           label: `${invitation.event_title} with ${invitation.other_people_username}`,
+          date: formatDate(invitation.invitation_date),
+          city: `${invitation.event_city}, ${invitation.event_country}`,
         };
       });
+      console.log(mappedInvitations);
       setChipsData(mappedInvitations);
     } catch (error) {
       console.error("Error fetching accepted invitations:", error.message);
@@ -89,12 +98,16 @@ function UploadMemory(props) {
 
     try {
       const imageLabel = chip_object.label;
+      const imageCity = chip_object.city;
+      const imageDate = chip_object.date;
 
       const body = {
         user_id: user.id,
         image_url: imageDataURL,
         caption: caption,
         image_label: imageLabel,
+        date: imageDate,
+        city: imageCity,
       };
 
       const requestOptions = {
@@ -145,7 +158,11 @@ function UploadMemory(props) {
             <Form.Label>Photo</Form.Label>
             <Form.Control type="file" onChange={changeHandler} required />
           </Form.Group>
-          {error && <div className="error">{error}</div>}
+          {error && (
+            <div className="error" style={{ color: "red" }}>
+              {error}
+            </div>
+          )}
           {file && <div>{file.name}</div>}
 
           <Form.Group controlId="text" className="mb-3">
@@ -162,14 +179,21 @@ function UploadMemory(props) {
             <Form.Label>Select your date</Form.Label>
             <div
               style={{
-                border: "1px solid #ccc",
+                border: "1px solid #1d3d48",
                 padding: "5px",
+                display: "flex",
+                flexWrap: "wrap",
               }}
             >
               {chipsData.map((chip) => (
                 <Chip
                   key={chip.id}
-                  label={chip.label}
+                  label={
+                    <>
+                      <div style={{ lineHeight: "1.2" }}>{chip.label} </div>
+                      <div style={{ lineHeight: "1.2" }}>{chip.date}</div>
+                    </>
+                  }
                   onClick={() => handleChipClick(chip.id)}
                   sx={{
                     backgroundColor:
@@ -184,6 +208,8 @@ function UploadMemory(props) {
                       color: selectedChipId === chip.id ? "#1d3d48" : "white",
                     },
                     margin: "5px",
+                    paddingTop: "20px",
+                    paddingBottom: "20px",
                   }}
                 />
               ))}
