@@ -105,7 +105,6 @@ function UploadMemory(props) {
         setError("Failed to upload image. Please try again later.");
         return;
       }
-      console.log("Image uploaded successfully!");
       props.fetchImages();
       setSelectedChipId(null);
       props.onHide();
