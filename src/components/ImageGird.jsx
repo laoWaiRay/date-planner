@@ -34,6 +34,7 @@ function ImageGrid({ images }) {
         onHide={() => setShowModal(false)}
         centered
         dialogClassName="custom-modal"
+        style={{ "--bs-modal-bg": "transparent" }}
       >
         <Modal.Body>
           <div className="polaroid-photo">
