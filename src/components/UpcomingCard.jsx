@@ -118,10 +118,10 @@ function UpcomingCard({
               sendEventRejectionEmail(invitationId);
             }}
             sx={{
-              backgroundColor: "#ff0000",
+              backgroundColor: "#cc2c2d",
               color: "white",
               ml: 1,
-              ":hover": { bgcolor: "#c70000" },
+              ":hover": { bgcolor: "#bd2627" },
             }}
           />
         </div>
