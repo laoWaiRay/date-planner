@@ -18,6 +18,7 @@ import date5 from "../assets/homepage/date5.jpg";
 import date6 from "../assets/homepage/date6.jpg";
 import date7 from "../assets/homepage/date7.jpg";
 import date8 from "../assets/homepage/date8.jpg";
+import date9 from "../assets/homepage/date9.jpg";
 
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -46,7 +47,7 @@ export default function Home() {
   const logout = useLogout();
 
   const backgroundImage =
-    user.cover_photo || "src/assets/homepage/background6.jpg";
+    user.cover_photo || "src/assets/homepage/background2.jpg";
   const avatarImage = user.avatar || "src/assets/avatar.png";
 
   const settings = {
@@ -132,6 +133,9 @@ export default function Home() {
       case "events":
         navigate("/events");
         break;
+      case "memories":
+        navigate("/memories");
+        break;
       default:
         return () => {};
     }
@@ -198,9 +202,9 @@ export default function Home() {
 
         {/* Container for invitation, link, upcoming tables */}
         <div className="flex bgColor">
-          <div className="floating-card-invitations my-5 max-h-[100vh] overflow-y-auto !space-y-4">
+          <div className="floating-card-invitations my-5 max-h-[90vh] overflow-y-auto !space-y-4">
             <h2
-              className="text-center font-light tracking-wider pb-2 mb-4 border-b"
+              className="text-center font-light tracking-wider pb-2 border-b my-4"
               style={{ color: "#39798f" }}
             >
               INVITATIONS
@@ -232,16 +236,16 @@ export default function Home() {
           {/* Navigation Links Table */}
           <div className="grid container gap-2  mx-auto my-5">
 
-          <div className="grid grid-cols-1 gap-3 mx-auto relative rounded-lg">
-              {/* Add Dates Card */}
-              <div className="">
-              <img
-                src={date7} 
-                className=" w-full h-fit rounded-lg"
-              />
-
-              </div>
-
+             {/* Top banner card to Explore Dates */}
+            <div className="grid grid-cols-1 gap-3 mx-auto relative rounded-lg bg-[url('src/assets/homepage/background5.jpg')] object-cover h-96 w-full bg-cover bg-right">
+              <CardActionArea onClick={(e) => handleNavCardClick(e, "public")}>
+                <Typography gutterBottom variant="h2" component="div" className="text-white my-0 mx-5" style={{fontWeight: "500"}} >
+                    Find Inspiration
+                  </Typography>
+                  <Typography variant="body1" className="text-white mx-5">
+                    Explore other date ideas and find inspiration for your next hang out!
+                  </Typography>
+              </CardActionArea>
             </div>
 
             {/* Top row of Navigation Links table*/}
@@ -254,14 +258,6 @@ export default function Home() {
                 "CHECK OUT YOUR FAVORITE DATE IDEAS"
               )}
 
-              {/* Explore Dates Card */}
-              {navigationCard(
-                "public",
-                date3,
-                "Explore Dates",
-                "FIND INSPIRATION FOR YOUR NEXT HANG OUT"
-              )}
-
               {/* Your Date Ideas Card */}
               {navigationCard(
                 "mydates",
@@ -269,6 +265,16 @@ export default function Home() {
                 "Your Date Ideas",
                 "REVIEW THE IDEAS YOU HAVE COME UP WITH"
               )}
+
+              {/* Explore Dates Card */}
+              {navigationCard(
+                "events",
+                date6,
+                "Events & Concerts",
+                "FIND LOCAL EVENTS AND CONCERTS HAPPENING IN YOUR AREA"
+              )}
+
+              
 
               
             </div>
@@ -285,18 +291,18 @@ export default function Home() {
 
               {/* Events & Concerts Card */}
               {navigationCard(
-                "events",
-                date6,
-                "Events & Concerts",
-                "FIND LOCAL EVENTS AND CONCERTS HAPPENING IN YOUR AREA"
+                "memories",
+                date9,
+                "Memories",
+                "REMEMBER, REMINISCE AND RELIVE YOUR FAVORITE DATES"
               )}
             </div>
           </div>
 
           {/* Upcoming Dates Table */}
-          <div className="floating-card-upcoming my-5 max-h-[100vh] overflow-y-auto !space-y-4">
+          <div className="floating-card-upcoming my-5 max-h-[90vh] overflow-y-auto !space-y-4">
             <h2
-              className="text-center font-light tracking-wider pb-2 mb-4 border-b"
+              className="text-center font-light tracking-wider pb-2 border-b my-4"
               style={{ color: "#39798f" }}
             >
               UPCOMING
@@ -330,12 +336,6 @@ export default function Home() {
             )}
           </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
-        <p>Test</p>
-        <p>TETESTTESTSETSETSET</p>
-        {/* <>{displayCards()}</> */}
       </div>
 
       {/* Photo Upload Modal */}
