@@ -142,7 +142,6 @@ export default function Home() {
   };
 
   const navigationCard = (link, cardImage, title, message) => {
-    console.log("NAVIG CARD", {link})
     return (
       <>
         <Card>
