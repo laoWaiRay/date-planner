@@ -22,13 +22,9 @@ function CreateDateInviteModal({ onClose, eventID }) {
       setUserError(true);
       //let user try again
     } else{
-      //console.log('Date and Time:', datetime);
-      //console.log(invitedUser.id);
       const currentUserID = currentUser.user.id;
       const invitedUserID = invitedUser.id;
-      //console.log(currentUser.user.id);
       const splitDate = datetime.split("T");
-      //console.log(splitDate[0]);
       const date = splitDate[0];
       const time = splitDate[1];
       const status = "pending";

@@ -16,7 +16,7 @@ export default function Input({ id, name, element, label, type, placeholder, upd
   const inputElement = element === "input" ? (
     <input id={id} name={name} type={type} placeholder={placeholder} value={inputState.value}
     onChange={handleChange} ref={inputRef}
-    className="bg-gray-100 py-2 px-3 rounded-sm placeholder:text-gray-400 w-full" />
+    className="bg-gray-100 py-2 px-3 rounded-md placeholder:text-gray-400 w-full border" />
   ) : (
     <textarea name={name} rows="4" onChange={handleChange} value={inputState.value} />
   );

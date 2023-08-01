@@ -6,7 +6,6 @@ import userRouter from "./routes/users.js";
 import reviewRouter from "./routes/reviews.js"
 import dotenv from "dotenv";
 import fetch from "node-fetch";
-import { Policy } from "@mui/icons-material";
 import { sendRejectionMail } from "./emails/rejectionEmail.js";
 import { sendAcceptanceMail } from "./emails/acceptanceEmail.js";
 dotenv.config();
@@ -89,10 +88,11 @@ app.get("/publicdates", async (req, res) => {
   var category = req.query.category
   var price = req.query.price
   var city = req.query.location
+  var preferredTime=req.query.preferredTime
   var publicDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id 
-                        WHERE private='f'`
+                        WHERE private='f' AND isticketmasterevent='f'`
   var values = []
   var count=1
 
@@ -114,7 +114,13 @@ app.get("/publicdates", async (req, res) => {
     values.push(city)
   }
 
-  await pool.query(publicDatesQuery, values, (err, result) => {
+  if (preferredTime !== undefined && preferredTime !== "all") {
+    var publicDatesQuery = publicDatesQuery + ` AND preferred_time =$${count}`
+    count++;
+    values.push(preferredTime)
+  }
+
+  pool.query(publicDatesQuery, values, (err, result) => {
     if (err) {
       res.end(err);
     }
@@ -164,7 +170,6 @@ app.post("/favorites", async (req, res) => {
 app.delete("/favorites", async (req, res) => {
   var del_userid = req.query.user
   var del_eventid = req.query.event
-  // console.log("DELETING FAV",del_userid,del_eventid)
 
   var delFavoriteQuery = `DELETE FROM saved WHERE user_id='${del_userid}' AND event_id='${del_eventid}'`
 
@@ -211,7 +216,7 @@ app.post("/mydates", async (req, res) => {
       date.category,
       date.preferred_time,
       locationId,
-      date.isPrivate,
+      date.private,
       date.comments,
       date.image
     ];
@@ -236,19 +241,16 @@ app.patch("/mydates", async (req, res, next) => {
   try {
     const { date } = req.body;
 
-    const { event_id, title, date_idea, location, city, country, price_range, category, 
-      preferred_time, comments, image, isPrivate, author } = date;
-
     // Check if location is already in DB before insert
     let locationId = null;
     const existsQuery = `SELECT * FROM locations WHERE city = $1 AND country = $2 AND detailed_address = $3`;
-    let result = await pool.query(existsQuery, [city, country, location]);
+    let result = await pool.query(existsQuery, [date.city, date.country, date.location]);
     if (result.rows.length > 0) {
       locationId = result.rows[0].id;
     }
 
     if (!locationId) {
-      //Insert location table first
+      // Insert location table first
       const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
       const locationValues = [date.city, date.country, date.location];
       const locationResult = await pool.query(locationQuery, locationValues);
@@ -260,33 +262,34 @@ app.patch("/mydates", async (req, res, next) => {
     const query = `
       UPDATE events 
       SET title = $1, description = $2, price = $3, category = $4, preferred_time = $5, 
-          location_id = $6, date_posted = CURRENT_DATE, private = $7, comments = $8 ${image ? " ,image = $10 " : " "}
+          location_id = $6, date_posted = CURRENT_DATE, private = $7, comments = $8 ${date.image ? " ,image = $10 " : " "}
       WHERE id = $9;
     `;
-    
+
     const queryValues = [
-      title, 
-      date_idea, 
-      price_range, 
-      category, 
-      preferred_time, 
-      locationId, 
-      isPrivate, 
-      comments, 
-      event_id
+      date.title,
+      date.date_idea,
+      date.price_range,
+      date.category,
+      date.preferred_time,
+      locationId,
+      date.private,
+      date.comments,
+      date.event_id
     ];
 
-    if (image)
-      queryValues.push(image);
+    if (date.image)
+      queryValues.push(date.image);
 
     await pool.query(query, queryValues);
 
-    res.end();
+    res.status(200).end();
   } catch (error) {
     console.error(error);
-    res.end();
+    res.status(500).end();
   }
-})
+});
+
 
 app.get("/ticketmaster", (req, res) => {
   var start = req.query.start
@@ -326,7 +329,6 @@ app.get("/ticketmaster", (req, res) => {
 
   fetch(url)
     .then((response) => {
-      // console.log(response);
       return response.json();
     })
     .then((data) => {
@@ -337,7 +339,6 @@ app.get("/ticketmaster", (req, res) => {
         res.json([]);
     })
     .catch((error) => {
-      // console.log("ERROR HERE")
       res.send([])
     });
 });
@@ -390,7 +391,33 @@ app.post("/createInvite", async (req, res) =>{
   const event_id = req.query.event_id;
   const status = req.query.status;
   const date = req.query.date;
-  const start_time = req.query.start_time;  
+  const start_time = req.query.start_time;
+
+  // If invitation is for ticketmaster event, it must be added to the events table first
+  if (event_id.length > 10) {
+    const result = await pool.query(`SELECT * FROM Events WHERE id = $1`, [event_id])
+    if (result.rows.length == 0) {
+      let result = await fetch(`https://app.ticketmaster.com/discovery/v2/events.json?id=${event_id}&apikey=${ticketmaster_api}`);
+      let data = await result.json();
+      const title = data._embedded?.events?.[0]?.name;
+
+      // GET location and populate locations table
+      const locationsRef = data._embedded?.events?.[0]?._links?.venues?.[0]?.href;
+      result = await fetch (`https://app.ticketmaster.com/${locationsRef}&apikey=${ticketmaster_api}`)
+      data = await result.json()
+      const city = data?.city?.name;
+      const country = data?.country?.name;
+      const detailedAddress = data?.name;
+
+      const locationQuery = `INSERT INTO locations (city, country, detailed_address) VALUES ($1, $2, $3) RETURNING id`;
+      const locationValues = [city, country, detailedAddress];
+      const locationResult = await pool.query(locationQuery, locationValues);
+      const locationId = locationResult.rows[0]?.id;
+
+      const query = `INSERT INTO Events (id, title, location_id, isticketmasterevent) VALUES ($1, $2, $3, $4)`
+      await pool.query(query, [event_id, title, locationId, true])
+    }
+  }
 
   // Define INSERT query
   const insertQuery = `
@@ -401,7 +428,7 @@ app.post("/createInvite", async (req, res) =>{
 // Defining parameter values for the INSERT query
   const values = [sender_id, receiver_id, event_id, status, date, start_time];
   try {
-    const result = await pool.query(insertQuery, values);
+    await pool.query(insertQuery, values);
     res.status(200).end();
   } catch (error) {
     console.error(error.message);
@@ -410,7 +437,7 @@ app.post("/createInvite", async (req, res) =>{
 
 });
 
-app.post("/updateInviteStatus", async (req, res) =>{
+app.patch("/updateInviteStatus", async (req, res) =>{
   //URL parmaters
   const invite_id = req.query.invite_id;
   const newStatus = req.query.status;
@@ -455,6 +482,53 @@ app.get("/pendingUserInvites", async (req, res) =>{
   JOIN events ON invitations.event_id = events.id
   JOIN locations ON events.location_id = locations.id
   WHERE invitations.receiver_id = $1 AND invitations.status = 'pending';
+`;
+
+// Defining parameter values for the INSERT query
+  const values = [user_id];
+
+  try {
+    const result = await pool.query(selectQuery, values);
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: "Cannot select users pending invitations" });
+  }
+})
+
+app.get("/acceptedUserInvites", async (req, res) =>{
+  
+  const user_id = req.query.user_id;
+
+    // Define INSERT query
+ const selectQuery = `
+SELECT 
+    invitations.id AS invitation_id,
+    CASE 
+        WHEN invitations.receiver_id = $1 THEN receivers.username
+        ELSE users.username
+    END AS your_username,
+    CASE 
+        WHEN invitations.receiver_id = $1 THEN users.username
+        ELSE receivers.username
+    END AS other_people_username,
+    users.avatar AS your_avatar_url,
+    receivers.avatar AS other_people_avatar_url,
+    invitations.start_time AS invitation_start_time,
+    invitations.date AS invitation_date,
+    events.id AS event_id,
+    events.title AS event_title,
+    locations.detailed_address AS event_detailed_address,
+    locations.city AS event_city,
+    locations.country AS event_country
+FROM invitations
+JOIN users ON invitations.sender_id = users.id
+JOIN users AS receivers ON invitations.receiver_id = receivers.id
+JOIN events ON invitations.event_id = events.id
+JOIN locations ON events.location_id = locations.id
+WHERE (invitations.receiver_id = $1 OR invitations.sender_id = $1)
+  AND invitations.status = 'accepted';
+
+
 `;
 
 // Defining parameter values for the INSERT query
@@ -631,6 +705,77 @@ app.get("/acceptanceEmail", async (req, res) => {
   }
 
 })
+
+//fetch all upcoming events with status set to accepted
+app.get('/allUpcomingEvents', async (req, res)=>{
+
+  const now = new Date(); // Get the current date and time
+
+    // Query the database to get the invitations with the desired conditions
+    const query = `
+      SELECT
+        sender.username as sender_username,
+        sender.email as sender_email,
+        receiver.username as receiver_username,
+        receiver.email as receiver_email
+      FROM invitations
+      INNER JOIN users AS sender ON invitations.sender_id = sender.id
+      INNER JOIN users AS receiver ON invitations.receiver_id = receiver.id
+      WHERE
+        status = 'accepted' AND
+        (date = $1 AND start_time > $2)
+    ;`
+
+    const values = [now.toISOString().slice(0, 10), now.toISOString().slice(11, 19)];
+    try{ 
+      const result = await pool.query(query, values);
+      res.json(result.rows);
+
+    }catch(error){
+      res.status(500).json({ error: "Cannot fetch all upcoming dates" });
+    }
+})
+
+app.post("/memories/images", async (req, res) => {
+  const { user_id, image_url, caption, image_label } = req.body;
+  try {
+    const query = `
+      INSERT INTO images (user_id, image_url, caption, image_label, created_at)
+      VALUES ($1, $2, $3, $4, NOW())
+      RETURNING id;
+    `;
+
+    const values = [user_id, image_url, caption, image_label];
+    const result = await pool.query(query, values);
+
+    // const newImageId = result.rows[0].id;
+    return res.status(200).end();
+  } catch (error) {
+    console.error("Error inserting image:", error.message);
+    return res.status(500).end();
+  }
+});
+
+app.get("/memories/images", async (req, res) => {
+  const user_id = req.query.user_id;
+  try {
+    const query = `
+      SELECT * FROM images
+      WHERE user_id = $1;
+    `;
+
+    const result = await pool.query(query, [user_id]);
+    const memories = result.rows;
+
+    return res.status(200).json(memories);
+  } catch (error) {
+    console.error("Error fetching images:", error.message);
+    return res.status(500).json({ error: "Failed to fetch images." });
+  }
+});
+
+
+
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

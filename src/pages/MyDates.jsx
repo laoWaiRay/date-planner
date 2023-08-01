@@ -138,7 +138,7 @@ export default function MyDates({ entryTab }) {
         <Navigate to="/dates/new" />
       ) : (
         <div className="md:container mx-auto">
-          <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4" style= {{color: "#39798f"}}>
+          <h1 className="font-display text-blue-500 mt-8 mb-0 font-bold text-4xl text-center" style= {{color: "#39798f"}}>
             Your Personal Date Ideas
           </h1>
           <Tabs
@@ -151,7 +151,7 @@ export default function MyDates({ entryTab }) {
             <Tab value="0" label="Your Date Ideas" />
             <Tab value="1" label="Favorites" />
           </Tabs>
-          <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
+          <div className="md:grid md:grid-cols-4 gap-5 md:max-w-5xl md:mx-auto flex flex-col items-center">
             {tabValue == "0" ? (
               <>{displayCards()}</>
             ) : (

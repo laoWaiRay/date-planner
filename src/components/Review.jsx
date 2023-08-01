@@ -72,18 +72,18 @@ export default function Review({ review, triggerRerender }) {
     <div className='border-t first:border-none py-2'>
       <div className='flex justify-between items-center'>
         <b>{review.username}</b>
-        <div className='space-x-1'>
+        <div className='space-x-2'>
           { review.username == user.username &&
             <>
               <button type='button'>
-                <EditIcon onClick={handleClickEdit}/>
+                <EditIcon className='text-[#39798f]' onClick={handleClickEdit}/>
               </button>
               <button type='button' onClick={handleClickDelete}>
-                <DeleteIcon />
+                <DeleteIcon className='text-[#39798f]' />
               </button>
             </>
           }
-          <span>{(new Date(review.date)).toLocaleDateString()}</span>
+          <span className='!ml-4'>{(new Date(review.date)).toLocaleDateString()}</span>
         </div>
       </div>
       <Rating 

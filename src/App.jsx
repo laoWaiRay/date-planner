@@ -18,17 +18,17 @@ import { initGoogleIdentity, handleCallbackResponse } from "./GoogleIdentity";
 import DrawerAppBar from "./components/Header";
 import Details from "./pages/Details";
 import AddDate from "./components/AddDate";
+import Memories from "./pages/Memories";
+import { reactRouterLoader as detailsPageLoader } from "./pages/Details";
 
 export default function App() {
   const { user, dispatch } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);
 
   // React Router
-  // TODO: Uncomment/add protected routes
   const router = createBrowserRouter([
     {
       path: "/",
-      // element: user ? <Home /> : <Login />,
       element: user ? (
         <>
           <DrawerAppBar /> <Home />
@@ -70,6 +70,7 @@ export default function App() {
           ) : (
             <Navigate to="/" />
           ),
+          loader: detailsPageLoader,
         },
       ],
     },
@@ -96,11 +97,11 @@ export default function App() {
       ),
     },
     {
-      path: "/dates/:id",
+      path: "/memories",
       element: user ? (
         <>
           {" "}
-          <DrawerAppBar /> <Details />{" "}
+          <DrawerAppBar /> <Memories />{" "}
         </>
       ) : (
         <Navigate to="/" />
@@ -111,7 +112,7 @@ export default function App() {
       element: user ? (
         <>
           {" "}
-          <DrawerAppBar /> <MyDates entryTab={"1"}/>{" "}
+          <DrawerAppBar /> <MyDates entryTab={"1"} />{" "}
         </>
       ) : (
         <Navigate to="/" />
@@ -122,13 +123,12 @@ export default function App() {
       element: user ? (
         <>
           {" "}
-          <DrawerAppBar /> <PublicDates entryTab={"1"}/>{" "}
+          <DrawerAppBar /> <PublicDates entryTab={"1"} />{" "}
         </>
       ) : (
         <Navigate to="/" />
       ),
     },
-    
   ]);
 
   // On page refresh, make a call to DB to restore client-side state about

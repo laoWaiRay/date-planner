@@ -7,7 +7,10 @@ import Avatar from "@mui/material/Avatar";
 import Chip from "@mui/material/Chip";
 import "./InvitationCard.css";
 import { useNavigate } from "react-router-dom";
-import { sendEventRejectionEmail, sendEventAcceptanceEmail } from "../api/internal/postgres"
+import {
+  sendEventRejectionEmail,
+  sendEventAcceptanceEmail,
+} from "../api/internal/postgres";
 
 const formatTime = (timeString) => {
   const [hours, minutes] = timeString.split(":");
@@ -83,43 +86,45 @@ function InvitationCard({
             <div>
               <b>Where:</b> {eventDetailedAddress}, {eventCity}, {eventCountry}
             </div>
-            <div className="parent-container">
-              <div className="left-corner">
-                <Chip
-                  label="View Event"
-                  onClick={() => handleClick(eventId)}
-                  sx={{backgroundColor: "#39798f", color:"white", ':hover': {bgcolor: '#1d3d48'}}}
-                />
-              </div>
-              <div className="right-corner">
-                <Fab
-                  size="small"
-                  color="success"
-                  aria-label="confirm"
-                  style={{
-                    marginLeft: "-10%",
-                    marginRight: "10%",
-                  }}
-                >
-                  <CheckIcon
-                    onClick={() =>{
-                      updateInvitationStatus(invitationId, "accepted");
-                      sendEventAcceptanceEmail(invitationId);
-                    }
-                    }
-                  />
-                </Fab>
-                <Fab size="small" color="error" aria-label="decline">
-                  <CloseIcon
-                    onClick={() =>{
-                      updateInvitationStatus(invitationId, "rejected");
-                      sendEventRejectionEmail(invitationId);
-                    }
-                    }
-                  />
-                </Fab>
-              </div>
-            </div>
+          </div>
+        </div>
+        <div className="parent-container">
+          <div className="left-corner">
+            <Chip
+              label="View Event"
+              onClick={() => handleClick(eventId)}
+              sx={{
+                backgroundColor: "#39798f",
+                color: "white",
+                ":hover": { bgcolor: "#1d3d48" },
+              }}
+            />
+          </div>
+          <div className="right-corner">
+            <Fab
+              size="small"
+              color="success"
+              aria-label="confirm"
+              style={{
+                marginLeft: "-10%",
+                marginRight: "10%",
+              }}
+            >
+              <CheckIcon
+                onClick={() => {
+                  updateInvitationStatus(invitationId, "accepted");
+                  sendEventAcceptanceEmail(invitationId);
+                }}
+              />
+            </Fab>
+            <Fab size="small" color="error" aria-label="decline">
+              <CloseIcon
+                onClick={() => {
+                  updateInvitationStatus(invitationId, "rejected");
+                  sendEventRejectionEmail(invitationId);
+                }}
+              />
+            </Fab>
           </div>
         </div>
       </Card.Body>

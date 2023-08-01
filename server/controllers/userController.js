@@ -112,10 +112,8 @@ userController.getUserById = async(req, res, next) => {
 
 userController.getSession = (req, res, next) => {
   if (req.session.user) {
-    console.log("Session exists:", req.session.user);
     res.json(req.session.user);
   } else {
-    console.log("Session does not exist", req.session);
     res.json({error: "No session available"});
   }
 }

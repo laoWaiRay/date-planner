@@ -1,0 +1,64 @@
+import React from "react";
+import "./Memories.css";
+import Button from "@mui/material/Button";
+import { useState, useEffect } from "react";
+import UploadMemory from "../components/UploadMemoryModal";
+import ImageGrid from "../components/ImageGird";
+import { useAuthContext } from "../hooks/useAuthContext";
+
+function Memories() {
+  const { user } = useAuthContext();
+  const [modalShow, setModalShow] = useState(false);
+  const [images, setImages] = useState([]);
+  const fetchImages = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/memories/images?user_id=${user.id}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch images.");
+      }
+      const data = await response.json();
+      setImages(data);
+    } catch (error) {
+      console.error("Error fetching images:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchImages();
+  }, [user.id]);
+
+  return (
+    <>
+      <div className="memories mb-3">
+        <div className="title">
+          <h2>Memories that Last</h2>
+          <p>Remember, Rejoice, Relive: Your Memorable Ignite Moments</p>
+        </div>
+        <Button
+          variant="contained"
+          onClick={() => setModalShow(true)}
+          sx={{
+            backgroundColor: "#39798f",
+            color: "white",
+            ":hover": { bgcolor: "#1d3d48" },
+            margin: "0 auto",
+            display: "block",
+          }}
+        >
+          Add a Memory
+        </Button>
+        <UploadMemory
+          show={modalShow}
+          onHide={() => setModalShow(false)}
+          fetchImages={fetchImages}
+        />
+      </div>
+
+      <ImageGrid images={images} />
+    </>
+  );
+}
+
+export default Memories;

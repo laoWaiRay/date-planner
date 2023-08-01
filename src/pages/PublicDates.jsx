@@ -29,6 +29,7 @@ export default function PublicDates({ entryTab }) {
     const [priceSelect, setPriceSelect] = useState("all");
     const [locations, setLocations] = useState([])
     const [locationSelect, setLocationSelect] = useState("all");
+    const [preferredTimeSelect, setPreferredTimeSelect] = useState("all");
 
     // For ticketmaster event filtering
     const dateObj = new Date()
@@ -71,11 +72,7 @@ export default function PublicDates({ entryTab }) {
 
     useEffect(() => {
         retrieveDates();
-      }, [categorySelect, priceSelect, locationSelect, outlet]);
-
-    useEffect(() => {
-        // retrieveFavorites();
-    })
+      }, [categorySelect, priceSelect, locationSelect, preferredTimeSelect]);
 
     const handleChange = (event, newValue) => {
         setTabValue(newValue);
@@ -98,7 +95,7 @@ export default function PublicDates({ entryTab }) {
 
     const retrieveDates = () => {
 
-        var url = `http://localhost:8000/publicdates?category=${categorySelect}&price=${priceSelect}&location=${locationSelect}`
+        var url = `http://localhost:8000/publicdates?category=${categorySelect}&price=${priceSelect}&location=${locationSelect}&preferredTime=${preferredTimeSelect}`
 
         fetch(url)
         .then((response) => {
@@ -137,7 +134,6 @@ export default function PublicDates({ entryTab }) {
 
     const displayEvents = (() => 
         events.slice(firstCardIndex, lastCardIndex).map(function(event) {
-            // console.log(event)
             var name = event.name
             var description = event.info
             var event_id = event.id
@@ -202,9 +198,12 @@ export default function PublicDates({ entryTab }) {
         setLocationSelect(value.props.value)
     }
 
+    const onPreferredTimeSelect = (event, value) => {
+      setPreferredTimeSelect(value.props.value)
+    }
+
     const forLocations = () => {
         locations.map((location) => {
-            console.log("FOR EACH",location)
             return <><MenuItem value="all">{location.city}</MenuItem></>
         })
     }
@@ -262,8 +261,22 @@ export default function PublicDates({ entryTab }) {
                         })
     
                     }
+                    </Select>
+                </FormControl>
 
-
+                <FormControl sx={{ mx: 2, minWidth: 140 }}>
+                    <InputLabel id="location-select-label">Time</InputLabel>
+                    <Select
+                        labelId="location-select-label"
+                        id="location-select"
+                        value={preferredTimeSelect}
+                        label="Location"
+                        onChange={onPreferredTimeSelect}
+                    > 
+                      <MenuItem value="all">All</MenuItem>
+                      <MenuItem value="morning">Morning</MenuItem>
+                      <MenuItem value="afternoon">Afternoon</MenuItem>
+                      <MenuItem value="evening">Evening</MenuItem>
                     </Select>
                 </FormControl>
             </>
@@ -371,7 +384,7 @@ export default function PublicDates({ entryTab }) {
                     </Select>
                 </FormControl>
 
-                <Button variant ="contained" sx={{ m: 1}} onClick={onSearchEvent}>Search Dates</Button>
+                <Button variant ="contained" sx={{ m: 1, backgroundColor: "#39798f", ':hover': {bgcolor: '#1d3d48'} }} onClick={onSearchEvent}>Search Dates</Button>
             </>
         )
     }
@@ -381,8 +394,8 @@ export default function PublicDates({ entryTab }) {
           <Outlet />
           <div className={`${outlet ? "hidden" : ""}`}>
             <div className="md:container mx-auto">
-            <h1 className="font-display text-blue-500 font-bold text-4xl text-center my-4" style= {{color: "#39798f"}}>Find Date Ideas</h1>
-            <Tabs className="mb-2" value ={tabValue} onChange={handleChange} centered sx={{" .Mui-selected": {color: `#39798f`}, "& .MuiTabs-indicator": {backgroundColor: `#39798f`}}}>
+            <h1 className="font-display text-blue-500 font-bold text-4xl text-center mt-8 mb-0" style= {{color: "#39798f"}}>Find Date Ideas</h1>
+            <Tabs className="mb-2" value ={tabValue} onChange={handleChange} centered sx={{" .Mui-selected": {color: `#39798f !important`}, "& .MuiTabs-indicator": {backgroundColor: `#39798f`}}}>
                 <Tab value="0" label="Shared by Users" />
                 <Tab value="1" label="Events/Concerts" />
             </Tabs>
@@ -405,7 +418,8 @@ export default function PublicDates({ entryTab }) {
                 <></>
             }
             
-                <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto">
+            <div className="md:grid md:grid-cols-4 gap-5 md:max-w-5xl md:mx-auto flex flex-col items-center">
+            {/* <div className="grid grid-cols-4 gap-5 max-w-5xl mx-auto"> */}
                     
                     {tabValue == "0" ? <>{displayDates()}</>: <>{displayEvents()}</>}
                 </div>
