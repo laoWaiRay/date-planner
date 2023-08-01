@@ -237,7 +237,8 @@ export default function Home() {
           <div className="grid container gap-2  mx-auto my-5">
 
              {/* Top banner card to Explore Dates */}
-            <div className="grid grid-cols-1 gap-3 mx-auto relative rounded-lg bg-[url('src/assets/homepage/background5.jpg')] object-cover h-96 w-full bg-cover bg-right">
+             <Card className="grid grid-cols-1 gap-3 mx-auto relative rounded-lg bg-[url('src/assets/homepage/background5.jpg')] object-cover h-96 w-full bg-cover bg-right">
+              
               <CardActionArea onClick={(e) => handleNavCardClick(e, "public")}>
                 <Typography gutterBottom variant="h2" component="div" className="text-white my-0 mx-5" style={{fontWeight: "500"}} >
                     Find Inspiration
@@ -246,7 +247,8 @@ export default function Home() {
                     Explore other date ideas and find inspiration for your next hang out
                   </Typography>
               </CardActionArea>
-            </div>
+              
+            </Card>
 
             {/* Top row of Navigation Links table*/}
             <div className="grid grid-cols-3 gap-3">
