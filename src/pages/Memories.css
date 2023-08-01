@@ -65,7 +65,7 @@ p {
 }
 
 .polaroid-photo {
-  min-width: 600px;
+  min-width: 800px;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 8px;
@@ -92,4 +92,28 @@ p {
 
 .modal-backdrop {
   --bs-backdrop-opacity: 0.8 !important;
+}
+
+@media (max-width: 991px) {
+  .polaroid-photo {
+    min-width: 400px;
+  }
+}
+
+.delete-icon-container {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0);
+  transition: background-color 0.3s ease;
+}
+
+.delete-icon-container:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.delete-icon {
+  color: red;
+  transition: color 0.3s ease;
 }
