@@ -135,7 +135,7 @@ export default function MyDates({ entryTab }) {
   return (
     <>
       {!isLoading && dates.length == 0 && tabValue == 0 ? (
-        <Navigate to="/dates/new" />
+        <Navigate to="/dates/add" />
       ) : (
         <div className="md:container mx-auto">
           <h1 className="text-center mt-12 mb-4 tracking-wider text-center font-light tracking-wider border-b" 

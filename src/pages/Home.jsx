@@ -243,7 +243,7 @@ export default function Home() {
                     Find Inspiration
                   </Typography>
                   <Typography variant="body1" className="text-white mx-5">
-                    Explore other date ideas and find inspiration for your next hang out!
+                    Explore other date ideas and find inspiration for your next hang out
                   </Typography>
               </CardActionArea>
             </div>

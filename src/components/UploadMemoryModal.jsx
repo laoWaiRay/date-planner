@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { Modal, Form, Button } from "react-bootstrap";
+import { Modal, Form } from "react-bootstrap";
 import { useAuthContext } from "../hooks/useAuthContext";
 import Chip from "@mui/material/Chip";
+import Button from '@mui/material/Button';
 
 function UploadMemory(props) {
   const handleCancel = () => {
@@ -217,10 +218,14 @@ function UploadMemory(props) {
           </Form.Group>
 
           <div className="space-x-2">
-            <Button type="submit" variant="primary">
-              Confirm Changes
+            <Button 
+              type="submit" 
+              variant="contained"
+              sx={{backgroundColor: "#39798f", color:"white", ':hover': {bgcolor: '#1d3d48'}}}
+            >
+              Submit
             </Button>
-            <Button type="button" variant="secondary" onClick={handleCancel}>
+            <Button type="button" variant="contained" color="inherit" onClick={handleCancel}>
               Cancel
             </Button>
           </div>

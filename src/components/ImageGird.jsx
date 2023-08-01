@@ -68,14 +68,16 @@ function ImageGrid({ images, onDeleteImage }) {
         })}
       </div>
       <Modal
+        size="xl"
+        centered
         show={showModal}
         onHide={() => setShowModal(false)}
-        centered
         dialogClassName="custom-modal"
         style={{
           "--bs-modal-padding": "0px",
           "--bs-modal-bg": "transparent",
-          marginLeft: "-10%",
+          "width":"100%"
+          // marginLeft: "auto",
         }}
       >
         <Modal.Body>
