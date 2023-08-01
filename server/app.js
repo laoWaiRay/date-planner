@@ -3,7 +3,7 @@ import pg from "pg";
 import cors from "cors";
 import session from "express-session";
 import userRouter from "./routes/users.js";
-import reviewRouter from "./routes/reviews.js"
+import reviewRouter from "./routes/reviews.js";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
 import { sendRejectionMail } from "./emails/rejectionEmail.js";
@@ -27,7 +27,7 @@ app.use(
   })
 );
 app.use(express.urlencoded({ extended: false }));
-app.use(express.json({limit: "5000kb"}));
+app.use(express.json({ limit: "5000kb" }));
 app.use(
   session({
     secret: "secret",
@@ -44,144 +44,149 @@ app.use("/users", userRouter);
 app.use("/reviews", reviewRouter);
 
 app.get("/mydates", async (req, res) => {
-  var userid = req.query.user
-  var category = req.query.category
-  var price = req.query.price
+  var userid = req.query.user;
+  var category = req.query.category;
+  var price = req.query.price;
 
   // var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments FROM events`;
 
-  if ((category == "all" && price == "all") || (category === undefined && price === undefined)) {
+  if (
+    (category == "all" && price == "all") ||
+    (category === undefined && price === undefined)
+  ) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                       locations.city, locations.country, locations.detailed_address  
                       FROM events INNER JOIN locations ON events.location_id = locations.id
-                      WHERE author=$1 AND isticketmasterevent = 'f';`
-    var values = [userid]
-  } else if (category !== undefined && (price == "all" || price === undefined)) {
+                      WHERE author=$1 AND isticketmasterevent = 'f';`;
+    var values = [userid];
+  } else if (
+    category !== undefined &&
+    (price == "all" || price === undefined)
+  ) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE category=$1 AND author=$2 AND isticketmasterevent = 'f';`
-    var values = [category, userid]
-  } else if (price !== undefined && (category == "all" || category === undefined)) {
+                        WHERE category=$1 AND author=$2 AND isticketmasterevent = 'f';`;
+    var values = [category, userid];
+  } else if (
+    price !== undefined &&
+    (category == "all" || category === undefined)
+  ) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE price=$1 AND author=$2 AND isticketmasterevent = 'f';`
-    var values = [price, userid]
+                        WHERE price=$1 AND author=$2 AND isticketmasterevent = 'f';`;
+    var values = [price, userid];
   } else if (category !== undefined && price !== undefined) {
     var myDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id
-                        WHERE category=$1 AND price=$2;`
-    var values = [category, price]
+                        WHERE category=$1 AND price=$2;`;
+    var values = [category, price];
   }
 
   await pool.query(myDatesQuery, values, (err, result) => {
     if (err) {
       res.end(err);
     }
-    res.send(result.rows)
+    res.send(result.rows);
   });
 });
 
 app.get("/publicdates", async (req, res) => {
-  var category = req.query.category
-  var price = req.query.price
-  var city = req.query.location
-  var preferredTime=req.query.preferredTime
+  var category = req.query.category;
+  var price = req.query.price;
+  var city = req.query.location;
+  var preferredTime = req.query.preferredTime;
   var publicDatesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
                         locations.city, locations.country, locations.detailed_address  
                         FROM events INNER JOIN locations ON events.location_id = locations.id 
-                        WHERE private='f' AND isticketmasterevent='f'`
-  var values = []
-  var count=1
+                        WHERE private='f' AND isticketmasterevent='f'`;
+  var values = [];
+  var count = 1;
 
   if (category !== undefined && category !== "all") {
-    var publicDatesQuery = publicDatesQuery + ` AND category =$${count}`
+    var publicDatesQuery = publicDatesQuery + ` AND category =$${count}`;
     count++;
-    values.push(category)
-  } 
-  
+    values.push(category);
+  }
+
   if (price !== undefined && price !== "all") {
-    var publicDatesQuery = publicDatesQuery + ` AND price =$${count}`
+    var publicDatesQuery = publicDatesQuery + ` AND price =$${count}`;
     count++;
-    values.push(price)
+    values.push(price);
   }
 
   if (city !== undefined && city !== "all") {
-    var publicDatesQuery = publicDatesQuery + ` AND locations.city =$${count}`
+    var publicDatesQuery = publicDatesQuery + ` AND locations.city =$${count}`;
     count++;
-    values.push(city)
+    values.push(city);
   }
 
   if (preferredTime !== undefined && preferredTime !== "all") {
-    var publicDatesQuery = publicDatesQuery + ` AND preferred_time =$${count}`
+    var publicDatesQuery = publicDatesQuery + ` AND preferred_time =$${count}`;
     count++;
-    values.push(preferredTime)
+    values.push(preferredTime);
   }
 
   pool.query(publicDatesQuery, values, (err, result) => {
     if (err) {
       res.end(err);
     }
-    res.send(result.rows)
+    res.send(result.rows);
   });
 });
 
-
 app.get("/favorites", async (req, res) => {
-  var userid = req.query.user
+  var userid = req.query.user;
 
-  var favoritesQuery = 
-    `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
+  var favoritesQuery = `SELECT events.id, events.title, events.description, events.author, events.price, events.category, events.preferred_time, events.comments, events.image,
     locations.city, locations.country, locations.detailed_address  
     FROM events INNER JOIN locations ON events.location_id = locations.id
-    WHERE events.id IN (SELECT event_id FROM saved WHERE user_id = ${userid});`
+    WHERE events.id IN (SELECT event_id FROM saved WHERE user_id = ${userid});`;
 
   await pool.query(favoritesQuery, (err, result) => {
     if (err) {
       res.end(err);
     }
-    res.send(result.rows)
+    res.send(result.rows);
   });
 });
 
 app.post("/favorites", async (req, res) => {
-  const userid = req.query.user
-  const eventid = req.query.event
+  const userid = req.query.user;
+  const eventid = req.query.event;
 
   // Add event to favorites table
-  var checkFavQuery = `SELECT * FROM saved WHERE user_id=$1 AND event_id=$2`
+  var checkFavQuery = `SELECT * FROM saved WHERE user_id=$1 AND event_id=$2`;
   const favResult = await pool.query(checkFavQuery, [userid, eventid]);
 
   if (favResult.rows.length == 0) {
-    var addFavoriteQuery = `INSERT INTO saved(user_id,event_id) VALUES(${userid},'${eventid}')`
+    var addFavoriteQuery = `INSERT INTO saved(user_id,event_id) VALUES(${userid},'${eventid}')`;
     pool.query(addFavoriteQuery, (err, result) => {
       if (err) {
-        console.log(err)
+        console.log(err);
         res.end(err);
       }
-      res.json(result)
-    }) 
+      res.json(result);
+    });
   }
 });
 
-
 app.delete("/favorites", async (req, res) => {
-  var del_userid = req.query.user
-  var del_eventid = req.query.event
+  var del_userid = req.query.user;
+  var del_eventid = req.query.event;
 
-  var delFavoriteQuery = `DELETE FROM saved WHERE user_id='${del_userid}' AND event_id='${del_eventid}'`
+  var delFavoriteQuery = `DELETE FROM saved WHERE user_id='${del_userid}' AND event_id='${del_eventid}'`;
 
   pool.query(delFavoriteQuery, (err, result) => {
     if (err) {
-      console.log(err)
+      console.log(err);
       res.end(err);
     }
-    res.json(result)
+    res.json(result);
   });
 });
-
 
 app.post("/mydates", async (req, res) => {
   try {
@@ -190,7 +195,11 @@ app.post("/mydates", async (req, res) => {
     // Check if location is already in DB before insert
     let locationId = null;
     const existsQuery = `SELECT * FROM locations WHERE city = $1 AND country = $2 AND detailed_address = $3`;
-    let result = await pool.query(existsQuery, [date.city, date.country, date.location]);
+    let result = await pool.query(existsQuery, [
+      date.city,
+      date.country,
+      date.location,
+    ]);
     if (result.rows.length > 0) {
       locationId = result.rows[0].id;
     }
@@ -218,7 +227,7 @@ app.post("/mydates", async (req, res) => {
       locationId,
       date.private,
       date.comments,
-      date.image
+      date.image,
     ];
     const response = await pool.query(eventQuery, eventValues);
 
@@ -230,7 +239,6 @@ app.post("/mydates", async (req, res) => {
     } else {
       res.status(200).end();
     }
-     
   } catch (error) {
     console.error(error.message);
   }
@@ -244,7 +252,11 @@ app.patch("/mydates", async (req, res, next) => {
     // Check if location is already in DB before insert
     let locationId = null;
     const existsQuery = `SELECT * FROM locations WHERE city = $1 AND country = $2 AND detailed_address = $3`;
-    let result = await pool.query(existsQuery, [date.city, date.country, date.location]);
+    let result = await pool.query(existsQuery, [
+      date.city,
+      date.country,
+      date.location,
+    ]);
     if (result.rows.length > 0) {
       locationId = result.rows[0].id;
     }
@@ -262,7 +274,9 @@ app.patch("/mydates", async (req, res, next) => {
     const query = `
       UPDATE events 
       SET title = $1, description = $2, price = $3, category = $4, preferred_time = $5, 
-          location_id = $6, date_posted = CURRENT_DATE, private = $7, comments = $8 ${date.image ? " ,image = $10 " : " "}
+          location_id = $6, date_posted = CURRENT_DATE, private = $7, comments = $8 ${
+            date.image ? " ,image = $10 " : " "
+          }
       WHERE id = $9;
     `;
 
@@ -275,11 +289,10 @@ app.patch("/mydates", async (req, res, next) => {
       locationId,
       date.private,
       date.comments,
-      date.event_id
+      date.event_id,
     ];
 
-    if (date.image)
-      queryValues.push(date.image);
+    if (date.image) queryValues.push(date.image);
 
     await pool.query(query, queryValues);
 
@@ -290,35 +303,34 @@ app.patch("/mydates", async (req, res, next) => {
   }
 });
 
-
 app.get("/ticketmaster", (req, res) => {
-  var start = req.query.start
-  var end = req.query.end
-  var countryCode = req.query.country
-  var city = req.query.city
+  var start = req.query.start;
+  var end = req.query.end;
+  var countryCode = req.query.country;
+  var city = req.query.city;
 
-  const dateObj = new Date()
-  var currDay = dateObj.getDate()
+  const dateObj = new Date();
+  var currDay = dateObj.getDate();
   if (currDay < 10) {
-    currDay = "0"+currDay
+    currDay = "0" + currDay;
   }
 
-  var currMonth = dateObj.getMonth()+1
+  var currMonth = dateObj.getMonth() + 1;
   if (currMonth < 10) {
-    currMonth = "0"+currMonth
+    currMonth = "0" + currMonth;
   }
-  var currYear = dateObj.getFullYear()
-  var currentDate = currYear+"-"+currMonth+"-"+currDay
+  var currYear = dateObj.getFullYear();
+  var currentDate = currYear + "-" + currMonth + "-" + currDay;
   if (start === undefined || start == "") {
-    var startTime = currentDate.toString()+"T00:00:00Z"
+    var startTime = currentDate.toString() + "T00:00:00Z";
   } else {
-    var startTime = start.toString()+"T00:00:00Z"
+    var startTime = start.toString() + "T00:00:00Z";
   }
 
   if (end === undefined || end == "") {
-    var endTime = currentDate.toString()+"T23:59:00Z"
+    var endTime = currentDate.toString() + "T23:59:00Z";
   } else {
-    var endTime = end.toString()+"T23:59:00Z"
+    var endTime = end.toString() + "T23:59:00Z";
   }
 
   if (city === undefined || city === "") {
@@ -333,25 +345,23 @@ app.get("/ticketmaster", (req, res) => {
     })
     .then((data) => {
       const events = data?._embedded?.events;
-      if (events && events.length > 0) 
-        res.json(events);
-      else 
-        res.json([]);
+      if (events && events.length > 0) res.json(events);
+      else res.json([]);
     })
     .catch((error) => {
-      res.send([])
+      res.send([]);
     });
 });
 
 // Get ticketmaster event by id
 app.get("/ticketmaster/:id", async (req, res, next) => {
   const { id } = req.params;
-  const result = await fetch(`https://app.ticketmaster.com/discovery/v2/events.json?id=${id}&apikey=${ticketmaster_api}`);
+  const result = await fetch(
+    `https://app.ticketmaster.com/discovery/v2/events.json?id=${id}&apikey=${ticketmaster_api}`
+  );
   const data = await result.json();
   res.json(data?._embedded?.events?.[0]);
-})
-
-
+});
 
 // Get user-created event by id
 app.get("/events/:id", async (req, res, next) => {
@@ -359,14 +369,14 @@ app.get("/events/:id", async (req, res, next) => {
   const result = await pool.query(`SELECT * FROM events WHERE id = $1`, [id]);
   const data = result.rows[0];
   res.json(data);
-})
+});
 
 // Delete an event by event id
 app.delete("/events/:id", async (req, res, next) => {
   const { id } = req.params;
   const result = await pool.query(`DELETE FROM events WHERE id = $1`, [id]);
   res.end();
-})
+});
 
 // Get all locations
 app.get("/locations", async (req, res, next) => {
@@ -374,17 +384,19 @@ app.get("/locations", async (req, res, next) => {
   const result = await pool.query(`SELECT * FROM locations;`);
   const data = result.rows;
   res.json(data);
-})
+});
 
 // Get location by id
 app.get("/locations/:id", async (req, res, next) => {
   const { id } = req.params;
-  const result = await pool.query(`SELECT * FROM locations WHERE id = $1`, [id]);
+  const result = await pool.query(`SELECT * FROM locations WHERE id = $1`, [
+    id,
+  ]);
   const data = result.rows[0];
   res.json(data);
-})
+});
 
-app.post("/createInvite", async (req, res) =>{
+app.post("/createInvite", async (req, res) => {
   //URL parmaters
   const sender_id = req.query.sender_id;
   const receiver_id = req.query.receiver_id;
@@ -395,16 +407,23 @@ app.post("/createInvite", async (req, res) =>{
 
   // If invitation is for ticketmaster event, it must be added to the events table first
   if (event_id.length > 10) {
-    const result = await pool.query(`SELECT * FROM Events WHERE id = $1`, [event_id])
+    const result = await pool.query(`SELECT * FROM Events WHERE id = $1`, [
+      event_id,
+    ]);
     if (result.rows.length == 0) {
-      let result = await fetch(`https://app.ticketmaster.com/discovery/v2/events.json?id=${event_id}&apikey=${ticketmaster_api}`);
+      let result = await fetch(
+        `https://app.ticketmaster.com/discovery/v2/events.json?id=${event_id}&apikey=${ticketmaster_api}`
+      );
       let data = await result.json();
       const title = data._embedded?.events?.[0]?.name;
 
       // GET location and populate locations table
-      const locationsRef = data._embedded?.events?.[0]?._links?.venues?.[0]?.href;
-      result = await fetch (`https://app.ticketmaster.com/${locationsRef}&apikey=${ticketmaster_api}`)
-      data = await result.json()
+      const locationsRef =
+        data._embedded?.events?.[0]?._links?.venues?.[0]?.href;
+      result = await fetch(
+        `https://app.ticketmaster.com/${locationsRef}&apikey=${ticketmaster_api}`
+      );
+      data = await result.json();
       const city = data?.city?.name;
       const country = data?.country?.name;
       const detailedAddress = data?.name;
@@ -414,8 +433,8 @@ app.post("/createInvite", async (req, res) =>{
       const locationResult = await pool.query(locationQuery, locationValues);
       const locationId = locationResult.rows[0]?.id;
 
-      const query = `INSERT INTO Events (id, title, location_id, isticketmasterevent) VALUES ($1, $2, $3, $4)`
-      await pool.query(query, [event_id, title, locationId, true])
+      const query = `INSERT INTO Events (id, title, location_id, isticketmasterevent) VALUES ($1, $2, $3, $4)`;
+      await pool.query(query, [event_id, title, locationId, true]);
     }
   }
 
@@ -425,7 +444,7 @@ app.post("/createInvite", async (req, res) =>{
     VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *;`;
 
-// Defining parameter values for the INSERT query
+  // Defining parameter values for the INSERT query
   const values = [sender_id, receiver_id, event_id, status, date, start_time];
   try {
     await pool.query(insertQuery, values);
@@ -434,10 +453,9 @@ app.post("/createInvite", async (req, res) =>{
     console.error(error.message);
     res.status(500).json({ error: "Cannot insert into invitation model" });
   }
-
 });
 
-app.patch("/updateInviteStatus", async (req, res) =>{
+app.patch("/updateInviteStatus", async (req, res) => {
   //URL parmaters
   const invite_id = req.query.invite_id;
   const newStatus = req.query.status;
@@ -457,15 +475,14 @@ app.patch("/updateInviteStatus", async (req, res) =>{
     console.error(error.message);
     res.status(500).json({ error: "Cannot update invitation" });
   }
-})
+});
 
 //fetch a users pending invites
-app.get("/pendingUserInvites", async (req, res) =>{
-  
+app.get("/pendingUserInvites", async (req, res) => {
   const user_id = req.query.user_id;
 
-    // Define INSERT query
- const selectQuery = `
+  // Define INSERT query
+  const selectQuery = `
   SELECT 
     invitations.id AS invitation_id,
     users.username AS sender_username,
@@ -484,7 +501,7 @@ app.get("/pendingUserInvites", async (req, res) =>{
   WHERE invitations.receiver_id = $1 AND invitations.status = 'pending';
 `;
 
-// Defining parameter values for the INSERT query
+  // Defining parameter values for the INSERT query
   const values = [user_id];
 
   try {
@@ -493,14 +510,13 @@ app.get("/pendingUserInvites", async (req, res) =>{
   } catch (error) {
     res.status(500).json({ error: "Cannot select users pending invitations" });
   }
-})
+});
 
-app.get("/acceptedUserInvites", async (req, res) =>{
-  
+app.get("/acceptedUserInvites", async (req, res) => {
   const user_id = req.query.user_id;
 
-    // Define INSERT query
- const selectQuery = `
+  // Define INSERT query
+  const selectQuery = `
 SELECT 
     invitations.id AS invitation_id,
     CASE 
@@ -531,7 +547,7 @@ WHERE (invitations.receiver_id = $1 OR invitations.sender_id = $1)
 
 `;
 
-// Defining parameter values for the INSERT query
+  // Defining parameter values for the INSERT query
   const values = [user_id];
 
   try {
@@ -540,14 +556,14 @@ WHERE (invitations.receiver_id = $1 OR invitations.sender_id = $1)
   } catch (error) {
     res.status(500).json({ error: "Cannot select users pending invitations" });
   }
-})
+});
 
 //fetch upcoming users invites
 app.get("/upcomingUserInvites", async (req, res) => {
   const user_id = req.query.user_id;
   const currentDate = new Date();
 
-   const selectQuery = `
+  const selectQuery = `
     SELECT 
       invitations.id AS invitation_id,
       users.username AS sender_username,
@@ -571,13 +587,19 @@ app.get("/upcomingUserInvites", async (req, res) => {
       AND (invitations.date > $2 OR (invitations.date = $2 AND invitations.start_time > $3));
   `;
 
-  const values = [user_id, currentDate.toISOString().slice(0, 10), currentDate.toISOString().slice(11, 19)];
+  const values = [
+    user_id,
+    currentDate.toISOString().slice(0, 10),
+    currentDate.toISOString().slice(11, 19),
+  ];
 
   try {
     const result = await pool.query(selectQuery, values);
     res.json(result.rows);
   } catch (error) {
-    res.status(500).json({ error: "Cannot select user's upcoming invitations" });
+    res
+      .status(500)
+      .json({ error: "Cannot select user's upcoming invitations" });
   }
 });
 
@@ -585,24 +607,30 @@ app.get("/upcomingUserInvites", async (req, res) => {
 app.post("/reviews/:id", async (req, res, next) => {
   const { id } = req.params;
   const { author_id, comment, score } = req.body;
-  await pool.query(`
+  await pool.query(
+    `
     INSERT INTO reviews(event_id, author_id, comment, score)
     VALUES ($1, $2, $3, $4);
-  `, [id, author_id, comment, score]);
+  `,
+    [id, author_id, comment, score]
+  );
   res.status(200).end();
-})
+});
 
 // Edit a review for a given review ID
 app.post("/reviews/:id/edit", async (req, res, next) => {
   const { id } = req.params;
   const { comment, score } = req.body;
-  await pool.query(`
+  await pool.query(
+    `
     UPDATE reviews
     SET comment = $1, score = $2, date = CURRENT_DATE
     WHERE id = $3;
-  `, [comment, score, id])
+  `,
+    [comment, score, id]
+  );
   res.status(200).end();
-})
+});
 
 // Delete a review by review ID
 app.delete("/reviews/:id", async (req, res, next) => {
@@ -613,7 +641,7 @@ app.delete("/reviews/:id", async (req, res, next) => {
   `;
   await pool.query(query, [id]);
   res.status(200).end();
-})
+});
 
 // Get a list of all reviews for a given event ID
 app.get("/reviews/:id", async (req, res, next) => {
@@ -628,7 +656,7 @@ app.get("/reviews/:id", async (req, res, next) => {
   `;
   const result = await pool.query(query, [id]);
   res.json(result.rows);
-})
+});
 
 // Get the average rating for a given event ID
 app.get("/reviews/:id/average", async (req, res, next) => {
@@ -640,7 +668,7 @@ app.get("/reviews/:id/average", async (req, res, next) => {
   `;
   const result = await pool.query(query, [id]);
   res.json(result.rows[0]);
-})
+});
 
 app.get("/rejectionEmail", async (req, res) => {
   const invitation_id = req.query.invitation_id;
@@ -658,21 +686,24 @@ app.get("/rejectionEmail", async (req, res) => {
 
   const values = [invitation_id];
 
-  try{
+  try {
     const result = await pool.query(query, values);
     const senderInfo = {
       receiver_username: result.rows[0].receiver_username,
       sender_email: result.rows[0].sender_email,
       date: result.rows[0].date,
     };
-    sendRejectionMail(senderInfo.sender_email, senderInfo.receiver_username, senderInfo.date);
+    sendRejectionMail(
+      senderInfo.sender_email,
+      senderInfo.receiver_username,
+      senderInfo.date
+    );
     res.status(200);
-    res.json("Email sent!")
-  } catch(error){
+    res.json("Email sent!");
+  } catch (error) {
     res.status(500).json({ error: "Cannot send rejection email" });
   }
-
-})
+});
 
 app.get("/acceptanceEmail", async (req, res) => {
   const invitation_id = req.query.invitation_id;
@@ -690,29 +721,31 @@ app.get("/acceptanceEmail", async (req, res) => {
 
   const values = [invitation_id];
 
-  try{
+  try {
     const result = await pool.query(query, values);
     const senderInfo = {
       receiver_username: result.rows[0].receiver_username,
       sender_email: result.rows[0].sender_email,
       date: result.rows[0].date,
     };
-    sendAcceptanceMail(senderInfo.sender_email, senderInfo.receiver_username, senderInfo.date);
+    sendAcceptanceMail(
+      senderInfo.sender_email,
+      senderInfo.receiver_username,
+      senderInfo.date
+    );
     res.status(200);
-    res.json("Email sent!")
-  } catch(error){
+    res.json("Email sent!");
+  } catch (error) {
     res.status(500).json({ error: "Cannot send rejection email" });
   }
-
-})
+});
 
 //fetch all upcoming events with status set to accepted
-app.get('/allUpcomingEvents', async (req, res)=>{
-
+app.get("/allUpcomingEvents", async (req, res) => {
   const now = new Date(); // Get the current date and time
 
-    // Query the database to get the invitations with the desired conditions
-    const query = `
+  // Query the database to get the invitations with the desired conditions
+  const query = `
       SELECT
         sender.username as sender_username,
         sender.email as sender_email,
@@ -724,28 +757,30 @@ app.get('/allUpcomingEvents', async (req, res)=>{
       WHERE
         status = 'accepted' AND
         (date = $1 AND start_time > $2)
-    ;`
+    ;`;
 
-    const values = [now.toISOString().slice(0, 10), now.toISOString().slice(11, 19)];
-    try{ 
-      const result = await pool.query(query, values);
-      res.json(result.rows);
-
-    }catch(error){
-      res.status(500).json({ error: "Cannot fetch all upcoming dates" });
-    }
-})
+  const values = [
+    now.toISOString().slice(0, 10),
+    now.toISOString().slice(11, 19),
+  ];
+  try {
+    const result = await pool.query(query, values);
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: "Cannot fetch all upcoming dates" });
+  }
+});
 
 app.post("/memories/images", async (req, res) => {
-  const { user_id, image_url, caption, image_label } = req.body;
+  const { user_id, image_url, caption, image_label, date, city } = req.body;
   try {
     const query = `
-      INSERT INTO images (user_id, image_url, caption, image_label, created_at)
-      VALUES ($1, $2, $3, $4, NOW())
+       INSERT INTO images (user_id, image_url, caption, image_label, date, city, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, NOW())
       RETURNING id;
     `;
 
-    const values = [user_id, image_url, caption, image_label];
+    const values = [user_id, image_url, caption, image_label, date, city];
     const result = await pool.query(query, values);
 
     // const newImageId = result.rows[0].id;
@@ -794,8 +829,6 @@ app.delete("/memories/images/:id", async (req, res) => {
     return res.status(500).json({ error: "Failed to delete image." });
   }
 });
-
-
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

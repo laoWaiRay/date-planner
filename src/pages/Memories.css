@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto+Mono:ital@1&display=swap");
 /* css inspiration for grid https://www.youtube.com/watch?v=cDwa_JwuC-w*/
 /* body {
   font-family: "Noto Serif";
@@ -65,7 +66,7 @@ h2 {
 }
 
 .polaroid-photo {
-  min-width: 800px;
+  min-width: 700px;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 8px;
@@ -74,6 +75,7 @@ h2 {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 }
 
 .polaroid-photo img {
@@ -116,4 +118,30 @@ h2 {
 .delete-icon {
   color: red;
   transition: color 0.3s ease;
+}
+
+.polaroid-city {
+  font-family: "Orbitron", sans-serif;
+  font-family: "Roboto Mono", monospace;
+  position: absolute;
+  top: 2%;
+  left: 15px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+}
+
+.polaroid-date {
+  font-family: "Orbitron", sans-serif;
+  font-family: "Roboto Mono", monospace;
+  position: absolute;
+  top: 2%;
+  right: 2%;
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px;
 }
