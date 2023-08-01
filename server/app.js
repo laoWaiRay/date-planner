@@ -736,6 +736,26 @@ app.get('/allUpcomingEvents', async (req, res)=>{
     }
 })
 
+app.post("/memories/images", async (req, res) => {
+  const { user_id, image_url, caption, image_label } = req.body;
+  try {
+    const query = `
+      INSERT INTO images (user_id, image_url, caption, image_label, created_at)
+      VALUES ($1, $2, $3, $4, NOW())
+      RETURNING id;
+    `;
+
+    const values = [user_id, image_url, caption, image_label];
+    const result = await pool.query(query, values);
+
+    // const newImageId = result.rows[0].id;
+    return res.status(200).end();
+  } catch (error) {
+    console.error("Error inserting image:", error.message);
+    return res.status(500).end();
+  }
+});
+
 
 
 app.listen(PORT, () => {

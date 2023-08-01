@@ -11,10 +11,18 @@ function UploadMemory(props) {
   const [file, setFile] = useState(null);
   const { user } = useAuthContext();
   const [error, setError] = useState(null);
-  const [acceptedinvitations, setacceptedInvitations] = useState([]);
   const [chipsData, setChipsData] = useState([]);
+  const [selectedChipId, setSelectedChipId] = useState(null);
+  const [imageDataURL, setImageDataURL] = useState(null);
+  const [formData, setFormData] = useState({
+    caption: "",
+  });
 
-  const colors = ["blue"];
+  const { caption } = formData;
+  const handleCaptionChange = (e) => {
+    const { value } = e.target;
+    setFormData({ ...formData, caption: value });
+  };
   const fetchAcceptedInvitations = async () => {
     try {
       const response = await fetch(
@@ -27,7 +35,6 @@ function UploadMemory(props) {
           label: `${invitation.event_title} with ${invitation.other_people_username}`,
         };
       });
-      setacceptedInvitations(data);
       setChipsData(mappedInvitations);
     } catch (error) {
       console.error("Error fetching accepted invitations:", error.message);
@@ -37,12 +44,18 @@ function UploadMemory(props) {
     fetchAcceptedInvitations();
   }, []);
   const types = ["image/png", "image/jpeg"];
+
   const changeHandler = (e) => {
     let selected = e.target.files[0];
 
     if (selected && types.includes(selected.type)) {
       setFile(selected);
       setError(null);
+      const reader = new FileReader();
+      reader.readAsDataURL(selected);
+      reader.onload = () => {
+        setImageDataURL(reader.result);
+      };
     } else {
       setFile(null);
       setError("Please select an image file with type jpeg or png");
@@ -50,19 +63,53 @@ function UploadMemory(props) {
   };
 
   const handleChipClick = (chipId) => {
-    // Handle chip click event here
-    console.log(`Chip with ID ${chipId} clicked!`);
+    setSelectedChipId((prevId) => (prevId === chipId ? null : chipId));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file || !caption || selectedChips.length === 0) {
-      setError("Please fill in all the required fields.");
+    if (!imageDataURL || !formData.caption || selectedChipId === null) {
+      setError(
+        "Please fill in all the fields and don't forget to select a date"
+      );
       return;
     }
 
-    if (file) {
-      const reader = new FileReader();
+    const chip_object = chipsData.find((i) => i.id === selectedChipId);
+
+    try {
+      const imageLabel = chip_object.label;
+
+      const body = {
+        user_id: user.id,
+        image_url: imageDataURL,
+        caption: caption,
+        image_label: imageLabel,
+      };
+
+      const requestOptions = {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      };
+
+      const response = await fetch(
+        "http://localhost:8000/memories/images",
+        requestOptions
+      );
+
+      if (!response.ok) {
+        setError("Failed to upload image. Please try again later.");
+        return;
+      }
+      console.log("Image uploaded successfully!");
+      props.onHide();
+    } catch (error) {
+      console.error("Error uploading image:", error.message);
+      setError("Failed to upload image. Please try again later.");
     }
   };
 
@@ -90,7 +137,12 @@ function UploadMemory(props) {
 
           <Form.Group controlId="text" className="mb-3">
             <Form.Label>Caption</Form.Label>
-            <Form.Control type="text" required />
+            <Form.Control
+              type="text"
+              value={caption}
+              onChange={handleCaptionChange}
+              required
+            />
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -107,9 +159,17 @@ function UploadMemory(props) {
                   label={chip.label}
                   onClick={() => handleChipClick(chip.id)}
                   sx={{
-                    backgroundColor: "#39798f",
-                    color: "white",
-                    ":hover": { bgcolor: "#1d3d48" },
+                    backgroundColor:
+                      selectedChipId === chip.id ? "white" : "#39798f",
+                    color: selectedChipId === chip.id ? "#39798f" : "white",
+                    border: `2px solid ${
+                      selectedChipId === chip.id ? "#39798f" : "white"
+                    }`,
+                    ":hover": {
+                      backgroundColor:
+                        selectedChipId === chip.id ? "white" : "#1d3d48",
+                      color: selectedChipId === chip.id ? "#1d3d48" : "white",
+                    },
                     margin: "5px",
                   }}
                 />
