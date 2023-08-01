@@ -774,6 +774,26 @@ app.get("/memories/images", async (req, res) => {
   }
 });
 
+app.delete("/memories/images/:id", async (req, res) => {
+  const imageId = req.params.id;
+  try {
+    const query = `
+      DELETE FROM images
+      WHERE id = $1;
+    `;
+
+    const result = await pool.query(query, [imageId]);
+
+    if (result.rowCount === 1) {
+      return res.status(200).json({ message: "Image deleted successfully." });
+    } else {
+      return res.status(404).json({ error: "Image not found." });
+    }
+  } catch (error) {
+    console.error("Error deleting image:", error.message);
+    return res.status(500).json({ error: "Failed to delete image." });
+  }
+});
 
 
 
