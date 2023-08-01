@@ -6,6 +6,7 @@ import Chip from "@mui/material/Chip";
 
 function UploadMemory(props) {
   const handleCancel = () => {
+    handleReset();
     props.onHide();
   };
   const [file, setFile] = useState(null);
@@ -17,6 +18,14 @@ function UploadMemory(props) {
   const [formData, setFormData] = useState({
     caption: "",
   });
+
+  const handleReset = () => {
+    setFile(null);
+    setError(null);
+    setSelectedChipId(null);
+    setImageDataURL(null);
+    setFormData({ caption: "" });
+  };
 
   const { caption } = formData;
   const handleCaptionChange = (e) => {
@@ -106,7 +115,7 @@ function UploadMemory(props) {
         return;
       }
       props.fetchImages();
-      setSelectedChipId(null);
+      handleReset();
       props.onHide();
     } catch (error) {
       console.error("Error uploading image:", error.message);
@@ -117,7 +126,7 @@ function UploadMemory(props) {
   return (
     <Modal
       show={props.show}
-      onHide={props.onHide}
+      onHide={handleCancel}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
