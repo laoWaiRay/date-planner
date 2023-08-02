@@ -3,7 +3,7 @@ import styles from "./Memories.module.css";
 import Button from "@mui/material/Button";
 import { useState, useEffect } from "react";
 import UploadMemory from "../components/UploadMemoryModal";
-import ImageGrid from "../components/ImageGird";
+import ImageGrid from "../components/ImageGrid";
 import { useAuthContext } from "../hooks/useAuthContext";
 
 function Memories() {

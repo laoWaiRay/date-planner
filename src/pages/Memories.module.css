@@ -67,7 +67,7 @@
 }
 
 .polaroidPhoto {
-  min-width: 80vh;
+  min-width: 50vh;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 8px;
