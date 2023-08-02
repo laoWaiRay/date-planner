@@ -70,7 +70,7 @@ function ImageGrid({ images, onDeleteImage }) {
       </div>
       <Modal
         show={showModal}
-        size="xl"
+        size="lg"
         centered
         onHide={() => setShowModal(false)}
         dialogClassName="custom-modal"

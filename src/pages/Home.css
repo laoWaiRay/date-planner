@@ -68,8 +68,9 @@
   left: 250px; */
   margin-left: 2%;
   /* transform: translateX(-50%); */
-  min-width: 300px;
-  width: 15%;
+  /* min-width: 100vh; */
+  max-width: 30%;
+  width: 30%;
   background-color: rgba(255, 255, 255, 1);
   padding: 16px;
   border-radius: 8px;
@@ -84,8 +85,9 @@
   right: 250px; */
   margin-right: 2%;
   /* transform: translateX(50%); */
-  min-width: 300px;
-  width: 15%;
+  /* min-width: 300px; */
+  max-width: 30%;
+  width: 30%;
   background-color: rgba(255, 255, 255, 1);
   padding: 16px;
   border-radius: 8px;

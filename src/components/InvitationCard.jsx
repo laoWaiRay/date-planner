@@ -64,7 +64,7 @@ function InvitationCard({
   };
 
   return (
-    <Card className="card-container">
+    <Card className="card-container" >
       <Card.Body>
         <Card.Title className="text-center"> {eventTitle}</Card.Title>
         <div style={{ display: "flex", alignItems: "center" }}>
