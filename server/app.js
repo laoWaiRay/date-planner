@@ -237,10 +237,11 @@ app.post("/mydates", async (req, res) => {
       };
       res.status(500).json(error_message);
     } else {
-      res.status(200).end();
+      res.status(200).json({});
     }
   } catch (error) {
     console.error(error.message);
+    res.json({error: "File size too large"})
   }
 });
 
