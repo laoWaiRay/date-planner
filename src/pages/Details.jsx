@@ -17,7 +17,7 @@ import { Rating } from "@mui/material";
 import { Delete, Edit, Send } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import { useAuthContext } from "../hooks/useAuthContext";
-import DateForm from "../components/DateForm";
+import DateForm from "../components/dateform";
 import CreateDateInvite from "../components/DateInviteModal";
 import DeleteWarningModal from "../components/DeleteWarningModal";
 import { Navigate } from "react-router-dom";
@@ -53,7 +53,7 @@ export default function Details() {
     if (response.ok) {
       handleNavigate();
     } else {
-      console.error("Failed to update data.");
+      throw new Error("Image too large")
     }
   };
 

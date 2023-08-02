@@ -129,6 +129,7 @@ export default function PublicDates({ entryTab }) {
 
     const retrieveLocations = async () => {
         let locationList = await getDistinctLocations()
+        console.log(locationList)
         setLocations(locationList)
     }
 
@@ -265,7 +266,7 @@ export default function PublicDates({ entryTab }) {
                     > 
                     <MenuItem value="all">All</MenuItem>
                     {locations.map((location) => {
-                        return <MenuItem key={location.id} value={location.city}>{location.city}</MenuItem>
+                          return <MenuItem key={location.city} value={location.city}>{location.city}</MenuItem>
                         })
     
                     }
@@ -402,7 +403,7 @@ export default function PublicDates({ entryTab }) {
           <Outlet />
           <div className={`${outlet ? "hidden" : ""}`}>
             <div className="md:container mx-auto">
-            <h1 className="text-center mt-12 mb-4 tracking-wider text-center font-light tracking-wider border-b"  
+            <h1 className=" mt-12 mb-4 tracking-wider font-light border-b text-center"
                 style= {{color: "#39798f"}}>
                     FIND DATE IDEAS
             </h1>
