@@ -93,6 +93,23 @@ export default function DateCard({ id, name, description, category, location,
       }
     }
 
+    const checkCategory = () => {
+      switch (category) {
+        case "stayathome":
+          return "Stay At Home"
+        case "natureandoutdoors":
+          return "Nature & Indoors"
+        case "musicandentertainment":
+          return "Music & Entertainment"
+        case "technologyandgaming":
+          return "Technology & Gaming"
+        case "mysteryandadventure":
+          return "Mystery"
+        default:
+          return category
+      }
+    };
+
     return (
         <Card className="h-full flex flex-col bg-red-200" variant="outlined" sx={{ maxWidth: 350}}>
             <CardMedia
@@ -120,7 +137,7 @@ export default function DateCard({ id, name, description, category, location,
                 }
                 
                 <p className="text-sm text-slate-500 my-0">Location: {location}</p>
-                <p className="text-sm text-slate-500 my-0">Category: <span style={{textTransform:'capitalize'}}>{category}</span></p>
+                <p className="text-sm text-slate-500 my-0">Category: <span style={{textTransform:'capitalize'}}>{checkCategory()}</span></p>
                 {price ? <p className="text-sm text-slate-500 mb-2">Price: {price}</p>:<></>}
                 { description !== undefined ? <p className="text-sm">{description}</p>: null}
             </CardContent>

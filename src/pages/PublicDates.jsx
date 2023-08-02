@@ -14,7 +14,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { Outlet, useOutlet } from "react-router-dom";
 import { useAuthContext } from '../hooks/useAuthContext';
-import { getLocations } from "../api/internal/postgres";
+import { getDistinctLocations } from "../api/internal/postgres";
 
 
 export default function PublicDates({ entryTab }) {
@@ -128,7 +128,7 @@ export default function PublicDates({ entryTab }) {
     }
 
     const retrieveLocations = async () => {
-        let locationList = await getLocations()
+        let locationList = await getDistinctLocations()
         setLocations(locationList)
     }
 

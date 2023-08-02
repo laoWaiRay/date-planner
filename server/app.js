@@ -387,6 +387,13 @@ app.get("/locations", async (req, res, next) => {
   res.json(data);
 });
 
+app.get("/distinctlocations", async (req, res, next) => {
+  const { id } = req.params;
+  const result = await pool.query(`SELECT DISTINCT city FROM locations;`);
+  const data = result.rows;
+  res.json(data);
+});
+
 // Get location by id
 app.get("/locations/:id", async (req, res, next) => {
   const { id } = req.params;

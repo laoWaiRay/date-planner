@@ -302,23 +302,8 @@ function DateForm(props) {
             <div className="col-md-12 text-center">
               <Button
                 variant="primary"
-                onClick={handleReset}
-                type="reset"
-                className="w-50"
-                sx={{
-                  backgroundColor: "#39798f",
-                  color: "white",
-                  ":hover": { bgcolor: "#1d3d48" },
-                }}
-              >
-                Reset
-              </Button>
-            </div>
-            <div className="col-md-12 text-center">
-              <Button
-                variant="primary"
                 type="submit"
-                className="w-50 mt-2"
+                className="w-50 my-2"
                 sx={{
                   backgroundColor: "#39798f",
                   color: "white",
@@ -328,6 +313,23 @@ function DateForm(props) {
                 Submit
               </Button>
             </div>
+            <div className="col-md-12 text-center">
+              <Button
+                variant="contained"
+                onClick={handleReset}
+                type="reset"
+                color="error"
+                className="w-50 my-2"
+                // sx={{
+                //   backgroundColor: "#39798f",
+                //   color: "white",
+                //   ":hover": { bgcolor: "#1d3d48" },
+                // }}
+              >
+                Reset
+              </Button>
+            </div>
+            
           </div>
         </form>
       </Modal.Body>
