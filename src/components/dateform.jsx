@@ -51,6 +51,7 @@ function DateForm(props) {
 
   const handleReset = () => {
     setFormValues({ ...newEvent });
+    setError("")
   };
 
   const handleFormSubmit = async (event) => {
