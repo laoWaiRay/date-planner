@@ -55,12 +55,13 @@ export default function Details() {
     } catch (err) {
       console.log(err)
     }
+    console.log(response)
 
     if (!response.ok) {
       throw new Error("Image too large")
-    } else {
-      handleNavigate();
     }
+
+    console.log("OK")
   };
 
   const initFormValues = {
@@ -80,7 +81,6 @@ export default function Details() {
   useEffect(() => {
     (async () => {
       if (isFirstLoad) {
-        console.log("FIRST LOAD", preloadedData);
         const data = preloadedData.eventData;
         let average = preloadedData.averageScore;
 

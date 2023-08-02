@@ -297,10 +297,10 @@ app.patch("/mydates", async (req, res, next) => {
 
     await pool.query(query, queryValues);
 
-    res.status(200).end();
+    res.status(200).json({})
   } catch (error) {
     console.error(error);
-    res.status(500).end();
+    res.status(500).json({error: "Image size too large"})
   }
 });
 
