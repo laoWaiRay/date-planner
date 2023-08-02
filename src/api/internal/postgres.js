@@ -170,6 +170,14 @@ async function getLocations() {
   return data;
 }
 
+//Get distinct cities in database
+async function getDistinctLocations() {
+  const result = await fetch(`http://localhost:8000/distinctlocations`, fetchOptions.GET);
+  const data = await result.json();
+  return data;
+}
+
+
 //Get location by id
 async function getLocationById(id) {
   const result = await fetch(`http://localhost:8000/locations/${id}`, fetchOptions.GET);
@@ -252,6 +260,7 @@ export {
   getEventById,
   deleteEvent,
   getLocations,
+  getDistinctLocations,
   getLocationById,
   addReview,
   editReview,
