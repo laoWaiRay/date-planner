@@ -43,17 +43,23 @@ export default function Details() {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   const postData = async (body) => {
-    const response = await fetch("http://localhost:8000/mydates", {
-      method: "PATCH",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+    let response;
 
-    if (response.ok) {
-      handleNavigate();
-    } else {
+    try {
+      response = await fetch("http://localhost:8000/mydates", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+    } catch (err) {
+      console.log(err)
+    }
+
+    if (!response.ok) {
       throw new Error("Image too large")
+    } else {
+      handleNavigate();
     }
   };
 
